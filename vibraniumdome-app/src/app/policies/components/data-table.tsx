@@ -1,0 +1,381 @@
+"use client"
+
+import { api } from "~/trpc/react";
+import * as React from "react"
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+
+import { Button } from "~/app/components/ui/button"
+import { Checkbox } from "~/app/components/ui/checkbox"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/app/components/ui/dropdown-menu"
+import { Input } from "~/app/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/app/components/ui/table"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/app/components/ui/dialog"
+import { Label } from "~/app/components/ui/label"
+import { Textarea } from "~/app/components/ui/textarea"
+
+import { useRouter } from "next/navigation";
+
+import { format } from "date-fns"
+
+
+export type Policy = {
+  id: string
+  name: string
+  llmAppName: string
+  content: string
+  createdAt: string
+}
+
+export type DataTableProps = {
+    data: Policy[];
+  };
+
+export const columns: ColumnDef<Policy>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "id",
+    header: "ID",
+    cell: ({ row }) => {
+      const short = String(row.getValue("id")).substring(0, 10)
+      return <div className="text-left font-medium">{short}</div>
+    },
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("name")}</div>
+    ),
+  },
+  {
+    accessorKey: "llmAppName",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          LLM App Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="text-left lowercase">{row.getValue("llmAppName")}</div>,
+  },
+  {
+    accessorKey: "content",
+    header: "Content",
+    cell: ({ row }) => {
+        const short = String(row.getValue("content"))
+      return <div className="text-left font-medium">{short.substring(0, 10)}</div>
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => {
+        const createdAt = format(row.getValue("createdAt"), "PP")
+      return <div className="text-left font-medium">{createdAt}</div>
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const policy = row.original
+      const router = useRouter();
+      const deletePolicyMutation = api.policy.delete.useMutation({
+        onSuccess: () => {
+          router.refresh();
+        },
+      })
+      const [policyId, setPolicyId] = React.useState(policy.id);
+      const [policyName, setPolicyName] = React.useState(policy.name);
+      const [llmAppName, setLlmAppName] = React.useState(policy.llmAppName);
+      const [policyContent, setPolicyContent] = React.useState(policy.content);
+
+      const updatePolicy = api.policy.update.useMutation({
+        onSuccess: () => {
+          router.refresh();
+        },
+      });
+    const saveChanges = async () => {
+        setOpen(false);
+        await updatePolicy.mutate({ id: policyId,
+                                    name: policyName,
+                                    llmAppName: llmAppName,
+                                    content: policyContent,
+                                })
+    };
+
+      const [open, setOpen] = React.useState(false);
+
+      return (
+        <>
+              <div className="flex gap-2">
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost">Edit Policy</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[825px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit policy</DialogTitle>
+                        <DialogDescription>
+                          Make policy changes. Click save when you're done.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="id" className="text-right">
+                            Policy ID
+                          </Label>
+                          <Input
+                            id="id"
+                            defaultValue={policy.id}
+                            className="col-span-3"
+                            onChange={(e) => setPolicyId(e.target.value)}
+                            readOnly
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="policyName" className="text-right">
+                            Policy Name
+                          </Label>
+                          <Input
+                            id="name"
+                            defaultValue={policy.name}
+                            className="col-span-3"
+                            onChange={(e) => setPolicyName(e.target.value)}
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="llmAppName" className="text-right">
+                            LLM App Name
+                          </Label>
+                          <Input
+                            id="llmAppName"
+                            defaultValue={policy.llmAppName}
+                            className="col-span-3"
+                            onChange={(e) => setLlmAppName(e.target.value)}
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="llmAppName" className="text-right">
+                            Policy Content
+                          </Label>
+                          <Textarea className="col-span-3" defaultValue={policy.content} onChange={(e) => setPolicyContent(e.target.value)}/>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit" onClick={saveChanges}>Save changes</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <Button variant="ghost" onClick={async () => 
+                      await deletePolicyMutation.mutate({ id: policy.id })
+                  }>Delete Policy</Button>
+                </div>
+        </>
+      )
+    },
+  },
+]
+
+export function DataTable(props: DataTableProps) {
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  )
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = React.useState({})
+  const data = props.data
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  })
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter policies..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  )
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}

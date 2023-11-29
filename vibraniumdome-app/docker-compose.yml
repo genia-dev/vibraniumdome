@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  vibraniumdome-app:
+    container_name: vibraniumdome-app
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+        NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+        NEXTAUTH_URL: ${NEXTAUTH_URL}
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+        GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+        OPENSEARCH_JWT_HMAC_SIGNING_KEY: ${OPENSEARCH_JWT_HMAC_SIGNING_KEY}
+        OPENSEARCH_DASHBOARD_URL: ${OPENSEARCH_DASHBOARD_URL}
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.example
+    environment:
+      - DATABASE_URL=mysql://root:@vibraniumdome-app-db:3306/vibraniumdome
+    depends_on:
+      - vibraniumdome-app-db
+
+  vibraniumdome-app-db:
+    container_name: vibraniumdome-app-db
+    image: mysql:8.1.0
+    volumes:
+      - ./vibraniumdome-db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: vibraniumdome
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  vibraniumdome-db-data:
