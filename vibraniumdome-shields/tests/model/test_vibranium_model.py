@@ -45,27 +45,27 @@ class TestVibraniumLLMInteraction(unittest.TestCase):
 
     def test_last_message(self):
         interaction = LLMInteraction({"id": "1", "llm_prompts": self._simple_user_message})
-        self.assertEquals(interaction.get_last_message(), "Where was it played shlomi@vibranium-dome.com?")
+        self.assertEqual(interaction.get_last_message(), "Where was it played shlomi@vibranium-dome.com?")
 
     def test_last_assistant_message(self):
         interaction = LLMInteraction({"id": "1", "llm_prompts": self._simple_assistant_message})
-        self.assertEquals(interaction.get_last_message(), "Sorry, i can not help you with that")
+        self.assertEqual(interaction.get_last_message(), "Sorry, i can not help you with that")
 
     def test_last_assistant_message_1(self):
         interaction = LLMInteraction({"id": "1", "llm_prompts": self._another_assistant_message})
-        self.assertEquals(interaction.get_last_user_message(), "3")
+        self.assertEqual(interaction.get_last_user_message(), "3")
 
     def test_last_assistant_message_2(self):
         interaction = LLMInteraction({"id": "1", "llm_prompts": self._another_assistant_message})
-        self.assertEquals(interaction.get_last_assistant_message(), "4")
+        self.assertEqual(interaction.get_last_assistant_message(), "4")
 
     def test_last_user_message(self):
         interaction = LLMInteraction({"id": "1", "llm_prompts": self._another_user_message})
-        self.assertEquals(interaction.get_last_assistant_message(), "4")
+        self.assertEqual(interaction.get_last_assistant_message(), "4")
 
     def test_last_user_message_1(self):
         interaction = LLMInteraction({"id": "1", "llm_prompts": self._another_user_message})
-        self.assertEquals(interaction.get_last_user_message(), "5")
+        self.assertEqual(interaction.get_last_user_message(), "5")
 
 
 if __name__ == "__main__":
