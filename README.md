@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/pypi/l/fpvgcc.svg?color=blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![CI](https://github.com/genia-dev/VibraniumDome/actions/workflows/ci.yml/badge.svg)](https://github.com/genia-dev/VibraniumDome/actions/workflows/ci.yml)
+[![CI](https://github.com/genia-dev/vibraniumdome/actions/workflows/ci.yml/badge.svg)](https://github.com/genia-dev/VibraniumDome/actions/workflows/ci.yml)
 
 <p align=center>
    <a href="https://vibraniumdom.com" target="_blank">
@@ -110,26 +110,21 @@ Full blown, end to end LLM WAF for Agents, allowing security teams govenrance, a
 
 Vibranium dome ecosystem is growing fast, we are working with security researchers, domain experts and looking for more code contributors to add more industry best practices and integrations
 
-### Demo
-
-vibranium demo
+## Demo
 
 https://github.com/genia-dev/VibraniumDome/assets/16246393/b0e37768-cacd-4af6-8ab4-41949812883e
 
 ## Getting Started
 
 ```
-pip3 install streamlit VibraniumDome
+git clone https://github.com/genia-dev/VibraniumDome
+
+cd VibraniumDome
+
+docker-compose up
 ```
 
-Then you can run the streamlit web app by:
-
-```
-VibraniumDome
-```
-
-For more details please see our [documentation here](https://VibraniumDome-dev.github.io/VibraniumDome/getting-started/)
-Once installed and granted with permissions, a few great example scenarios [can be found here](./media/)
+For more details please see [documentation here](https://docs.vibraniumdome.com/quickstart)
 
 ## Contributing
 
@@ -139,17 +134,13 @@ More details can be found [here](./CONTRIBUTING.md).
 
 ## License
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+GNU General Public License v3.0 or later
 
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
-[LICENSE](./LICENSE)
+See [LICENSE](./LICENSE) to see the full text.
 
 ## Contact
 
-Got an idea to improve our project? We'd love to hear it and collaborate with you. Don't hesitate to reach out to us! Just open an [issue](https://github.com/VibraniumDome-dev/VibraniumDome/issues) and VibraniumDome will respond to you 🦸‍♀️🦸‍♂️ !
+Got an idea to improve our project? We'd love to hear it and collaborate with you. Don't hesitate to reach out to us! Just open an [issue](https://github.com/genia-dev/VibraniumDome/issues) and we will respond to you 🦸‍♀️🦸‍♂️ !
 You can see details [here](./.github/ISSUE_TEMPLATE/submit-a-request.md).
 
 ## Future Plans
@@ -161,4 +152,6 @@ You can see details [here](./.github/ISSUE_TEMPLATE/submit-a-request.md).
 - Alerting framework
 - Integration with your enterprise security applications
 
-#### Full documentation can be found [here](https://docs.vibraniumdome.com/)
+## Documentation
+
+https://docs.vibraniumdome.com
