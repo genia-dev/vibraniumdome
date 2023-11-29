@@ -10,6 +10,13 @@
 
 ## Installation
 
+### Docker-Compose
+```
+docker-compose up --build
+```
+
+### Local
+
 - Node v20.8.1 (+)
 ```
 brew install node
@@ -36,29 +43,29 @@ yarn dev
 mysql -u root vibraniumdome
 ```
 
-### Usage
+## Usage Operations
 
-#### To reset the database:
+### To reset the database:
 ```
 npx prisma db push --force-reset
 ```
 
-#### To initialize the database:
+### To initialize the database:
 ```
 npx prisma db seed
 ```
 
-#### To get browser db viewer client:
+### To get browser db viewer client:
 ```
 npx prisma studio
 ```
 
-#### To reset the database & seed:
+### To reset the database & seed:
 ```
 yarn db:reset
 ```
 
-#### Get the current policy for LLM app
+### Get the current policy for LLM app
 ```
 curl -v "http://localhost:3000/api/trpc/policies?batch=1&input=%7B%220%22%3A%7B%22json%22%3A%7B%22llmAppId%22%3A%22clolkhhq10009n0nes7kj68jz%22%7D%7D%7D" -H "Authorization: Bearer vibranium_hvencwoacfzmon003ltkyfce6wugf5w7pt9l"
 ```
