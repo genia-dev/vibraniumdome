@@ -108,7 +108,7 @@ Full blown, end to end LLM WAF for Agents, allowing security teams govenrance, a
 
 ### Dozens of shields and integrations coming soon
 
-Vibranium dome ecosystem is growing fast, we are working with security researchers, domain experts and looking for more code contributors to add more industry best practices and integrations
+Vibranium Dome ecosystem is growing fast, we are working with security researchers, domain experts and looking for more code contributors to add more industry best practices and integrations
 
 ## Demo
 
@@ -140,7 +140,7 @@ See [LICENSE](./LICENSE) to see the full text.
 
 ## Contact
 
-Got an idea to improve our project? We'd love to hear it and collaborate with you. Don't hesitate to reach out to us! Just open an [issue](https://github.com/genia-dev/VibraniumDome/issues) and we will respond to you 🦸‍♀️🦸‍♂️ !
+Got an idea to improve our project? We'd love to hear it and collaborate with you. Don't hesitate to reach out to us! Just open an [issue](https://github.com/genia-dev/vibraniumdome/issues) and we will respond to you 🦸‍♀️🦸‍♂️ !
 You can see details [here](./.github/ISSUE_TEMPLATE/submit-a-request.md).
 
 ## Future Plans
