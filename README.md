@@ -112,14 +112,14 @@ Vibranium dome ecosystem is growing fast, we are working with security researche
 
 ## Demo
 
-https://github.com/genia-dev/VibraniumDome/assets/16246393/b0e37768-cacd-4af6-8ab4-41949812883e
+https://github.com/genia-dev/vibraniumdome/assets/16246393/b0e37768-cacd-4af6-8ab4-41949812883e
 
 ## Getting Started
 
 ```
-git clone https://github.com/genia-dev/VibraniumDome
+git clone https://github.com/genia-dev/vibraniumdome
 
-cd VibraniumDome
+cd vibraniumdome
 
 docker-compose up
 ```
@@ -129,7 +129,7 @@ For more details please see [documentation here](https://docs.vibraniumdome.com/
 ## Contributing
 
 We would appreciate your contributions! 🙌🌟💖
-👩‍💻➕👨‍💻 Fork VibraniumDome repository, make your changes, and submit a pull request!
+👩‍💻➕👨‍💻 Fork repository, make your changes, and submit a pull request!
 More details can be found [here](./CONTRIBUTING.md).
 
 ## License
