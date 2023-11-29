@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/pypi/l/fpvgcc.svg?color=blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)
-[![CI](https://github.com/genia-dev/VibraniumDome/actions/workflows/ci.yml/badge.svg)](https://github.com/genia-dev/VibraniumDome/actions/workflows/ci.yml)
+[![CI](https://github.com/genia-dev/vibraniumdome/actions/workflows/ci.yml/badge.svg)](https://github.com/genia-dev/VibraniumDome/actions/workflows/ci.yml)
 
 <p align=center>
    <a href="https://vibraniumdom.com" target="_blank">
