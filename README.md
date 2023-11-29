@@ -129,7 +129,7 @@ For more details please see [documentation here](https://docs.vibraniumdome.com/
 ## Contributing
 
 We would appreciate your contributions! 🙌🌟💖
-👩‍💻➕👨‍💻 Fork vibraniumdome repository, make your changes, and submit a pull request!
+👩‍💻➕👨‍💻 Fork repository, make your changes, and submit a pull request!
 More details can be found [here](./CONTRIBUTING.md).
 
 ## License
