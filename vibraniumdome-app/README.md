@@ -24,8 +24,8 @@ brew services start mysql
 
 #### Run Vibranium-App
 ```
-git clone git@github.com:genia-dev/Vibranium-App.git
-cd Vibranium-App
+git clone git@github.com:genia-dev/vibraniumdome.git
+cd vibraniumdome/vibraniumdome-app
 yarn
 npx prisma db seed
 yarn dev
@@ -33,7 +33,7 @@ yarn dev
 
 #### To connect the local MySQL:
 ```
-mysql -u root vibranium
+mysql -u root vibraniumdome
 ```
 
 ### Usage
@@ -58,7 +58,7 @@ npx prisma studio
 yarn db:reset
 ```
 
-# TODO
+#### Get the current policy for LLM app
 ```
 curl -v "http://localhost:3000/api/trpc/policies?batch=1&input=%7B%220%22%3A%7B%22json%22%3A%7B%22llmAppId%22%3A%22clolkhhq10009n0nes7kj68jz%22%7D%7D%7D" -H "Authorization: Bearer vibranium_hvencwoacfzmon003ltkyfce6wugf5w7pt9l"
 ```
