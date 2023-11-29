@@ -1,0 +1,29 @@
+[openai]
+OPENAI_MODEL="gpt-3.5-turbo-0613"
+#OPENAI_MODEL="gpt-4-0613"
+function_call="auto"
+timeout=45
+temperature=0
+
+[logger_level]
+default_logging_level="INFO"
+'vibranium.main'="INFO"
+'vibraniumdome_shields.shields.transformer_shield'="INFO"
+'vibraniumdome_shields.open_telemetry.open_telemetry_parser'="INFO"
+
+[vector_db]
+collection_name="data"
+#vector_db_dir=tempfile.gettempdir()
+embedding_model_name="text-embedding-ada-002"
+
+[embeddings]
+cache_embeddings=false
+
+[vibraniumdome_shields]
+app="server"
+high_risk_threshold=0.8
+low_risk_threshold=0.2
+# false for sync or true for async
+# execution_mode_async=true
+transformer_model_name="deepset/deberta-v3-base-injection"
+refusal_model_name="MoritzLaurer/deberta-v3-large-zeroshot-v1"

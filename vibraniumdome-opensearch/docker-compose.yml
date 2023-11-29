@@ -1,0 +1,76 @@
+version: '3'
+services:
+  vibraniumdome-opensearch-node-1:
+    image: opensearchproject/opensearch:2.9.0
+    container_name: vibraniumdome-opensearch-node-1
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=vibraniumdome-opensearch-node-1
+      - discovery.seed_hosts=vibraniumdome-opensearch-node-1,vibraniumdome-opensearch-node-2
+      - cluster.initial_cluster_manager_nodes=vibraniumdome-opensearch-node-1,vibraniumdome-opensearch-node-2
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - ./vibraniumdome-opensearch-data1:/usr/share/opensearch/data
+      - ./config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch-security/opensearch.yml
+      - ./log4j2.properties:/usr/share/opensearch/config/log4j2.properties
+    ports:
+      - 9200:9200
+      - 9600:9600 # required for Performance Analyzer
+  vibraniumdome-opensearch-node-2:
+    image: opensearchproject/opensearch:2.9.0
+    container_name: vibraniumdome-opensearch-node-2
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=vibraniumdome-opensearch-node-2
+      - discovery.seed_hosts=vibraniumdome-opensearch-node-1,vibraniumdome-opensearch-node-2
+      - cluster.initial_cluster_manager_nodes=vibraniumdome-opensearch-node-1,vibraniumdome-opensearch-node-2
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./vibraniumdome-opensearch-data2:/usr/share/opensearch/data
+      - ./config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch-security/opensearch.yml
+      - ./log4j2.properties:/usr/share/opensearch/config/log4j2.properties
+  vibraniumdome-opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.9.0
+    container_name: vibraniumdome-opensearch-dashboards
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      OPENSEARCH_HOSTS: '["https://vibraniumdome-opensearch-node-1:9200","https://vibraniumdome-opensearch-node-2:9200"]'
+    volumes:
+      - ./opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
+  
+  opensearch-seeder:
+    image: centos
+    container_name: opensearch-seeder
+    volumes:
+      - ./dashboard.ndjson:/dashboard.ndjson
+      - ./opensearch-seed.sh:/opensearch-seed.sh
+    command: /bin/bash /opensearch-seed.sh
+    depends_on:
+      - vibraniumdome-opensearch-node-1
+      - vibraniumdome-opensearch-node-2
+      - vibraniumdome-opensearch-dashboards
+
+volumes:
+  vibraniumdome-opensearch-data1:
+  vibraniumdome-opensearch-data2:

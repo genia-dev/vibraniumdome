@@ -1,0 +1,53 @@
+[tool.poetry]
+name = "vibraniumdome-shields"
+version = "0.1.0"
+description = ""
+authors = ["Uri Shamay <cmpxchg16@gmail.com>", "Shlomi Shemesh <shlomosh@gmail.com>"]
+readme = "README.md"
+packages = [{include = "vibraniumdome_shields"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9, <3.13"
+openai = "^0.28.1"
+transformers = "^4.34.0"
+configparser = "^6.0.0"
+flask = "^3.0.0"
+pandas = "^2.1.1"
+sentence-transformers = "^2.2.2"
+loguru = "^0.7.2"
+nltk = "^3.8.1"
+dynaconf = "^3.2.3"
+streamlit-extras = "^0.3.4"
+pytest = "^7.4.2"
+pyyaml = "^6.0.1"
+marshmallow = "^3.20.1"
+pygments = "^2.16.1"
+opensearch-py = "^2.3.2"
+gunicorn = "^21.2.0"
+torch = "2.0.1"
+datasets = "^2.15.0"
+langchain = "^0.0.339"
+faiss-cpu = "^1.7.4"
+tiktoken = "^0.5.1"
+load-dotenv = "^0.1.0"
+termcolor = "^2.3.0"
+presidio-analyzer = "^2.2.351"
+spacy = "^3.7.2"
+opentelemetry-proto = "^1.21.0"
+pyrate-limiter = "^3.1.0"
+vibraniumdome-sdk = "^0.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 119
+
+[tool.poetry.scripts]
+cli = 'vibraniumdome_shields.user_interface.cli_app:main'
+server = 'vibraniumdome_shields.main:server'

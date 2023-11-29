@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "vibraniumdome-opensearch"
+version = "0.1.0"
+description = ""
+authors = ["Uri Shamay <cmpxchg16@gmail.com>", "Shlomi Shemesh <shlomosh@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+opensearch-py = "^2.3.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
