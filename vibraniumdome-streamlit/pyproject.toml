@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "vibraniumdome-streamlit"
+version = "0.1.0"
+description = "streamlit app to demo Vibranium Dome"
+authors = ["Uri Shamay <cmpxchg16@gmail.com>", "Shlomi Shemesh <shlomosh@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.28.2"
+streamlit-extras = "^0.3.5"
+pyperclip = "^1.8.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
