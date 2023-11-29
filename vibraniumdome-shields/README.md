@@ -2,8 +2,8 @@
 
 ## Installation:
 ```
-git clone git@github.com:genia-dev/VibraniumDome.git
-cd VibraniumDome/vibraniumdome-shields
+git clone git@github.com:genia-dev/vibraniumdome.git
+cd vibraniumdome/vibraniumdome-shields
 poetry install
 poetry shell
 ```

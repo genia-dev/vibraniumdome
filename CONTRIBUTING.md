@@ -2,7 +2,7 @@
 
 ## Bug Reports
 
-We use [GitHub Issues](https://github.com/genia-dev/VibraniumDome/issues) to track public bugs. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue.
+We use [GitHub Issues](https://github.com/genia-dev/vibraniumdome/issues) to track public bugs. Please ensure your description is clear and has sufficient instructions to be able to reproduce the issue.
 
 ## Feature Requests
 
