@@ -1,0 +1,40 @@
+name: VibraniumDome CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+permissions:
+  contents: read
+
+jobs:
+  vibraniumdome-shields:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.9"
+    
+    - name: Install Poetry
+      run: curl -sSL https://install.python-poetry.org | python3 -
+    
+    - name: Install Dependencies vibraniumdome-shields
+      run: /Users/runner/.local/bin/poetry install
+      working-directory: vibraniumdome-shields/
+    
+    - name: Workaround for missing pytorch dependencies during poetry install
+      run: /Users/runner/.local/bin/poetry run pip install torch
+      working-directory: vibraniumdome-shields/
+
+    - name: Run Tests vibraniumdome-shields
+      run: /Users/runner/.local/bin/poetry run pytest
+      working-directory: vibraniumdome-shields/
