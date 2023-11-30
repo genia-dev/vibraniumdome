@@ -7,8 +7,7 @@ readme = "README.md"
 packages = [{include = "vibraniumdome_shields"}]
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.13"
-openai = "^0.28.1"
+python = ">=3.9, !=3.9.7, <4.0"
 transformers = "^4.34.0"
 configparser = "^6.0.0"
 flask = "^3.0.0"
@@ -17,7 +16,6 @@ sentence-transformers = "^2.2.2"
 loguru = "^0.7.2"
 nltk = "^3.8.1"
 dynaconf = "^3.2.3"
-streamlit-extras = "^0.3.4"
 pytest = "^7.4.2"
 pyyaml = "^6.0.1"
 marshmallow = "^3.20.1"
@@ -36,6 +34,10 @@ spacy = "^3.7.2"
 opentelemetry-proto = "^1.21.0"
 pyrate-limiter = "^3.1.0"
 vibraniumdome-sdk = "^0.1.0"
+streamlit = "^1.28.2"
+streamlit-extras = "^0.3.5"
+openai = "0.28.0"
+httpx = "^0.25.2"
 
 
 [tool.poetry.group.dev.dependencies]
