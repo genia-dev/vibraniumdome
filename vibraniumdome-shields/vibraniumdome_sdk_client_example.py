@@ -9,11 +9,11 @@ import requests
 from vibraniumdome_sdk import VibraniumDome
 
 # VibraniumDome.init(app_name="insurance_classifier_ds")
-VibraniumDome.init(app_name="insurance_quote")
-# VibraniumDome.init(app_name="gpt_next")
+# VibraniumDome.init(app_name="insurance_quote")
+VibraniumDome.init(app_name="gpt_next")
 
-used_id = "user-123456"
-# used_id = "user-456789"
+# used_id = "user-123456"
+used_id = "user-456789"
 
 session_id_header = "abcd-1234-cdef"
 # session_id_header = "cdef-1234-abcd"

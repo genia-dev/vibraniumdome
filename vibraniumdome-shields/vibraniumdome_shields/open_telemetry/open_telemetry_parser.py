@@ -121,6 +121,23 @@ class OpenTelemetryParser:
                 break
         llm_interaction["llm_prompts"] = prompts
 
+    def _parse_functions(self, llm_interaction: dict, document):
+        functions = []
+        functions_names = []
+        i = 0
+        while True:
+            name = f"llm.request.functions.{i}.name"
+            description = f"llm.request.functions.{i}.description"
+            parameters = f"llm.request.functions.{i}.parameters"
+            if name in document:
+                functions.append({"name": document[name], "description": document[description], "parameters": document[parameters]})
+                functions_names.append(document[name])
+                i += 1
+            else:
+                break
+        llm_interaction["llm_functions"] = functions
+        llm_interaction["llm_function_names"] = functions_names
+
     def _parse_headers(self, llm_interaction, document):
         llm_interaction["llm.user"] = document.get("llm.user")
         headers_dict = safe_loads_dictionary_string(document.get("llm.headers"))
@@ -149,12 +166,17 @@ class OpenTelemetryParser:
         export_trace_service_request.ParseFromString(request_data)
         document = self._parse_trace_request(export_trace_service_request)
 
-        llm_interaction = {key: value for key, value in document.items() if not key.startswith("llm.prompts") and not key.startswith("llm.completions")}
+        llm_interaction = {
+            key: value
+            for key, value in document.items()
+            if not key.startswith("llm.prompts") and not key.startswith("llm.completions") and not key.startswith("llm.request.functions")
+        }
         # convert timestamp to unix iso 8601 type
         llm_interaction = {key: self.convert_unix_nano_str_to_iso(value) if key.endswith("_timestamp") else value for key, value in llm_interaction.items()}
         llm_interaction["shields_timestamp"] = datetime.now().strftime(self._datetime_format)
         self._parse_headers(llm_interaction, document)
         self._parse_prompts(llm_interaction, document)
         self._parse_completions(llm_interaction, document)
+        self._parse_functions(llm_interaction, document)
         self._logger.debug("llm_interaction: %s", llm_interaction)
         return LLMInteraction(llm_interaction)
