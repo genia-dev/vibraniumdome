@@ -37,6 +37,7 @@ class LLMInteraction:
     _interaction: dict
     _messages: List
     _completion: str = ""
+    _function_call_name: str
     _id: str
     _shields_result: ShieldsDeflectionResult
     _llm_user: str
@@ -47,11 +48,15 @@ class LLMInteraction:
             raise ValueError("LLMInteraction missed configuration")
         self._interaction = interaction
         self._id = interaction["id"]
-        if interaction.get("llm_completions"):
-            self._completion = interaction.get("llm_completions")[0].get("content", "")
         self._messages = interaction.get("llm_prompts")
         self._llm_user = interaction.get("llm.user")
         self._llm_app = interaction.get("service.name")
+
+    def set_completion(self, completion):
+        self._completion = completion
+    
+    def set_function_call_name(self, name):
+        self._function_call_name = name
 
     def get_id(self) -> str:
         return self._id
