@@ -8,18 +8,12 @@ from vibraniumdome_sdk import VibraniumDome
 st.set_page_config(initial_sidebar_state="collapsed")
 # allign the button text to the left
 st.markdown("<style>.main button p {text-align: left;}</style>", unsafe_allow_html=True)
-
+st.markdown("<style>h1, p, ol, ul, dl {font-family: \"Plus Jakarta Sans\", sans-serif;}</style>", unsafe_allow_html=True)
 
 def handle_input(prompt, from_button):
     if not openai_api_key and os.getenv("OPENAI_API_KEY") is None:
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
-
-    print(temperature)
-    print(llm_model)
-    print(user)
-    print(session)
-    print(llm_agent_name)
 
     openai.api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
 
@@ -47,7 +41,7 @@ messages = [
 ]
 
 with st.sidebar:
-    tab1, tab2, tab3 = st.tabs(["Configuration", "Enviroment variables", "Useful links"])
+    tab1, tab2, tab3 = st.tabs(["Configuration", "Enviroment variables", "Links"])
 
     with tab1:
         user = st.text_input("User id (optional)", key="open_ai_user")
@@ -81,13 +75,18 @@ if vibranium_dome_base_url:
 VibraniumDome.init(app_name=llm_agent_name or "openai_test_app")
 
 st.title("Vibranium Dome Chatbot 💬")
-st.caption(body="🚀 A Vibranium Dome streamlit chatbot powered by ChatGPT", help="Additional configuration override is available in the left panel")
+st.caption(
+    body="🚀 A Vibranium Dome chatbot that simulate a potential Agent (powered by ChatGPT)",
+    help="Additional configuration override is available in the left panel"
+)
+
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
-buttons = st.container()
-for n, message in enumerate(messages):
-    buttons.button(label=message, on_click=handle_input, args=[message, True])
+with st.container():
+    buttons = st.container()
+    for n, message in enumerate(messages):
+        buttons.button(label=message, on_click=handle_input, args=[message, True])
 
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
