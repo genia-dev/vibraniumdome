@@ -59,7 +59,7 @@ with st.sidebar:
         )
 
     with tab2:
-        "the below parameters are taken from the Vibranium dome enviroment variables, you can override them below"
+        "These parameters are taken from the Vibranium Dome enviroment variables, you can override them below"
         openai_api_key = st.text_input("OpenAI API Key (optional)", key="chatbot_api_key", type="password")
         "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
         vibranium_dome_base_url = st.text_input("Vibranium Dome Base URL (optional)", key="vibranium_dome_base_url")
