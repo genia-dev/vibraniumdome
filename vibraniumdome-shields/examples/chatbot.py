@@ -7,7 +7,7 @@ from vibraniumdome_sdk import VibraniumDome
 
 st.set_page_config(initial_sidebar_state="collapsed")
 # allign the button text to the left
-st.markdown('<style>.main button p {text-align: left;}</style>', unsafe_allow_html=True)
+st.markdown("<style>.main button p {text-align: left;}</style>", unsafe_allow_html=True)
 
 
 def handle_input(prompt, from_button):
@@ -16,6 +16,7 @@ def handle_input(prompt, from_button):
         st.stop()
 
     print(temperature)
+    print(llm_model)
     print(user)
     print(session)
     print(llm_agent_name)
@@ -26,7 +27,7 @@ def handle_input(prompt, from_button):
     if not from_button:
         st.chat_message("user").write(prompt)
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=llm_model or "gpt-3.5-turbo",
         messages=st.session_state.messages,
         request_timeout=60,
         temperature=temperature or 0,
@@ -49,9 +50,10 @@ with st.sidebar:
     tab1, tab2, tab3 = st.tabs(["Configuration", "Enviroment variables", "Useful links"])
 
     with tab1:
-        user = st.text_input("Simulate User id (optional)", key="open_ai_user")
-        session = st.text_input("Simulate Session id (optional)", key="open_ai_headers_session")
+        user = st.text_input("User id (optional)", key="open_ai_user")
+        session = st.text_input("Session id (optional)", key="open_ai_headers_session")
         llm_agent_name = st.text_input("LLM Agent Name (optional)", key="llm_application_name")
+        llm_model = st.selectbox("LLM Model (optional)", ("gpt-3.5-turbo", "gpt-3.5-turbo-1106	", "gpt-3.5-turbo-16k", "gpt-4", "gpt-4-0613"))
         temperature = st.slider(
             "Temperature",
             help="The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use log probability to automatically increase the temperature until certain thresholds are hit.",
@@ -78,8 +80,8 @@ if vibranium_dome_base_url:
 
 VibraniumDome.init(app_name=llm_agent_name or "openai_test_app")
 
-st.title("💬 Vibranium Dome Chatbot")
-st.caption("🚀 A Vibranium Dome streamlit chatbot powered by OpenAI LLM")
+st.title("Vibranium Dome Chatbot 💬")
+st.caption(body="🚀 A Vibranium Dome streamlit chatbot powered by ChatGPT", help="Additional configuration override is available in the left panel")
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
