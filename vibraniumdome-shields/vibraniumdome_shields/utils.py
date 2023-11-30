@@ -1,4 +1,5 @@
 import json
+import ast
 import logging
 import os
 from datetime import datetime
@@ -8,6 +9,15 @@ from pydantic import BaseModel
 
 
 logger = logging.getLogger(__name__)
+
+def safe_loads_dictionary_string(dictionary_string: str):
+    try:
+        parsed_dictionary = ast.literal_eval(dictionary_string)
+    except json.JSONDecodeError:
+        logger.error("dictionary_string could not be parser: %s", dictionary_string)
+        parsed_dictionary = {}
+    return parsed_dictionary
+
 
 def safe_loads_json(json_string: str):
     try:

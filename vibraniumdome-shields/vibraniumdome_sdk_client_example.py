@@ -15,8 +15,8 @@ VibraniumDome.init(app_name="insurance_quote")
 used_id = "user-123456"
 # used_id = "user-456789"
 
-# session_id_header = "abcd-1234-cdef"
-session_id_header = "cdef-1234-abcd"
+session_id_header = "abcd-1234-cdef"
+# session_id_header = "cdef-1234-abcd"
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 

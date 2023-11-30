@@ -1,12 +1,11 @@
 import binascii
 import logging
-
-from vibraniumdome_shields.shields.model import LLMInteraction
 from datetime import datetime
 
 from opentelemetry.proto.collector.trace.v1.trace_service_pb2 import ExportTraceServiceRequest
 
-from vibraniumdome_shields.utils import safe_loads_json
+from vibraniumdome_shields.shields.model import LLMInteraction
+from vibraniumdome_shields.utils import safe_loads_dictionary_string
 
 
 class OpenTelemetryParser:
@@ -124,7 +123,8 @@ class OpenTelemetryParser:
 
     def _parse_headers(self, llm_interaction, document):
         llm_interaction["llm.user"] = document.get("llm.user")
-        headers_dict = safe_loads_json(document.get("llm.headers"))
+        headers_dict = safe_loads_dictionary_string(document.get("llm.headers"))
+        # parse all meaningful headers here
         llm_interaction["session-id"] = headers_dict.get("x-session-id")
         return llm_interaction
 
