@@ -13,6 +13,14 @@
 LLM Agents are the new tool in every cutting edge tech team toolbox.
 Just like with Cloud applications, The new set of challanges with LLMs is enabling the organization to move fast, while not compormizing on customer data and security best practices.
 
+The project is composed of:
+* [Full-Stack Web-Application](./vibraniumdome-app/README.md) - For management & dashboard.
+* [Shields Server](./vibraniumdome-shields/README.md) -  Receives LLM interactions via [Open Telemetry](https://opentelemetry.io) from the [vibraniumdome-sdk](https://github.com/genia-dev/vibraniumdome-sdk).
+* [OpenSearch](./vibraniumdome-opensearch/README.md) - Provides storage & query analytics for LLM interactions received by the [Shields Server](./vibraniumdome-shields/README.md).
+
+
+See [Getting Started](#getting-started) how to run all-in-one.
+
 #### Vulnerabilities in focus
 
 - Prompt Injections [LLM01](https://llmtop10.com/llm01/)
