@@ -32,8 +32,6 @@ services:
       - "5001:5001"
     env_file:
       - ./vibraniumdome-shields/.env.example
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
       - /tmp:/tmp
     depends_on:
