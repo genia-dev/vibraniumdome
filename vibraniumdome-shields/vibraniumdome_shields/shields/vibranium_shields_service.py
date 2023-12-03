@@ -10,12 +10,13 @@ from vibraniumdome_shields.shields.input.model_denial_of_service_shield import M
 from vibraniumdome_shields.shields.input.prompt_injection_transformer_shield import PromptInjectionTransformerShield
 from vibraniumdome_shields.shields.input.prompt_safety_shield import PromptSafetyShield
 from vibraniumdome_shields.shields.input.regex_shield import InputRegexShield
+from vibraniumdome_shields.shields.input.sensitive_information_disclosoure_shield import SensitiveInformationDisclosureShieldInput
 from vibraniumdome_shields.shields.input.vector_db_shield import VectorDBShield
 from vibraniumdome_shields.shields.model import LLMInteraction, Risk, ShieldMatch, ShieldsDeflectionResult, VibraniumShield
 from vibraniumdome_shields.shields.output.canary_token_disclosoure_shield import CanaryTokenDisclosureShield
 from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield
 from vibraniumdome_shields.shields.output.regex_shield import OutputRegexShield
-from vibraniumdome_shields.shields.output.sensitive_information_disclosoure_shield import SensitiveInformationDisclosureShield
+from vibraniumdome_shields.shields.output.sensitive_information_disclosoure_shield import SensitiveInformationDisclosureShieldOutput
 from vibraniumdome_shields.vector_db.vector_db_service import VectorDBService
 
 
@@ -39,6 +40,7 @@ class VibraniumShieldsFactory:
                 CaptainsShield(settings.get("OPENAI_API_KEY")),
                 PromptInjectionTransformerShield(settings.get("vibraniumdome_shields.transformer_model_name")),
                 PromptSafetyShield(),
+                SensitiveInformationDisclosureShieldInput(),
                 ModelDenialOfServiceShield(),
             ]
         }
@@ -49,7 +51,7 @@ class VibraniumShieldsFactory:
                 OutputRegexShield(),
                 RefusalShield(settings.get("vibraniumdome_shields.refusal_model_name")),
                 CanaryTokenDisclosureShield(),
-                SensitiveInformationDisclosureShield(),
+                SensitiveInformationDisclosureShieldOutput(),
             ]
         }
 

@@ -1,11 +1,11 @@
 import logging
 
-from vibraniumdome_shields.shields.regex_shield_base import RegexShieldBase
 from vibraniumdome_shields.shields.model import LLMInteraction
+from vibraniumdome_shields.shields.regex_shield_base import RegexShieldBase
 
 
 class InputRegexShield(RegexShieldBase):
-    logger = logging.getLogger(__name__)
+    _logger = logging.getLogger(__name__)
     _shield_name: str = "regex_shield"
 
     def __init__(self):
