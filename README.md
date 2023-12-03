@@ -141,6 +141,14 @@ https://github.com/genia-dev/vibraniumdome/assets/16246393/58f44d36-12bc-4622-9c
 > `sudo chown -R 1000:1000 vibraniumdome-opensearch/vibraniumdome-opensearch-data2`
 
 
+First define environment variable with `OPENAI_API_KEY`:
+
+```
+export OPENAI_API_KEY="sk-..."
+```
+
+Now run the docker-compose:    
+
 ```
 git clone https://github.com/genia-dev/vibraniumdome
 
