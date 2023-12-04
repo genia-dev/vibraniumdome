@@ -42,6 +42,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5001:5001"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     env_file:
       - ./vibraniumdome-shields/.env.example
     volumes:

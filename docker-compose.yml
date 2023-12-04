@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ./vibraniumdome-app/.env.example
+      - vibraniumdome-app/.env.example
     environment:
       - DATABASE_URL=mysql://root:@vibraniumdome-app-db:3306/vibraniumdome
     depends_on:
@@ -31,7 +31,9 @@ services:
     ports:
       - "5001:5001"
     env_file:
-      - ./vibraniumdome-shields/.env.example
+      - vibraniumdome-shields/.env.example
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
       - /tmp:/tmp
     depends_on:

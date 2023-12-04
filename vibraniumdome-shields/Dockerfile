@@ -11,9 +11,7 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 COPY . .
 
-RUN $POETRY_HOME/bin/poetry env use python3.9
 RUN $POETRY_HOME/bin/poetry install --no-interaction --no-ansi
-RUN $POETRY_HOME/bin/poetry run pip install torch
 
 EXPOSE 5001
 

@@ -13,14 +13,6 @@
 LLM Agents are the new tool in every cutting edge tech team toolbox.
 Just like with Cloud applications, The new set of challanges with LLMs is enabling the organization to move fast, while not compormizing on customer data and security best practices.
 
-The project is composed of:
-* [Full-Stack Web-Application](./vibraniumdome-app/README.md) - For management & dashboard.
-* [Shields Server](./vibraniumdome-shields/README.md) -  Receives LLM interactions via [Open Telemetry](https://opentelemetry.io) from the [vibraniumdome-sdk](https://github.com/genia-dev/vibraniumdome-sdk).
-* [OpenSearch](./vibraniumdome-opensearch/README.md) - Provides storage & query analytics for LLM interactions received by the [Shields Server](./vibraniumdome-shields/README.md).
-
-
-See [Getting Started](#getting-started) how to run all-in-one.
-
 #### Vulnerabilities in focus
 
 - Prompt Injections [LLM01](https://llmtop10.com/llm01/)
@@ -120,30 +112,9 @@ Vibranium Dome ecosystem is growing fast, we are working with security researche
 
 ## Demo
 
-https://github.com/genia-dev/vibraniumdome/assets/16246393/58f44d36-12bc-4622-9c80-fdc0e3113e5f
-
+https://github.com/genia-dev/vibraniumdome/assets/16246393/b0e37768-cacd-4af6-8ab4-41949812883e
 
 ## Getting Started
-
-> [!IMPORTANT]
-> [OpenSearch](https://opensearch.org/docs/latest/quickstart/#starting-your-cluster) requires max virtual memory areas `vm.max_map_count` to be `262144`, and in some environments it's `65530`, so check first and apply workaround to make sure it's the correct value.   
-> Run first:    
-> `docker run -u root -it opensearchproject/opensearch:2.9.0 bash -c "cat /proc/sys/vm/max_map_count"`   
-> if that command return `65530`, run that command to increase it temporarily:   
-> `docker run --rm --privileged alpine sysctl -w vm.max_map_count=262144`   
-> and run again the previos command to make sure the new value set to `262144`    
-> `docker run -u root -it opensearchproject/opensearch:2.9.0 bash -c "cat /proc/sys/vm/max_map_count"`    
-
-> [!IMPORTANT]
-> OpenSearch on Linux machine need to change the owner of the filesystem volumes, so run:    
-> `mkdir -p vibraniumdome-opensearch/vibraniumdome-opensearch-data1 vibraniumdome-opensearch/vibraniumdome-opensearch-data2`    
-> `sudo chown -R 1000:1000 vibraniumdome-opensearch/vibraniumdome-opensearch-data1`    
-> `sudo chown -R 1000:1000 vibraniumdome-opensearch/vibraniumdome-opensearch-data2`
-
-
-Set `OPENAI_API_KEY` environment variable in [environment file](./vibraniumdome-shields/.env.example)    
-
-Now run the docker-compose:    
 
 ```
 git clone https://github.com/genia-dev/vibraniumdome
@@ -151,14 +122,6 @@ git clone https://github.com/genia-dev/vibraniumdome
 cd vibraniumdome
 
 docker-compose up
-```
-
-> [!NOTE]
-> The previous command of `docker-compose up` use existing docker images in docker-hub, if you would like to modify & build the project from source locally, you can run the docker-compose in build mode by:    
- 
-```
-cp vibraniumdome-app/.env.example .env    
-docker-compose -f docker-compose.build.yml up --build
 ```
 
 For more details please see [documentation here](https://docs.vibraniumdome.com/quickstart)
