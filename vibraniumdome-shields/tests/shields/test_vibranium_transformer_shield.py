@@ -18,7 +18,7 @@ class TestVibraniumTransformetShieldSanity(unittest.TestCase):
         self._full_policy = PolicyService("mock_key").get_default_policy()
 
     def create_interaction_from_string(self, str):
-        llm_interaction = {"id": "1", "llm_prompts": [{"role": "user", "content": str}]}
+        llm_interaction = {"id": "1", "service.name":"test", "llm_prompts": [{"role": "user", "content": str}]}
         return LLMInteraction(llm_interaction)
 
     def test_hi(self):
@@ -54,7 +54,7 @@ class TestVibraniumTransformetShield(unittest.TestCase):
         self._full_policy = PolicyService("mock_key").get_default_policy()
 
     def create_interaction_from_string(self, str):
-        llm_interaction = {"id": "1", "llm_prompts": [{"role": "user", "content": str}]}
+        llm_interaction = {"id": "1", "service.name":"test", "llm_prompts": [{"role": "user", "content": str}]}
         return LLMInteraction(llm_interaction)
 
     def test_forget(self):

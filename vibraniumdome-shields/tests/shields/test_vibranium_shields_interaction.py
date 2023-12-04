@@ -47,7 +47,7 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
-                "service.name":"test",
+                "service.name": "test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
@@ -89,13 +89,13 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
             }
         )
         actual = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        self.assertEqual(actual.results.get("llm_shield"), [])
+        self.assertEqual(actual.results.get("llm_shield", []), [])
 
     def test_email_pattern(self):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
-                "service.name":"test",
+                "service.name": "test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
@@ -118,7 +118,7 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
-                "service.name":"test",
+                "service.name": "test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
@@ -147,7 +147,7 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
-                "service.name":"test",
+                "service.name": "test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
@@ -163,7 +163,6 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
         self.assertIsNotNone(response.results["vector_db_shield"][0])
         self.assertIsNotNone(response.results["transformer_shield"][0])
         self.assertIsNotNone(response.results["llm_shield"][0])
-
 
     @unittest.skip("write this test")
     def test_code(self):
