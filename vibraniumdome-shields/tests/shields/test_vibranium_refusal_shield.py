@@ -29,12 +29,10 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
     def test_no_refusal(self):
         test = "how can i get a quote for my business insurance?"
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(
-            result, [RefusalShieldMatch(model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["not_refusal", "refusal"], scores=[0.99, 0.00])]
-        )
+        self.assertEqual(result, [])
 
     def test_refusal_1(self):
-        test = "I’m sorry, but as an AI language model, I do not have the ability to access or analyze specific offers"
+        test = "I'm sorry, but as an AI language model, I do not have the ability to access or analyze specific offers"
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertEqual(
             result, [RefusalShieldMatch(model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["not_refusal", "refusal"], scores=[0.74, 0.25])]

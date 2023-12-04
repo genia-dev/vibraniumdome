@@ -30,7 +30,7 @@ class RefusalShield(VibraniumShield):
             self._logger.error("Failed to load model: %s", self._model)
 
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
-        threshold = shield_policy_config.get("threshold", 0.5)
+        threshold = shield_policy_config.get("threshold", 0.25)
         categories = ["refusal", "not_refusal"]
         shield_matches = []
         result = None
@@ -43,7 +43,7 @@ class RefusalShield(VibraniumShield):
             raise err
 
         self._logger.info("Model result: %s", result)
-        if result and result[1] > threshold:
+        if result and result.get("scores")[1] >= threshold:
             shield_matches.append(
                 RefusalShieldMatch(
                     model=self._model,
