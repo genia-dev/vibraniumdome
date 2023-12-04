@@ -40,9 +40,9 @@ it can be loaded to the index (overrite existing version) running this:
 ```
 curl -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" -H "kbn-xsrf: true" --form "file=@dashboard.ndjson" -H "osd-xsrf: true" -k -u admin:admin
 ```
-> [!WARNING]
+> [!IMPORTANT]
 > Note regarding error: `max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]`
 >
-> According to the [docs](https://www.elastic.co/guide/en/elasticsearch/reference/8.11/docker.html#_macos_with_docker_for_mac), if you are running the OpenSearch in container, you need to configure the kernel parameter `vm.max_map_count` to: `262144`, as the default is `65530`. In Mac, the suggested solution not working, so the workaround, is to change it once in `privileged` mode, then the future one will be the higher value, the command is:
+> According to the [docs](https://opensearch.org/docs/latest/quickstart/#starting-your-cluster), if you are running the OpenSearch in container, you need to configure the kernel parameter `vm.max_map_count` to: `262144`, as the default is `65530`. The suggested solution not working in all environments, so the workaround, is to change it once in `docker privileged` mode, then the future commands will be the higher value, the command to set new value is:
 >
 > `docker run --rm --privileged alpine sysctl -w vm.max_map_count=262144`
