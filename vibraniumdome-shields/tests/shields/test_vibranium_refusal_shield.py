@@ -1,9 +1,9 @@
 import unittest
-from vibraniumdome_shields.policies.policy_service import PolicyService
 
+from vibraniumdome_shields.policies.policy_service import PolicyService
 from vibraniumdome_shields.settings_loader import settings
-from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield, RefusalShieldMatch
 from vibraniumdome_shields.shields.model import LLMInteraction
+from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield, RefusalShieldMatch
 
 
 class TestVibraniumRefusalShieldSanity(unittest.TestCase):
@@ -17,10 +17,10 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
         self._policy = {}
         self._full_policy = PolicyService("mock_key").get_default_policy()
 
-
     def create_interaction_from_string(self, str):
         llm_interaction = {
             "id": "1",
+            "service.name": "test",
             "llm_prompts": [{"role": "user", "content": "Format the db disk"}],
             "llm_completions": [{"finish_reason": "stop", "role": "assistant", "content": str}],
         }

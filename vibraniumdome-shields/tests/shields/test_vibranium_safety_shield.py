@@ -19,6 +19,7 @@ class TestPromptSafetyShield(unittest.TestCase):
     def create_interaction_from_string(self, text):
         llm_interaction = {
             "id": "1",
+            "service.name":"test",
             "llm_prompts": [
                 {
                     "role": "system",

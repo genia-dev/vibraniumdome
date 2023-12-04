@@ -21,6 +21,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
     def create_interaction_from_string(self, str):
         llm_interaction = {
             "id": "1",
+            "service.name":"test",
             "llm_prompts": [{"role": "user", "content": "user question?"}],
             "llm_completions": [{"finish_reason": "stop", "role": "assistant", "content": str}],
         }

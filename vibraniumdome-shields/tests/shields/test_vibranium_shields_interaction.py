@@ -47,6 +47,7 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
+                "service.name":"test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
@@ -87,14 +88,14 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
                 ],
             }
         )
-        expected = {"1": 0.0, "2": 0.0, "3": 0.0, "accumulation": 0.0}
         actual = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        self.assertEqual(actual.results.get("llm_shield")[0].llm_response, expected)
+        self.assertEqual(actual.results.get("llm_shield"), [])
 
     def test_email_pattern(self):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
+                "service.name":"test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
@@ -117,6 +118,7 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
+                "service.name":"test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
@@ -145,6 +147,7 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
         _llm_interaction = LLMInteraction(
             {
                 "id": "1",
+                "service.name":"test",
                 "llm_vendor": "OpenAI",
                 "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
                 "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
