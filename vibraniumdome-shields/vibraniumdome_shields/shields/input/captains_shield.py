@@ -51,8 +51,12 @@ class CaptainsShield(VibraniumShield):
         else:
             params["model"] = "gpt-3.5-turbo"
 
+        results = []
         response = openai.ChatCompletion.create(**params)
-        # TODO: check result before returning match
         response_val = response["choices"][0]["message"]["content"]
         parsed_dict = ast.literal_eval(response_val)
-        return [CaptainsShieldMatch(llm_response=response_val, risk=parsed_dict["accumulation"])]
+        risk = parsed_dict.get("accumulation", 0.0)
+        if risk > 0:
+            results = [CaptainsShieldMatch(llm_response=response_val, risk=risk)]
+
+        return results

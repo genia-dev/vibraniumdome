@@ -44,7 +44,7 @@ class LLMInteraction:
     _llm_app: str
 
     def __init__(self, interaction: dict):
-        if not interaction or not interaction["id"] or not interaction.get("llm_prompts"):
+        if not interaction or not interaction["id"] or not interaction.get("llm_prompts") or not interaction.get("service.name"):
             raise ValueError("LLMInteraction missed configuration")
         self._interaction = interaction
         self._id = interaction["id"]

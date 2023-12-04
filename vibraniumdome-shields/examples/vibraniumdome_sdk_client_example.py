@@ -309,21 +309,3 @@ response = openai.ChatCompletion.create(
 )
 
 print(response)
-
-
-"""
-"choices": [
-    {
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": null,
-        "function_call": {
-          "name": "order_detail",
-          "arguments": "{\n  \"to_address\": \"22 Fourth Avenue, Woodlands\",\n  \"order\": \"two packs of cans\",\n  \"date\": \"27th of July\",\n  \"notes\": \"Just leave the order at the door, we live in a safe area.\"\n}"
-        }
-      },
-      "finish_reason": "function_call"
-    }
-  ],
-"""
