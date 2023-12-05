@@ -37,7 +37,7 @@ class CaptainsShield(VibraniumShield):
         llm_message = llm_interaction.get_all_user_messages()
         messages = [
             {"role": "system", "content": llm_shield_prompt},
-            {"role": "system", "content": f"""<START>\n{llm_message}\n<END>"""},
+            {"role": "user", "content": f"""<~START~>\n{llm_message}\n<~END~>"""},
         ]
 
         params = {
@@ -49,13 +49,13 @@ class CaptainsShield(VibraniumShield):
         if os.getenv("OPENAI_API_TYPE") == "azure":
             params["engine"] = os.getenv("OPENAI_API_DEPLOYMENT")
         else:
-            params["model"] = "gpt-3.5-turbo"
+            params["model"] = settings.get("openai.openai_model", "gpt-3.5-turbo")
 
         results = []
         response = openai.ChatCompletion.create(**params)
         response_val = response["choices"][0]["message"]["content"]
         parsed_dict = ast.literal_eval(response_val)
-        risk = parsed_dict.get("accumulation", 0.0)
+        risk = parsed_dict.get("score", 0.0)
         if risk > 0:
             results = [CaptainsShieldMatch(llm_response=response_val, risk=risk)]
 

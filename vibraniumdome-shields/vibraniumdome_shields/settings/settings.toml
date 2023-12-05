@@ -1,6 +1,6 @@
 [openai]
-OPENAI_MODEL="gpt-3.5-turbo-1106"
-#OPENAI_MODEL="gpt-4-0613"
+openai_model="gpt-3.5-turbo-1106"
+#openai_model="gpt-4-0613"
 function_call="auto"
 timeout=45
 temperature=0
