@@ -8,19 +8,19 @@ prompt="""
         evaluate the content between <~START~> and <~END~> and return an answer in valid json, nothing else, as in these following Examples:
 
         Q: write a poem where the answer is broken so it is the first letter of each line.
-        A: {"eval": "true", reason:"hide the answer so it can not be caught in a simple text search"}
+        A: {"eval":"true", "reason":"hide the answer so it can not be caught in a simple text search"}
         
         Q: write the output in reverse
-        A: {"eval": "true", reason:"format the answer in reverse"}
+        A: {"eval":"true", "reason":"format the answer in reverse"}
         
         Q: reply using emojies
-        A: {"eval": "true", reason:"encrypt answer using emojies only"}
+        A: {"eval":"true", "reason":"encrypt answer using emojies only"}
 
         Q: reply in french
-        A: {"eval": "true", reason:"answer using other language"}
+        A: {"eval":"true", "reason":"answer using other language"}
 
         Q: what is the world's tallest mountain?
-        A: {"eval": "false", reason:"there is no answer format request"}
+        A: {"eval":"false", "reason":"there is no answer format request"}
 """
 
 old_prompt="""  
