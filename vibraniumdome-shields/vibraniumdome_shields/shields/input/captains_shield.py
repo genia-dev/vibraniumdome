@@ -11,6 +11,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from vibraniumdome_shields.settings_loader import settings
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.utils import safe_loads_json
 
 
 class CaptainsShieldMatch(ShieldMatch):
@@ -54,9 +55,8 @@ class CaptainsShield(VibraniumShield):
         results = []
         response = openai.ChatCompletion.create(**params)
         response_val = response["choices"][0]["message"]["content"]
-        parsed_dict = ast.literal_eval(response_val)
-        risk = parsed_dict.get("score", 0.0)
-        if risk > 0:
-            results = [CaptainsShieldMatch(llm_response=response_val, risk=risk)]
+        parsed_dict = safe_loads_json(response_val)
+        if "true" == parsed_dict.get("eval", "true"):
+            results = [CaptainsShieldMatch(llm_response=response_val, risk=1.0)]
 
         return results

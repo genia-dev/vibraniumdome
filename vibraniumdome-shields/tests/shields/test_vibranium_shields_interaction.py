@@ -136,7 +136,6 @@ class TestVibraniumShieldsInteraction(unittest.TestCase):
                 ],
             }
         )
-        expected = "shlomi@vibranium-dome.com"
         response = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
         self.assertIsNotNone(response.results["vector_db_shield"][0])
         self.assertIsNotNone(response.results["transformer_shield"][0])
