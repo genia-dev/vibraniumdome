@@ -42,14 +42,12 @@ class RefusalShield(VibraniumShield):
             self._logger.exception("Pipeline error")
             raise err
 
-        self._logger.info("Model result: %s", result)
-        if result and result.get("scores")[1] >= threshold:
-            shield_matches.append(
-                RefusalShieldMatch(
-                    model=self._model,
-                    labels=result["labels"],
-                    scores=[math.floor(result["scores"][0] * 100) / 100, math.floor(result["scores"][1] * 100) / 100],
-                )
-            )
+        self._logger.debug("Model result: %s", result)
+        if result:
+            refusal_index = result["labels"].index("refusal")
+            refusal_score = result["scores"][refusal_index]
+            risk = math.floor(refusal_score * 100) / 100
+            if risk >= threshold:
+                shield_matches.append(RefusalShieldMatch(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=risk))
 
         return shield_matches

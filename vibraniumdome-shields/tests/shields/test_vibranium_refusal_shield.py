@@ -34,38 +34,67 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
     def test_refusal_1(self):
         test = "I'm sorry, but as an AI language model, I do not have the ability to access or analyze specific offers"
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(
-            result, [RefusalShieldMatch(model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["not_refusal", "refusal"], scores=[0.74, 0.25])]
-        )
+        self.assertEqual(result, [])
 
     def test_refusal_2(self):
         test = "I'm sorry, but I'm unable to assist with your request as it falls outside the scope of my capabilities."
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertEqual(
-            result, [RefusalShieldMatch(model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.0])]
+            result,
+            [
+                RefusalShieldMatch(
+                    model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
+                )
+            ],
         )
 
     def test_refusal_3(self):
         test = "Unfortunately, I can't provide help with this specific request due to my current limitations."
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertEqual(
-            result, [RefusalShieldMatch(model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.0])]
+            result,
+            [
+                RefusalShieldMatch(
+                    model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
+                )
+            ],
         )
 
     def test_refusal_4(self):
         test = "I apologize, but I'm not equipped to handle this type of request at the moment."
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertEqual(
-            result, [RefusalShieldMatch(model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.0])]
+            result,
+            [
+                RefusalShieldMatch(
+                    model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
+                )
+            ],
         )
 
     def test_refusal_5(self):
         test = "My apologies, but your request is outside my range of assistance capabilities."
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertEqual(
-            result, [RefusalShieldMatch(model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.0])]
+            result,
+            [
+                RefusalShieldMatch(
+                    model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
+                )
+            ],
         )
 
+    def test_refusal_6(self):
+        test = "I am sorry dave, but as a large language model trained by OpenAI, i am afraid a can not let you do that"
+        result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
+        self.assertEqual(
+            result,
+            [
+                RefusalShieldMatch(
+                    model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
+                )
+            ],
+        )
 
 if __name__ == "__main__":
     unittest.main()
