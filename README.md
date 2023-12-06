@@ -88,7 +88,9 @@ Full blown, end to end LLM WAF for Agents, allowing security teams govenrance, a
 </p>
 <br/>
 
-## Shields
+## Vibranium Shields
+
+Vibranium shields are the core of the Vibranium Dome layer of defences, and they are designed to protect Agents and critical resources from the LLM threats
 
 #### Input shields
 
