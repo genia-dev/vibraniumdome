@@ -36,6 +36,14 @@ services:
       - /tmp:/tmp
     depends_on:
       - vibraniumdome-app
+  
+  vibraniumdome-streamlit-app:
+    container_name: vibraniumdome-streamlit-app
+    image: vibraniumdome/vibraniumdome-streamlit-app:0.1.0
+    ports:
+      - "8501:8501"
+    depends_on:
+      - vibraniumdome-app
 
   vibraniumdome-opensearch-node-1:
     image: opensearchproject/opensearch:2.9.0

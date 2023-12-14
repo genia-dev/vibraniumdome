@@ -48,6 +48,16 @@ services:
       - /tmp:/tmp
     depends_on:
       - vibraniumdome-app
+  
+  vibraniumdome-streamlit-app:
+    container_name: vibraniumdome-streamlit-app
+    build:
+      context: ./vibraniumdome-shields/examples/
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    depends_on:
+      - vibraniumdome-app
 
   vibraniumdome-opensearch-node-1:
     image: opensearchproject/opensearch:2.9.0
