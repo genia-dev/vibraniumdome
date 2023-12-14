@@ -6,10 +6,10 @@ from uuid import UUID
 import spacy
 from presidio_analyzer import AnalyzerEngine
 
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
 
-class SensitiveShieldMatch(ShieldMatch):
+class SensitiveShieldDeflectionResult(ShieldDeflectionResult):
     result: list
 
 
@@ -32,7 +32,7 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
     def _get_message_to_validate(self, llm_interaction: LLMInteraction) -> str:
         pass
 
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         try:
             # TODO: consider moving to ctor
@@ -42,7 +42,7 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
                 result = analyzer.analyze(text=message, entities=self._entites, language="en")
                 if result:
                     shield_matches.append(
-                        SensitiveShieldMatch(result=[{key: value for key, value in r.to_dict().items() if key != "recognition_metadata"} for r in result])
+                        SensitiveShieldDeflectionResult(result=[{key: value for key, value in r.to_dict().items() if key != "recognition_metadata"} for r in result])
                     )
         except Exception:
             self._logger.exception("Presidio Analyzer error, scan_id: %s", scan_id)

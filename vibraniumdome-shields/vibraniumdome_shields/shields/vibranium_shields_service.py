@@ -11,8 +11,8 @@ from vibraniumdome_shields.shields.input.prompt_injection_transformer_shield imp
 from vibraniumdome_shields.shields.input.prompt_safety_shield import PromptSafetyShield
 from vibraniumdome_shields.shields.input.regex_shield import InputRegexShield
 from vibraniumdome_shields.shields.input.sensitive_information_disclosoure_shield import SensitiveInformationDisclosureShieldInput
-from vibraniumdome_shields.shields.input.vector_db_shield import VectorDBShield
-from vibraniumdome_shields.shields.model import LLMInteraction, Risk, ShieldMatch, ShieldsDeflectionResult, VibraniumShield
+from vibraniumdome_shields.shields.input.semantic_similarity_shield import SemanticSimilarityShield
+from vibraniumdome_shields.shields.model import LLMInteraction, Risk, ShieldDeflectionResult, ShieldsDeflectionResult, VibraniumShield
 from vibraniumdome_shields.shields.output.canary_token_disclosoure_shield import CanaryTokenDisclosureShield
 from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield
 from vibraniumdome_shields.shields.output.regex_shield import OutputRegexShield
@@ -35,7 +35,7 @@ class VibraniumShieldsFactory:
         self._input_shields = {
             shield._shield_name: shield
             for shield in [
-                VectorDBShield(self._vector_db_service),
+                SemanticSimilarityShield(self._vector_db_service),
                 InputRegexShield(),
                 CaptainsShield(settings.get("OPENAI_API_KEY")),
                 PromptInjectionTransformerShield(settings.get("vibraniumdome_shields.transformer_model_name")),
@@ -81,11 +81,11 @@ class CaptainLLM:
 
     def _execute_captains_strategy(
         self, llm_interaction: LLMInteraction, shields: list, shield_deflection_result: ShieldsDeflectionResult, policy: dict
-    ) -> Dict[str, List[ShieldMatch]]:
+    ) -> Dict[str, List[ShieldDeflectionResult]]:
         execution_mode_async = settings.get("vibraniumdome_shields.execution_mode_async", default=True, cast="@bool")
         scan_id = shield_deflection_result.scan_id
 
-        def deflect_shield(tuple: [VibraniumShield, dict]) -> List[ShieldMatch]:
+        def deflect_shield(tuple: [VibraniumShield, dict]) -> List[ShieldDeflectionResult]:
             try:
                 shield, shield_policy_config = tuple
                 self._logger.info("run shield: %s, with scan id=%s", shield.name, scan_id)

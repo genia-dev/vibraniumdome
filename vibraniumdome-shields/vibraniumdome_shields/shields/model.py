@@ -10,7 +10,7 @@ from termcolor import colored
 from vibraniumdome_shields.utils import is_not_blank, timestamp_str
 
 
-class ShieldMatch(BaseModel):
+class ShieldDeflectionResult(BaseModel):
     name: str = ""
     risk: float = 0
 
@@ -24,7 +24,7 @@ class Risk(Enum):
 class ShieldsDeflectionResult(BaseModel):
     scan_id: UUID = Field(default_factory=uuid4)
     timestamp: str = timestamp_str()
-    results: Dict[str, List[ShieldMatch]] = {}
+    results: Dict[str, List[ShieldDeflectionResult]] = {}
     risk: Risk = Risk.NONE
     risk_factor: float = 0
 
@@ -193,5 +193,5 @@ class VibraniumShield(ABC):
         self.name = name
 
     @abstractmethod
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         pass

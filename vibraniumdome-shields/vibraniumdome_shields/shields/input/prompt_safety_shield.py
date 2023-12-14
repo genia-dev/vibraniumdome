@@ -3,10 +3,10 @@ from typing import List
 from uuid import UUID
 
 import openai
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
 
-class PromptSafetyShieldMatch(ShieldMatch):
+class PromptSafetyShieldMatch(ShieldDeflectionResult):
     category: str
     category_score: float
 
@@ -56,7 +56,7 @@ class PromptSafetyShield(VibraniumShield):
     def __init__(self):
         super().__init__(self._shield_name)
 
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
 
         try:

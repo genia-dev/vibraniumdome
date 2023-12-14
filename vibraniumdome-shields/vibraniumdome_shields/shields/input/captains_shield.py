@@ -1,5 +1,4 @@
 import os
-import ast
 import logging
 from typing import List
 from uuid import UUID
@@ -10,11 +9,11 @@ from pydantic import Json
 from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from vibraniumdome_shields.settings_loader import settings
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
-from vibraniumdome_shields.utils import safe_loads_dictionary_string, safe_loads_json
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
+from vibraniumdome_shields.utils import safe_loads_dictionary_string
 
 
-class CaptainsShieldMatch(ShieldMatch):
+class CaptainsShieldDeflectionResult(ShieldDeflectionResult):
     llm_response: Json
 
 
@@ -32,7 +31,7 @@ class CaptainsShield(VibraniumShield):
         stop=stop_after_attempt(3),
         retry=retry_if_exception_type((Timeout, TryAgain, APIError, APIConnectionError)),
     )
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         self.logger.info("performing scan, id='%s'", scan_id)
         llm_shield_prompt = settings["llm_shield"]["prompt"]
         llm_message = llm_interaction.get_all_user_messages()
@@ -57,6 +56,6 @@ class CaptainsShield(VibraniumShield):
         response_val = response["choices"][0]["message"]["content"]
         parsed_dict = safe_loads_dictionary_string(response_val)
         if "true" == parsed_dict.get("eval", "true"):
-            results = [CaptainsShieldMatch(llm_response=response_val, risk=1.0)]
+            results = [CaptainsShieldDeflectionResult(llm_response=response_val, risk=1.0)]
 
         return results

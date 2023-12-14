@@ -4,10 +4,10 @@ from uuid import UUID
 import math
 from transformers import pipeline
 
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
 
-class RefusalShieldMatch(ShieldMatch):
+class RefusalShieldDeflectionResult(ShieldDeflectionResult):
     model: str = ""
     labels: List
     scores: List
@@ -29,7 +29,7 @@ class RefusalShield(VibraniumShield):
         except Exception:
             self._logger.error("Failed to load model: %s", self._model)
 
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         threshold = shield_policy_config.get("threshold", 0.25)
         categories = ["refusal", "not_refusal"]
         shield_matches = []
@@ -48,6 +48,6 @@ class RefusalShield(VibraniumShield):
             refusal_score = result["scores"][refusal_index]
             risk = math.floor(refusal_score * 100) / 100
             if risk >= threshold:
-                shield_matches.append(RefusalShieldMatch(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=risk))
+                shield_matches.append(RefusalShieldDeflectionResult(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=risk))
 
         return shield_matches

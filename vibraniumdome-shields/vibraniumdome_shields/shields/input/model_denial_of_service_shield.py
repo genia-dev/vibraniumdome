@@ -3,11 +3,11 @@ import threading
 from typing import List, Dict
 from uuid import UUID
 
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 from pyrate_limiter import Duration, InMemoryBucket, Rate, Limiter, BucketFullException
 
 
-class ModelDenialOfServiceShieldMatch(ShieldMatch):
+class ModelDenialOfServiceShieldDeflectionResult(ShieldDeflectionResult):
     limit_key: str  # aka user_id or ip
     identity: str  # the user_id value
 
@@ -22,7 +22,7 @@ class ModelDenialOfServiceShield(VibraniumShield):
         self.lock = threading.Lock()
         self._limiter_dict = {}
 
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         limit_key = shield_policy_config.get("limit_by", "llm.user")
         if "llm.user" == limit_key:
@@ -42,7 +42,7 @@ class ModelDenialOfServiceShield(VibraniumShield):
                     self._logger.debug("Access to critical function for %s : %s granted!", limit_key, identity)
                 except BucketFullException as err:
                     self._logger.info("Rate limit exceeded for for %s : %s", limit_key, identity)
-                    shield_matches.append(ModelDenialOfServiceShieldMatch(limit_key=limit_key, identity=identity, name=err.meta_info["error"]))
+                    shield_matches.append(ModelDenialOfServiceShieldDeflectionResult(limit_key=limit_key, identity=identity, name=err.meta_info["error"]))
         except Exception as err:
             self._logger.exception("Failed to perform ModelDenialOfServiceShield, scan_id=%d", scan_id)
             raise err

@@ -4,10 +4,10 @@ from uuid import UUID
 
 from transformers import pipeline
 
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
 
-class PromptInjectionTransformerShieldMatch(ShieldMatch):
+class PromptInjectionTransformerShieldDeflectionResult(ShieldDeflectionResult):
     model: str = ""
     label: str = ""
     threshold: float = 0.0
@@ -29,7 +29,7 @@ class PromptInjectionTransformerShield(VibraniumShield):
         except Exception:
             self._logger.error("Failed to load model: %s", self._model)
 
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         # TODO: take threshold by policy, check if should be 0.9
         threshold = shield_policy_config.get("threshold", 0.98)
         shield_matches = []
@@ -46,5 +46,5 @@ class PromptInjectionTransformerShield(VibraniumShield):
             if rec["label"] == "INJECTION":
                 risk_score = rec["score"]
                 self._logger.debug("Detected prompt injection; score={%s} threshold={%s} id={%s}", risk_score, threshold, scan_id)
-                shield_matches.append(PromptInjectionTransformerShieldMatch(model=self._model, label=rec["label"], threshold=threshold, risk=risk_score))
+                shield_matches.append(PromptInjectionTransformerShieldDeflectionResult(model=self._model, label=rec["label"], threshold=threshold, risk=risk_score))
         return shield_matches

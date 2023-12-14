@@ -3,7 +3,7 @@ import unittest
 from vibraniumdome_shields.policies.policy_service import PolicyService
 from vibraniumdome_shields.settings_loader import settings
 from vibraniumdome_shields.shields.model import LLMInteraction
-from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield, RefusalShieldMatch
+from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield, RefusalShieldDeflectionResult
 
 
 class TestVibraniumRefusalShieldSanity(unittest.TestCase):
@@ -42,7 +42,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
         self.assertEqual(
             result,
             [
-                RefusalShieldMatch(
+                RefusalShieldDeflectionResult(
                     model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
                 )
             ],
@@ -54,7 +54,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
         self.assertEqual(
             result,
             [
-                RefusalShieldMatch(
+                RefusalShieldDeflectionResult(
                     model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
                 )
             ],
@@ -66,7 +66,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
         self.assertEqual(
             result,
             [
-                RefusalShieldMatch(
+                RefusalShieldDeflectionResult(
                     model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
                 )
             ],
@@ -78,7 +78,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
         self.assertEqual(
             result,
             [
-                RefusalShieldMatch(
+                RefusalShieldDeflectionResult(
                     model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
                 )
             ],
@@ -90,7 +90,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
         self.assertEqual(
             result,
             [
-                RefusalShieldMatch(
+                RefusalShieldDeflectionResult(
                     model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
                 )
             ],

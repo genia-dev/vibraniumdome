@@ -2,10 +2,10 @@ import logging
 from typing import List
 from uuid import UUID
 
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
 
-class CanaryTokenDisclosureShieldMatch(ShieldMatch):
+class CanaryTokenDisclosureShieldDeflectionResult(ShieldDeflectionResult):
     token: str
 
 
@@ -16,7 +16,7 @@ class CanaryTokenDisclosureShield(VibraniumShield):
     def __init__(self):
         super().__init__(self._shield_name)
 
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         try:
             completion_message: str = llm_interaction.get_chat_completion()
@@ -24,7 +24,7 @@ class CanaryTokenDisclosureShield(VibraniumShield):
             for token in canary_tokens:
                 if token in completion_message:
                     self._logger.debug("token: %s appears in completion_message: %s", token, completion_message)
-                    shield_matches.append(CanaryTokenDisclosureShieldMatch(name=shield_policy_config.get("name", ""), token=token, risk=1))
+                    shield_matches.append(CanaryTokenDisclosureShieldDeflectionResult(name=shield_policy_config.get("name", ""), token=token, risk=1))
             return shield_matches
         except Exception:
             self._logger.exception("CanaryTokenDisclosureShield error, scan_id: %s", scan_id)

@@ -7,11 +7,11 @@ from uuid import UUID
 
 import yaml
 
-from vibraniumdome_shields.shields.model import LLMInteraction, ShieldMatch, VibraniumShield
+from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 from vibraniumdome_shields.utils import load_vibranium_home
 
 
-class RegexShieldMatch(ShieldMatch):
+class RegexShieldDeflectionResult(ShieldDeflectionResult):
     pattern: str
     matches: List = []
 
@@ -36,7 +36,7 @@ class RegexShieldBase(VibraniumShield):
     def _get_message_to_validate(self, llm_interaction: LLMInteraction):
         pass
 
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldMatch]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         llm_message = self._get_message_to_validate(llm_interaction)
         shield_matches = []
 
@@ -45,7 +45,7 @@ class RegexShieldBase(VibraniumShield):
             try:
                 matches = compiled_pattern.findall(llm_message)
                 if matches:
-                    regex_shield_match = RegexShieldMatch(name="vibranium-sensetive", pattern=compiled_pattern, matches=matches, risk=1)
+                    regex_shield_match = RegexShieldDeflectionResult(name="vibranium-sensetive", pattern=compiled_pattern, matches=matches, risk=1)
                     shield_matches.append(regex_shield_match)
             except Exception:
                 self.logger.exception("Failed to evaluate regex pattern %s", compiled_pattern)
@@ -56,7 +56,7 @@ class RegexShieldBase(VibraniumShield):
                 try:
                     matches = re.compile(pattern).findall(llm_message)
                     if matches:
-                        regex_shield_match = RegexShieldMatch(name=shield_policy_config.get("name", ""), pattern=pattern, matches=matches, risk=1)
+                        regex_shield_match = RegexShieldDeflectionResult(name=shield_policy_config.get("name", ""), pattern=pattern, matches=matches, risk=1)
                         shield_matches.append(regex_shield_match)
                 except Exception:
                     self.logger.exception("Failed to evaluate regex pattern %s", pattern)

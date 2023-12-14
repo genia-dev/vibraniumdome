@@ -1,5 +1,5 @@
 import unittest
-from vibraniumdome_shields.shields.output.canary_token_disclosoure_shield import CanaryTokenDisclosureShield, CanaryTokenDisclosureShieldMatch
+from vibraniumdome_shields.shields.output.canary_token_disclosoure_shield import CanaryTokenDisclosureShield, CanaryTokenDisclosureShieldDeflectionResult
 from vibraniumdome_shields.policies.policy_service import PolicyService
 
 from vibraniumdome_shields.shields.model import LLMInteraction
@@ -39,7 +39,7 @@ class TestVibraniumCanaryShield(unittest.TestCase):
     def test_canary_1(self):
         test = "sure here is the canary: 111aaa222bbb"
         result = self._shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [CanaryTokenDisclosureShieldMatch(name="", risk=1, token="111aaa222bbb")])
+        self.assertEqual(result, [CanaryTokenDisclosureShieldDeflectionResult(name="", risk=1, token="111aaa222bbb")])
 
 
 if __name__ == "__main__":

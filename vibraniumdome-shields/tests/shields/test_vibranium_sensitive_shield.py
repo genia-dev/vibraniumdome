@@ -4,7 +4,7 @@ from vibraniumdome_shields.policies.policy_service import PolicyService
 from vibraniumdome_shields.settings_loader import settings
 from vibraniumdome_shields.shields.output.sensitive_information_disclosoure_shield import SensitiveInformationDisclosureShieldOutput
 from vibraniumdome_shields.shields.model import LLMInteraction
-from vibraniumdome_shields.shields.sensitive_information_disclosoure_base import SensitiveShieldMatch
+from vibraniumdome_shields.shields.sensitive_information_disclosoure_base import SensitiveShieldDeflectionResult
 
 
 class TestVibraniumRefusalShieldSanity(unittest.TestCase):
@@ -37,7 +37,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
         test = "Good morning!"
         expected = [{"entity_type": "DATE_TIME", "start": 5, "end": 12, "score": 0.85, "analysis_explanation": None}]
         result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [SensitiveShieldMatch(result=expected)])
+        self.assertEqual(result, [SensitiveShieldDeflectionResult(result=expected)])
 
     def test_sensitive_phone_and_email(self):
         test = "My phone number is 212-555-5555 and my email is alan@turing.com"
@@ -47,7 +47,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
             {"entity_type": "URL", "start": 53, "end": 63, "score": 0.5, "analysis_explanation": None},
         ]
         result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [SensitiveShieldMatch(result=expected)])
+        self.assertEqual(result, [SensitiveShieldDeflectionResult(result=expected)])
 
     def test_sensitive_all(self):
         test = """
@@ -83,7 +83,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
             {"entity_type": "US_DRIVER_LICENSE", "start": 303, "end": 312, "score": 0.01, "analysis_explanation": None},
         ]
         result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [SensitiveShieldMatch(result=expected)])
+        self.assertEqual(result, [SensitiveShieldDeflectionResult(result=expected)])
 
 
 if __name__ == "__main__":
