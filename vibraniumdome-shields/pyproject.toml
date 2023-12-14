@@ -34,8 +34,6 @@ spacy = "^3.7.2"
 opentelemetry-proto = "^1.21.0"
 pyrate-limiter = "^3.1.0"
 vibraniumdome-sdk = "^0.1.0"
-streamlit = "^1.28.2"
-streamlit-extras = "^0.3.5"
 openai = "0.28.0"
 httpx = "^0.25.2"
 
