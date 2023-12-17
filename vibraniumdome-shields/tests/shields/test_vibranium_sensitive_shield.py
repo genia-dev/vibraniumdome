@@ -29,9 +29,8 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
 
     def test_no_sensitive(self):
         test = "Is there anything else I can help you with?"
-        expected = []
         result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, expected)
+        self.assertEqual(result[0].risk, 0)
 
     def test_sensitive_date(self):
         test = "Good morning!"

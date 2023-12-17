@@ -43,4 +43,8 @@ class SemanticSimilarityShield(VibraniumShield):
         except Exception as err:
             self.logger.exception("Failed to perform vector shield, scan_id=%d", scan_id)
             raise err
+
+        if len(shield_matches) == 0:
+            shield_matches.append(SemanticSimilarityShieldDeflectionResult())
+
         return shield_matches

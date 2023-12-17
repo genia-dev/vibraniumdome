@@ -61,4 +61,7 @@ class RegexShieldBase(VibraniumShield):
                 except Exception:
                     self.logger.exception("Failed to evaluate regex pattern %s", pattern)
 
+        if len(shield_matches) == 0:
+            shield_matches.append(RegexShieldDeflectionResult(pattern="any"))
+
         return shield_matches

@@ -42,8 +42,14 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
                 result = analyzer.analyze(text=message, entities=self._entites, language="en")
                 if result:
                     shield_matches.append(
-                        SensitiveShieldDeflectionResult(result=[{key: value for key, value in r.to_dict().items() if key != "recognition_metadata"} for r in result])
+                        SensitiveShieldDeflectionResult(
+                            result=[{key: value for key, value in r.to_dict().items() if key != "recognition_metadata"} for r in result]
+                        )
                     )
         except Exception:
             self._logger.exception("Presidio Analyzer error, scan_id: %s", scan_id)
+
+        if len(shield_matches) == 0:
+            shield_matches.append(SensitiveShieldDeflectionResult(result=[]))
+
         return shield_matches
