@@ -57,5 +57,6 @@ class CaptainsShield(VibraniumShield):
         parsed_dict = safe_loads_dictionary_string(response_val)
         if "true" == parsed_dict.get("eval", "true"):
             results = [CaptainsShieldDeflectionResult(llm_response=response_val, risk=1.0)]
-
+        else:
+            results = [CaptainsShieldDeflectionResult(llm_response=response_val, risk=0)]
         return results

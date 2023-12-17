@@ -1,7 +1,7 @@
 import unittest
-from vibraniumdome_shields.shields.input.prompt_safety_shield import PromptSafetyShield, PromptSafetyShieldMatch
-from vibraniumdome_shields.policies.policy_service import PolicyService
 
+from vibraniumdome_shields.policies.policy_service import PolicyService
+from vibraniumdome_shields.shields.input.prompt_safety_shield import PromptSafetyShield
 from vibraniumdome_shields.shields.model import LLMInteraction
 
 
@@ -19,7 +19,7 @@ class TestPromptSafetyShield(unittest.TestCase):
     def create_interaction_from_string(self, text):
         llm_interaction = {
             "id": "1",
-            "service.name":"test",
+            "service.name": "test",
             "llm_prompts": [
                 {
                     "role": "system",

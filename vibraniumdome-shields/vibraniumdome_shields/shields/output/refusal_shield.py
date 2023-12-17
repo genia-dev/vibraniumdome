@@ -32,7 +32,7 @@ class RefusalShield(VibraniumShield):
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         threshold = shield_policy_config.get("threshold", 0.25)
         categories = ["refusal", "not_refusal"]
-        shield_matches = []
+        shield_results = []
         result = None
         try:
             message = llm_interaction.get_chat_completion()
@@ -48,6 +48,8 @@ class RefusalShield(VibraniumShield):
             refusal_score = result["scores"][refusal_index]
             risk = math.floor(refusal_score * 100) / 100
             if risk >= threshold:
-                shield_matches.append(RefusalShieldDeflectionResult(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=risk))
+                shield_results.append(RefusalShieldDeflectionResult(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=risk))
+            else:
+                shield_results.append(RefusalShieldDeflectionResult(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=0))
 
-        return shield_matches
+        return shield_results

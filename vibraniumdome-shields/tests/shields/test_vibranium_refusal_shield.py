@@ -6,7 +6,7 @@ from vibraniumdome_shields.shields.model import LLMInteraction
 from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield, RefusalShieldDeflectionResult
 
 
-class TestVibraniumRefusalShieldSanity(unittest.TestCase):
+class TestVibraniumRefusalShield(unittest.TestCase):
     _refusal_shield: RefusalShield = None
     _scan_id = 1
     _policy: dict
@@ -28,13 +28,27 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
 
     def test_no_refusal(self):
         test = "how can i get a quote for my business insurance?"
+        expected_risk = 0
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [])
+        self.assertEqual(result[0].risk, expected_risk)
 
-    def test_refusal_1(self):
+    def test_lack_of_ability(self):
         test = "I'm sorry, but as an AI language model, I do not have the ability to access or analyze specific offers"
+        expected_risk = 0
         result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [])
+        self.assertEqual(result[0].risk, expected_risk)
+
+    def test_refusal_to_comply(self):
+        test = "I apologize, but I cannot comply with your request."
+        result = self._refusal_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
+        self.assertEqual(
+            result,
+            [
+                RefusalShieldDeflectionResult(
+                    model=settings.get("vibraniumdome_shields.refusal_model_name"), labels=["refusal", "not_refusal"], scores=[0.99, 0.01], risk=0.99
+                )
+            ],
+        )
 
     def test_refusal_2(self):
         test = "I'm sorry, but I'm unable to assist with your request as it falls outside the scope of my capabilities."
@@ -95,6 +109,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
                 )
             ],
         )
+
 
 if __name__ == "__main__":
     unittest.main()

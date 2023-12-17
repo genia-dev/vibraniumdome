@@ -24,22 +24,22 @@ class TestVibraniumTransformetShieldSanity(unittest.TestCase):
     def test_hi(self):
         test = "Hi, how are you doing today?"
         result = self._transformer_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertListEqual(result, [])
+        self.assertEqual(result[0].risk, 0)
 
     def test_sanity1(self):
         test = "how can i get a quote for my business insurance?"
         result = self._transformer_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertListEqual(result, [])
+        self.assertEqual(result[0].risk, 0)
 
     def test_sanity2(self):
         test = "What are your business office hours?"
         result = self._transformer_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertListEqual(result, [])
+        self.assertEqual(result[0].risk, 0)
 
     def test_sanity3(self):
         test = "why is your service better for me compared to your competition?"
         result = self._transformer_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertListEqual(result, [])
+        self.assertEqual(result[0].risk, 0)
 
 
 class TestVibraniumTransformetShield(unittest.TestCase):

@@ -6,7 +6,7 @@ import openai
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
 
-class PromptSafetyShieldMatch(ShieldDeflectionResult):
+class PromptSafetyShieldResult(ShieldDeflectionResult):
     category: str
     category_score: float
 
@@ -66,10 +66,12 @@ class PromptSafetyShield(VibraniumShield):
             if result["flagged"]:
                 category_scores = result["category_scores"]
                 shield_matches = [
-                    PromptSafetyShieldMatch(category=category, category_score=category_scores.get(category))
+                    PromptSafetyShieldResult(category=category, category_score=category_scores.get(category), risk=1)
                     for category, flag in result.get("categories").items()
                     if flag
                 ]
+            else:
+                [PromptSafetyShieldResult(category="", category_score=0.0, risk=0)]
         except Exception:
             self._logger.exception("Safety API error")
 

@@ -1,8 +1,6 @@
 import logging
 import unittest
 
-from vibraniumdome_shields.settings_loader import settings
-from vibraniumdome_shields.shields.input.prompt_injection_transformer_shield import PromptInjectionTransformerShield
 from vibraniumdome_shields.shields.model import LLMInteraction
 
 

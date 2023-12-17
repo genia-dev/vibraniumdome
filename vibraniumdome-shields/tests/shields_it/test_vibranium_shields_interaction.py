@@ -7,7 +7,7 @@ from vibraniumdome_shields.shields.vibranium_shields_service import CaptainLLM, 
 from vibraniumdome_shields.vector_db.vector_db_service import VectorDBService
 
 
-class TestVibraniumShieldsInteraction(unittest.TestCase):
+class TestVibraniumShieldsIT(unittest.TestCase):
     _captain_llm: CaptainLLM
     _policy: dict
 
