@@ -1,15 +1,17 @@
 import logging
 import threading
-from typing import List, Dict
+from typing import Dict, List, Optional
 from uuid import UUID
 
+from pyrate_limiter import BucketFullException, Duration, InMemoryBucket, Limiter, Rate
+
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
-from pyrate_limiter import Duration, InMemoryBucket, Rate, Limiter, BucketFullException
 
 
 class ModelDenialOfServiceShieldDeflectionResult(ShieldDeflectionResult):
     limit_key: str  # aka user_id or ip
     identity: str  # the user_id value
+    error_message: Optional[str] = None
 
 
 class ModelDenialOfServiceShield(VibraniumShield):
@@ -22,6 +24,16 @@ class ModelDenialOfServiceShield(VibraniumShield):
         self.lock = threading.Lock()
         self._limiter_dict = {}
 
+    def _get_limiter_key(self, llm_interaction: LLMInteraction, shield_policy_config: dict, policy: dict):
+        # app__policy__limitby
+        return llm_interaction.get_llm_app() + "__" + policy.get("id") + "__" + shield_policy_config.get("limit_by")
+
+    def _init_limiter(self, shield_policy_config, llm_app):
+        rate = Rate(shield_policy_config.get("threshold", 10), Duration.SECOND * shield_policy_config.get("interval_sec", 60))
+        # map list of threshold and intervals to list of rates
+        bucket = InMemoryBucket([rate])
+        self._limiter_dict[llm_app] = Limiter(bucket)
+
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         limit_key = shield_policy_config.get("limit_by", "llm.user")
@@ -30,7 +42,7 @@ class ModelDenialOfServiceShield(VibraniumShield):
         else:
             identity = llm_interaction.get(limit_key)
 
-        limiter_key = self.get_limiter_key(llm_interaction, shield_policy_config, policy)
+        limiter_key = self._get_limiter_key(llm_interaction, shield_policy_config, policy)
         # TODO: add dictionary to get limiter by policy id (both application and tenant)
         try:
             with self.lock:
@@ -40,20 +52,13 @@ class ModelDenialOfServiceShield(VibraniumShield):
                     limiter = self._limiter_dict.get(limiter_key)
                     limiter.try_acquire(identity)
                     self._logger.debug("Access to critical function for %s : %s granted!", limit_key, identity)
+                    shield_matches.append(ModelDenialOfServiceShieldDeflectionResult(limit_key=limit_key, identity=identity))
                 except BucketFullException as err:
                     self._logger.info("Rate limit exceeded for for %s : %s", limit_key, identity)
-                    shield_matches.append(ModelDenialOfServiceShieldDeflectionResult(limit_key=limit_key, identity=identity, name=err.meta_info["error"]))
+                    shield_matches.append(
+                        ModelDenialOfServiceShieldDeflectionResult(limit_key=limit_key, identity=identity, error_message=err.meta_info["error"], risk=1)
+                    )
         except Exception as err:
             self._logger.exception("Failed to perform ModelDenialOfServiceShield, scan_id=%d", scan_id)
             raise err
         return shield_matches
-
-    def get_limiter_key(self, llm_interaction: LLMInteraction, shield_policy_config: dict, policy: dict):
-        # app__policy__limitby
-        return llm_interaction.get_llm_app() + "__" + policy.get("id") + "__" + shield_policy_config.get("limit_by")
-
-    def _init_limiter(self, shield_policy_config, llm_app):
-        rate = Rate(shield_policy_config.get("threshold", 10), Duration.SECOND * shield_policy_config.get("interval_sec", 60))
-        # map list of threshold and intervals to list of rates
-        bucket = InMemoryBucket([rate])
-        self._limiter_dict[llm_app] = Limiter(bucket)

@@ -89,7 +89,9 @@ class TestVibraniumShieldsIT(unittest.TestCase):
             }
         )
         actual = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        self.assertEqual(actual.results.get("llm_shield", []), [])
+        self.assertEqual(actual.results.get("llm_shield")[0].risk, 0)
+        self.assertEqual(actual.results.get("transformer_shield")[0].risk, 0)
+        
 
     def test_email_pattern(self):
         _llm_interaction = LLMInteraction(
