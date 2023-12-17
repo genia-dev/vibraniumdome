@@ -2,6 +2,7 @@ import concurrent.futures
 import logging
 import os
 import tempfile
+import asyncio
 
 from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, request
@@ -28,6 +29,10 @@ for logger_name, log_level in settings.logger_level.to_dict().items():
     logger.setLevel(log_level)
 
 
+_logger = logging.getLogger(__name__)
+trace_thread_pool_executor = None
+
+
 class ScanInputSchema(Schema):
     llm_session = fields.String(required=True)
 
@@ -44,6 +49,13 @@ captain_llm = CaptainLLM(VibraniumShieldsFactory(vector_db_service))
 policy_service = PolicyService()
 parser = OpenTelemetryParser()
 interaction_service = LLMInteractionService()
+
+
+def _get_thread_pool_executor():
+    global trace_thread_pool_executor
+    if trace_thread_pool_executor is None:
+        trace_thread_pool_executor = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="traces")
+    return trace_thread_pool_executor
 
 
 @app.route("/api/health", methods=["GET"])
@@ -79,17 +91,19 @@ def receive_traces():
 
     def process_traces(llm_interaction: LLMInteraction):
         try:
-            # policy = policy_service.get_default_policy()
             policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service_name", "default"))
             llm_interaction._shields_result = captain_llm.deflect_shields(llm_interaction, policy)
             interaction_service.save_llm_interaction(llm_interaction)
         except Exception:
-            logger.exception("error while deflecting shields for interaction= %s with policy= %s", llm_interaction, policy)
+            _logger.exception("error while deflecting shields for interaction= %s with policy= %s", llm_interaction, policy)
 
-    # Create a ThreadPoolExecutor
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.submit(process_traces, llm_interaction)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
+    # Submit the async task to the thread pool with input arguments
+    loop.run_in_executor(_get_thread_pool_executor(), process_traces, llm_interaction)
+
+    _logger.debug("done proccesing %s", llm_interaction._id)
     return Response(ExportTraceServiceResponse().SerializeToString(), mimetype="application/octet-stream")
 
 

@@ -25,6 +25,7 @@ class VibraniumShieldsFactory:
 
     _vector_db_service: VectorDBService
     _input_shields: dict
+    _output_shields: dict
 
     def __init__(self, _vector_db_service: VectorDBService):
         if not _vector_db_service:
@@ -94,7 +95,7 @@ class CaptainLLM:
                 self._logger.exception("error while deflecting shield %s with scan_id=%s", shield.name, scan_id)
 
         if execution_mode_async:
-            with concurrent.futures.ThreadPoolExecutor() as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5, thread_name_prefix="CaptainLLM") as executor:
                 shields_res = executor.map(deflect_shield, shields)
                 results = dict(filter(lambda x: len(x[1]) > 0, shields_res))
         else:
