@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 import math
 from transformers import pipeline
@@ -8,9 +8,9 @@ from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflection
 
 
 class RefusalShieldDeflectionResult(ShieldDeflectionResult):
-    model: str = ""
-    labels: List
-    scores: List
+    model: Optional[str] = None
+    labels: Optional[List] = None
+    scores: Optional[List] = None
 
 
 class RefusalShield(VibraniumShield):
@@ -50,6 +50,6 @@ class RefusalShield(VibraniumShield):
             if risk >= threshold:
                 shield_results.append(RefusalShieldDeflectionResult(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=risk))
             else:
-                shield_results.append(RefusalShieldDeflectionResult(model=self._model, labels=categories, scores=[risk, round(1 - risk, 2)], risk=0))
+                shield_results.append(RefusalShieldDeflectionResult())
 
         return shield_results
