@@ -61,7 +61,7 @@ class VibraniumShieldsFactory:
         shields_list: list = []
 
         for shield_policy in policy_shields:
-            shield: CaptainsShield = shields.get(shield_policy["type"])
+            shield = shields.get(shield_policy["type"])
             if shield:
                 shields_list.append([shield, shield_policy["metadata"]])
             else:
