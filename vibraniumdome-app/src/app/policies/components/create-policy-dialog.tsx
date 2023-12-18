@@ -16,6 +16,7 @@ import { Label } from "~/app/components/ui/label"
 import { Textarea } from "~/app/components/ui/textarea"
 import * as React from "react"
 import { useRouter } from "next/navigation";
+import { defaultPolicy } from "~/model/default-policy";
 
 export type Policy = {
     id: string
@@ -31,7 +32,7 @@ export function CreatePolicyDialog() {
 
     const [policyName, setPolicyName] = React.useState('');
     const [llmAppName, setLlmAppName] = React.useState('');
-    const [policyContent, setPolicyContent] = React.useState('');
+    const textareaRef = React.useRef(null);
 
     const createPolicy = api.policy.create.useMutation({
         onSuccess: () => {
@@ -41,10 +42,9 @@ export function CreatePolicyDialog() {
 
     const saveChanges = async () => {
         setOpen(false);
-        
         await createPolicy.mutate({name: policyName,
                                     llmAppName: llmAppName,
-                                    content: policyContent,
+                                    content: textareaRef.current?.value,
                                 })
     };
 
@@ -88,7 +88,11 @@ export function CreatePolicyDialog() {
                 <Label htmlFor="llmAppName" className="text-right">
                 Policy Content
                 </Label>
-                <Textarea className="col-span-3" placeholder="" onChange={(e) => setPolicyContent(e.target.value)}/>
+                <Textarea className="col-span-3" 
+                            ref={textareaRef}
+                            defaultValue={JSON.stringify(defaultPolicy, null, 4)}
+                            placeholder=""
+                            />
             </div>
             </div>
             <DialogFooter>

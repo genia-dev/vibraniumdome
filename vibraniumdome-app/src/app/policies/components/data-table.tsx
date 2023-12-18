@@ -169,7 +169,7 @@ export const columns: ColumnDef<Policy>[] = [
               <div className="flex gap-2">
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                      <Button variant="ghost">Edit Policy</Button>
+                      <Button disabled={policy.name === "Default Policy"} variant="ghost">Edit Policy</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[825px]">
                       <DialogHeader>
@@ -217,7 +217,7 @@ export const columns: ColumnDef<Policy>[] = [
                           <Label htmlFor="llmAppName" className="text-right">
                             Policy Content
                           </Label>
-                          <Textarea className="col-span-3" defaultValue={policy.content} onChange={(e) => setPolicyContent(e.target.value)}/>
+                          <Textarea className="col-span-3" defaultValue={JSON.stringify(JSON.parse(policy.content), null, 4)} onChange={(e) => setPolicyContent(e.target.value)}/>
                         </div>
                       </div>
                       <DialogFooter>
@@ -226,7 +226,7 @@ export const columns: ColumnDef<Policy>[] = [
                     </DialogContent>
                   </Dialog>
                   
-                  <Button variant="ghost" onClick={async () => 
+                  <Button disabled={policy.name === "Default Policy"} variant="ghost" onClick={async () => 
                       await deletePolicyMutation.mutate({ id: policy.id })
                   }>Delete Policy</Button>
                 </div>
