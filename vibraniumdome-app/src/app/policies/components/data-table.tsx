@@ -69,30 +69,8 @@ export type DataTableProps = {
 export const columns: ColumnDef<Policy>[] = [
   {
     id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
     enableSorting: false,
     enableHiding: false,
-  },
-  {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => {
-      const short = String(row.getValue("id")).substring(0, 10)
-      return <div className="text-left font-medium">{short}</div>
-    },
   },
   {
     accessorKey: "name",
@@ -117,14 +95,6 @@ export const columns: ColumnDef<Policy>[] = [
     cell: ({ row }) => <div className="text-left lowercase">{row.getValue("llmAppName")}</div>,
   },
   {
-    accessorKey: "content",
-    header: "Content",
-    cell: ({ row }) => {
-        const short = String(row.getValue("content"))
-      return <div className="text-left font-medium">{short.substring(0, 10)}</div>
-    },
-  },
-  {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
@@ -147,6 +117,7 @@ export const columns: ColumnDef<Policy>[] = [
       const [policyName, setPolicyName] = React.useState(policy.name);
       const [llmAppName, setLlmAppName] = React.useState(policy.llmAppName);
       const [policyContent, setPolicyContent] = React.useState(policy.content);
+      const textareaRef = React.useRef(null);
 
       const updatePolicy = api.policy.update.useMutation({
         onSuccess: () => {
@@ -158,7 +129,7 @@ export const columns: ColumnDef<Policy>[] = [
         await updatePolicy.mutate({ id: policyId,
                                     name: policyName,
                                     llmAppName: llmAppName,
-                                    content: policyContent,
+                                    content: textareaRef.current?.value,
                                 })
     };
 
@@ -217,7 +188,7 @@ export const columns: ColumnDef<Policy>[] = [
                           <Label htmlFor="llmAppName" className="text-right">
                             Policy Content
                           </Label>
-                          <Textarea className="col-span-3" defaultValue={JSON.stringify(JSON.parse(policy.content), null, 4)} onChange={(e) => setPolicyContent(e.target.value)}/>
+                          <Textarea ref={textareaRef} className="col-span-3" defaultValue={JSON.stringify(JSON.parse(policy.content), null, 4)} onChange={(e) => setPolicyContent(e.target.value)}/>
                         </div>
                       </div>
                       <DialogFooter>
