@@ -39,7 +39,7 @@ export const getPolicyByLLMAppApi = protectedProcedure
                 "low_risk_threshold": 0.2,
                 "input_shields": [
                     {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.input.regexv", "metadata": {}, "name": "policy number"},
+                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "name": "policy number"},
                     {"type": "com.vibraniumdome.shield.input.captain", "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"}},
                     {"type": "com.vibraniumdome.shield.input.transformer", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}},
