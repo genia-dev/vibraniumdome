@@ -24,9 +24,8 @@ class ModelDenialOfServiceShield(VibraniumShield):
         self.lock = threading.Lock()
         self._limiter_dict = {}
 
-    def _get_limiter_key(self, llm_interaction: LLMInteraction, shield_policy_config: dict, policy: dict):
-        # app__policy__limitby
-        return llm_interaction.get_llm_app() + "__" + policy.get("id") + "__" + shield_policy_config.get("limit_by")
+    def _get_limiter_key(self, llm_interaction: LLMInteraction, limit_key: str, identity: str, policy: dict):
+        return llm_interaction.get_llm_app() + "__" + policy.get("id") + "__" + limit_key + "=" + identity
 
     def _init_limiter(self, shield_policy_config, llm_app):
         rate = Rate(shield_policy_config.get("threshold", 10), Duration.SECOND * shield_policy_config.get("interval_sec", 60))
@@ -42,7 +41,7 @@ class ModelDenialOfServiceShield(VibraniumShield):
         else:
             identity = llm_interaction.get(limit_key)
 
-        limiter_key = self._get_limiter_key(llm_interaction, shield_policy_config, policy)
+        limiter_key = self._get_limiter_key(llm_interaction, limit_key, identity, policy)
         # TODO: add dictionary to get limiter by policy id (both application and tenant)
         try:
             with self.lock:
