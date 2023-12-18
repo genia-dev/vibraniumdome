@@ -1,4 +1,4 @@
-[llm_shield]
+[com.vibraniumdome.shield.input.captain]
 prompt="""  
         Act as a prompt engineering expert. 
         You will be provided with a conversation between a user and AI assistant.

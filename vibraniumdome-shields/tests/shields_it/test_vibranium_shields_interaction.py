@@ -28,17 +28,17 @@ class TestVibraniumShieldsIT(unittest.TestCase):
             "content": {
                 "shields_filter": "all",
                 "input_shields": [
-                    {"type": "llm_shield", "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"}},
-                    {"type": "regex_shield", "metadata": {}, "name": "policy number"},
-                    {"type": "regex_shield", "metadata": {"patterns": ["shlomi@vibranium-dome.com"]}, "name": "email"},
-                    {"type": "transformer_shield", "metadata": {}},
-                    {"type": "vector_db_shield", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.input.captain", "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"}},
+                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "name": "policy number"},
+                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {"patterns": ["shlomi@vibranium-dome.com"]}, "name": "email"},
+                    {"type": "com.vibraniumdome.shield.input.transformer", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}},
                 ],
                 "output_shields": [
-                    {"type": "llm_shield", "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"}},
-                    {"type": "regex_shield", "metadata": {}},
-                    {"type": "transformer_shield", "metadata": {}},
-                    {"type": "vector_db_shield", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "name": "credit card"},
+                    {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.output.refusal.canary_token_disc", "metadata": {"canary_tokens": []}},
+                    {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": {}},
                 ],
             },
         }
@@ -89,8 +89,8 @@ class TestVibraniumShieldsIT(unittest.TestCase):
             }
         )
         actual = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        self.assertEqual(actual.results.get("llm_shield")[0].risk, 0)
-        self.assertEqual(actual.results.get("transformer_shield")[0].risk, 0)
+        self.assertEqual(actual.results.get("com.vibraniumdome.shield.input.captain")[0].risk, 0)
+        self.assertEqual(actual.results.get("com.vibraniumdome.shield.input.transformer")[0].risk, 0)
         
 
     def test_email_pattern(self):
@@ -113,7 +113,7 @@ class TestVibraniumShieldsIT(unittest.TestCase):
         )
         expected = "shlomi@vibranium-dome.com"
         response = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        actual = response.results["regex_shield"][0].matches[0]
+        actual = response.results["com.vibraniumdome.shield.input.regex"][0].matches[0]
         self.assertEqual(actual, expected)
 
     def test_kamingo_subversion(self):
@@ -139,9 +139,9 @@ class TestVibraniumShieldsIT(unittest.TestCase):
             }
         )
         response = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        self.assertIsNotNone(response.results["vector_db_shield"][0])
-        self.assertIsNotNone(response.results["transformer_shield"][0])
-        self.assertIsNotNone(response.results["llm_shield"][0])
+        self.assertIsNotNone(response.results["com.vibraniumdome.shield.input.semantic_similarity"][0])
+        self.assertIsNotNone(response.results["com.vibraniumdome.shield.input.transformer"][0])
+        self.assertIsNotNone(response.results["com.vibraniumdome.shield.input.captain"][0])
 
     def test_fondu(self):
         _llm_interaction = LLMInteraction(
@@ -160,8 +160,8 @@ class TestVibraniumShieldsIT(unittest.TestCase):
             }
         )
         response = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        self.assertIsNotNone(response.results["vector_db_shield"][0])
-        self.assertIsNotNone(response.results["llm_shield"][0])
+        self.assertIsNotNone(response.results["com.vibraniumdome.shield.input.semantic_similarity"][0])
+        self.assertIsNotNone(response.results["com.vibraniumdome.shield.input.captain"][0])
 
     @unittest.skip("write this test")
     def test_code(self):

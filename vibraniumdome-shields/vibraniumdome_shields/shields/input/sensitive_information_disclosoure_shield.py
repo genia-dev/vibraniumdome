@@ -6,7 +6,7 @@ from vibraniumdome_shields.shields.sensitive_information_disclosoure_base import
 
 class SensitiveInformationDisclosureShieldInput(SensitiveInformationDisclosureShieldBase):
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "sensitive_shield"
+    _shield_name: str = "com.vibraniumdome.shield.input.sensitive_info_disc"
 
     def __init__(self):
         super().__init__(self._shield_name)

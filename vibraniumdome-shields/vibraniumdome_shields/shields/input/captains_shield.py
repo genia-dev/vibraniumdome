@@ -19,7 +19,7 @@ class CaptainsShieldDeflectionResult(ShieldDeflectionResult):
 
 class CaptainsShield(VibraniumShield):
     logger = logging.getLogger(__name__)
-    _shield_name: str = "llm_shield"
+    _shield_name: str = "com.vibraniumdome.shield.input.captain"
 
     def __init__(self, openai_api_key):
         super().__init__(self._shield_name)
@@ -33,7 +33,7 @@ class CaptainsShield(VibraniumShield):
     )
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         self.logger.info("performing scan, id='%s'", scan_id)
-        llm_shield_prompt = settings["llm_shield"]["prompt"]
+        llm_shield_prompt = settings[self._shield_name]["prompt"]
         llm_message = llm_interaction.get_all_user_messages()
         messages = [
             {"role": "system", "content": llm_shield_prompt},

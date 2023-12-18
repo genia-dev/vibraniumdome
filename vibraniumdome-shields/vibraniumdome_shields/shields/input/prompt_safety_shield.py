@@ -51,7 +51,7 @@ class PromptSafetyShield(VibraniumShield):
     """
 
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "prompt_safety_shield"
+    _shield_name: str = "com.vibraniumdome.shield.input.prompt_safety"
 
     def __init__(self):
         super().__init__(self._shield_name)

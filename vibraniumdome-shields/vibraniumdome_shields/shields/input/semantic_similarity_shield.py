@@ -16,7 +16,7 @@ class SemanticSimilarityShieldDeflectionResult(ShieldDeflectionResult):
 
 class SemanticSimilarityShield(VibraniumShield):
     logger = logging.getLogger(__name__)
-    _shield_name: str = "vector_db_shield"
+    _shield_name: str = "com.vibraniumdome.shield.input.semantic_similarity"
     _vector_db_service: VectorDBService
 
     def __init__(self, vector_db_service: VectorDBService):

@@ -6,7 +6,7 @@ from vibraniumdome_shields.shields.regex_shield_base import RegexShieldBase
 
 class OutputRegexShield(RegexShieldBase):
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "regex_output_shield"
+    _shield_name: str = "com.vibraniumdome.shield.output.regex"
 
     def __init__(self):
         super().__init__(self._shield_name)

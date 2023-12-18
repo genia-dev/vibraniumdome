@@ -16,7 +16,7 @@ class ModelDenialOfServiceShieldDeflectionResult(ShieldDeflectionResult):
 
 class ModelDenialOfServiceShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "model_denial_of_service_shield"
+    _shield_name: str = "com.vibraniumdome.shield.input.model_dos"
     _limiter_dict: Dict[str, Limiter]
 
     def __init__(self):

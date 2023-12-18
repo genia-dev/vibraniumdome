@@ -15,7 +15,7 @@ class RefusalShieldDeflectionResult(ShieldDeflectionResult):
 
 class RefusalShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "refusal_shield"
+    _shield_name: str = "com.vibraniumdome.shield.output.refusal"
 
     def __init__(self, model):
         super().__init__(self._shield_name)
