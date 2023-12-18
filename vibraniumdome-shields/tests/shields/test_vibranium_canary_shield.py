@@ -14,7 +14,7 @@ class TestVibraniumCanaryShield(unittest.TestCase):
     def setUp(self):
         self._shield = CanaryTokenDisclosureShield()
         self._policy = {"canary_tokens": ["111aaa222bbb"]}
-        self._full_policy = PolicyService("mock_key").get_default_policy()
+        self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, str):
         llm_interaction = {

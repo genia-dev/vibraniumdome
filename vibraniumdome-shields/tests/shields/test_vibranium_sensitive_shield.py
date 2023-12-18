@@ -16,7 +16,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
     def setUp(self):
         self._sensitive_shield = SensitiveInformationDisclosureShieldOutput()
         self._policy = {}
-        self._full_policy = PolicyService("mock_key").get_default_policy()
+        self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, str):
         llm_interaction = {

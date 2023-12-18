@@ -14,7 +14,7 @@ class TestPromptSafetyShield(unittest.TestCase):
     def setUp(self):
         self._shield = PromptSafetyShield()
         self._policy = {}
-        self._full_policy = PolicyService("mock_key").get_default_policy()
+        self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, text):
         llm_interaction = {

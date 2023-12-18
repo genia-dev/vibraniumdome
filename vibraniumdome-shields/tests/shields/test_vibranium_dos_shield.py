@@ -12,7 +12,7 @@ class TestVibraniumModelDenialOfServiceShield(unittest.TestCase):
 
     def setUp(self):
         self._shield = ModelDenialOfServiceShield()
-        self._policy = PolicyService("mock_key").get_default_policy()
+        self._policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, prompt: str) -> LLMInteraction:
         llm_interaction = {

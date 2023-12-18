@@ -79,7 +79,6 @@ def receive_traces():
     executor = concurrent.futures.ThreadPoolExecutor()
     def process_traces(llm_interaction: LLMInteraction):
         try:
-            # policy = policy_service.get_default_policy()
             policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service_name", "default"))
             llm_interaction._shields_result = captain_llm.deflect_shields(llm_interaction, policy)
             interaction_service.save_llm_interaction(llm_interaction)

@@ -18,7 +18,7 @@ class PolicyService:
         if not self._vibranium_dome_api_key:
             raise ValueError("PolicyService missed configuration 'VIBRANIUM_DOME_API_KEY'")
 
-    def get_default_policy(self):
+    def _get_default_policy(self):
         return {
             "id": "-99",
             "name": "Default Policy",
@@ -48,14 +48,17 @@ class PolicyService:
         encoded_input_json = quote(json.dumps({"0": {"json": {"llmAppName": llm_app_name}}}))
         full_url = f"{self._vibranium_dome_base_url}/api/trpc/policies?batch=1&input={encoded_input_json}"
         headers = {"Authorization": f"Bearer {self._vibranium_dome_api_key}"}
+        result = None
         try:
             response = requests.get(full_url, headers=headers)
             if response.ok:
                 response_data = response.json()
                 json_content = response_data[0]["result"]["data"]["json"]
                 self._logger.info("policy: %s", json_content)
-                return json_content
+                result = json_content
         except Exception:
             self._logger.exception("failed loading policy %s", llm_app_name)
+            # TODO: replace the default policy with a local cache copy mechanism
+            result = self._get_default_policy()
 
-        return self.get_default_policy()
+        return result

@@ -18,7 +18,7 @@ class TestVibraniumCaptainShield(unittest.TestCase):
 
     def setUp(self):
         self._llm_shield = CaptainsShield(os.getenv("OPENAI_API_KEY"))
-        self._full_policy = PolicyService("mock_key").get_default_policy()
+        self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def test_sanity(self):
         test = "Hi, good morning"

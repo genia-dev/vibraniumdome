@@ -15,7 +15,7 @@ class TestVibraniumTransformetShieldSanity(unittest.TestCase):
     def setUp(self):
         self._transformer_shield = PromptInjectionTransformerShield(settings.get("vibraniumdome_shields.transformer_model_name"))
         self._policy = {"threshold": 0.9}
-        self._full_policy = PolicyService("mock_key").get_default_policy()
+        self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, str):
         llm_interaction = {"id": "1", "service.name": "test", "llm_prompts": [{"role": "user", "content": str}]}
@@ -51,7 +51,7 @@ class TestVibraniumTransformetShield(unittest.TestCase):
     def setUp(self):
         self._transformer_shield = PromptInjectionTransformerShield(settings.get("vibraniumdome_shields.transformer_model_name"))
         self._policy = {"threshold": 0.9}
-        self._full_policy = PolicyService("mock_key").get_default_policy()
+        self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, str):
         llm_interaction = {"id": "1", "service.name": "test", "llm_prompts": [{"role": "user", "content": str}]}
@@ -180,7 +180,7 @@ class TestVibraniumAdvancedTransformetShield(unittest.TestCase):
     def setUp(self):
         self._transformer_shield = PromptInjectionTransformerShield(settings.get("vibraniumdome_shields.transformer_model_name"))
         self._policy = {"threshold": 0.9}
-        self._full_policy = PolicyService("mock_key").get_default_policy()
+        self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, str):
         llm_interaction = {"id": "1", "service.name": "test", "llm_prompts": [{"role": "user", "content": str}]}
