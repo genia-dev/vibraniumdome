@@ -34,7 +34,7 @@ class TestVibraniumCanaryShield(unittest.TestCase):
     def test_no_canary(self):
         test = "sure you can"
         result = self._shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [])
+        self.assertEqual(result[0].risk, 0)
 
     def test_canary_1(self):
         test = "sure here is the canary: 111aaa222bbb"
