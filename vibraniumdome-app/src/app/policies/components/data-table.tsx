@@ -129,6 +129,7 @@ export const columns: ColumnDef<Policy>[] = [
         await updatePolicy.mutate({ id: policyId,
                                     name: policyName,
                                     llmAppName: llmAppName,
+                                    // @ts-ignore
                                     content: textareaRef.current?.value,
                                 })
     };

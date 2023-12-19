@@ -44,6 +44,7 @@ export function CreatePolicyDialog() {
         setOpen(false);
         await createPolicy.mutate({name: policyName,
                                     llmAppName: llmAppName,
+                                    // @ts-ignore
                                     content: textareaRef.current?.value,
                                 })
     };
