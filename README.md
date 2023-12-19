@@ -100,6 +100,7 @@ Vibranium shields are the core of the Vibranium Dome layer of defences, and they
 * [X] Semantic vector similarity shield
 * [X] Regex Input shield
 * [X] Prompt safety moderation shield
+* [X] PII and Sensetive information disclosure shield
 * [ ] Secret prompt detection shield
 * [ ] Malicous URLs shield
 

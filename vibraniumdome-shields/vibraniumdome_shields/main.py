@@ -76,7 +76,8 @@ def scan():
 @app.route("/v1/traces", methods=["POST"])
 def receive_traces():
     llm_interaction: LLMInteraction = parser.parse_llm_call(request.data)
-    executor = concurrent.futures.ThreadPoolExecutor()
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix="traces")
+
     def process_traces(llm_interaction: LLMInteraction):
         try:
             policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service_name", "default"))
