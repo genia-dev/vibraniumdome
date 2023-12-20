@@ -72,7 +72,7 @@ async function main() {
         name: "Default Policy",
         llmApp: "DefaultAny",
         createdById: team1.id,
-        content: defaultPolicy
+        content: defaultPolicy.content
       }
     });
   }

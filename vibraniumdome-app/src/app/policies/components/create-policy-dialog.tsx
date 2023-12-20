@@ -91,7 +91,7 @@ export function CreatePolicyDialog() {
                 </Label>
                 <Textarea className="col-span-3" 
                             ref={textareaRef}
-                            defaultValue={JSON.stringify(defaultPolicy, null, 4)}
+                            defaultValue={JSON.stringify(defaultPolicy.content, null, 4)}
                             placeholder=""
                             />
             </div>
