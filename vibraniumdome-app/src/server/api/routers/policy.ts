@@ -8,17 +8,16 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { defaultPolicy } from "~/model/default-policy";
-
 export const getPolicyByLLMAppApi = protectedProcedure
 .input(z.object({ llmAppName: z.string().min(1) }))
 .query(async ({ ctx, input }) => {
   const membership = await ctx.db.membership.findFirst({
     where: { userId: ctx.session.user?.id },
   });
-  const policy = await ctx.db.policy.findFirst({
+  var policy = await ctx.db.policy.findFirst({
     where: {
       createdById: membership?.teamId,
+      llmApp: input.llmAppName,
     },
     select: {
       id: true,
@@ -31,7 +30,19 @@ export const getPolicyByLLMAppApi = protectedProcedure
   });
   
   if (!policy) {
-    return defaultPolicy
+    policy = await ctx.db.policy.findFirst({
+      where: {
+        seq: -99
+      },
+      select: {
+        id: true,
+        seq: false,
+        name: true,
+        content: true,
+        createdAt: false,
+        updatedAt: false,
+      },
+    });
   }
 
   return policy
@@ -107,6 +118,23 @@ export const policyRouter = createTRPCRouter({
       // @ts-ignore
       where: { createdBy: { id: membership.teamId } },
     });
+  }),
+
+  getDefaultPolicy: protectedProcedure.query(async ({ ctx }) => {
+    const policy = await ctx.db.policy.findFirst({
+      where: {
+        seq: -99
+      },
+      select: {
+        id: true,
+        seq: false,
+        name: true,
+        content: true,
+        createdAt: false,
+        updatedAt: false,
+      },
+    });
+    return policy
   }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {

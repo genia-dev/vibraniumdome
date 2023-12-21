@@ -2,9 +2,6 @@ const { PrismaClient, UserRole } = require('@prisma/client');
 const { genSaltSync, hashSync } = require('bcryptjs');
 
 const defaultPolicy = {
-  "id": "-99",
-  "name": "Default Policy",
-  "content": {
       "shields_filter": "all",
       "high_risk_threshold": 0.8,
       "low_risk_threshold": 0.2,
@@ -23,7 +20,6 @@ const defaultPolicy = {
           {"type": "com.vibraniumdome.shield.output.refusal.canary_token_disc", "metadata": {"canary_tokens": []}},
           {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": {}},
       ],
-  },
 }
 
 const prisma = new PrismaClient()
@@ -69,10 +65,11 @@ async function main() {
 
     await prisma.policy.create({
       data: {
+        seq: -99,
         name: "Default Policy",
         llmApp: "DefaultAny",
         createdById: team1.id,
-        content: defaultPolicy.content
+        content: defaultPolicy
       }
     });
   }

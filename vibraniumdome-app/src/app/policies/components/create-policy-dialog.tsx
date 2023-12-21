@@ -1,6 +1,5 @@
 "use client"
 
-import { api } from "~/trpc/react";
 import { Button } from "~/app/components/ui/button"
 import {
   Dialog,
@@ -16,7 +15,7 @@ import { Label } from "~/app/components/ui/label"
 import { Textarea } from "~/app/components/ui/textarea"
 import * as React from "react"
 import { useRouter } from "next/navigation";
-import { defaultPolicy } from "~/model/default-policy";
+import { api } from "~/trpc/react";
 
 export type Policy = {
     id: string
@@ -48,6 +47,8 @@ export function CreatePolicyDialog() {
                                     content: textareaRef.current?.value,
                                 })
     };
+    
+    const defaultPolicy = api.policy.getDefaultPolicy.useQuery().data;
 
     return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -91,7 +92,7 @@ export function CreatePolicyDialog() {
                 </Label>
                 <Textarea className="col-span-3" 
                             ref={textareaRef}
-                            defaultValue={JSON.stringify(defaultPolicy.content, null, 4)}
+                            defaultValue={JSON.stringify(defaultPolicy?.content, null, 4)}
                             placeholder=""
                             />
             </div>
