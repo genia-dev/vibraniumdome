@@ -1,14 +1,15 @@
-import json
 import ast
+import json
 import logging
 import os
 from datetime import datetime
 from uuid import uuid4
 
+import yaml
 from pydantic import BaseModel
 
-
 logger = logging.getLogger(__name__)
+
 
 def safe_loads_dictionary_string(dictionary_string: str):
     try:
@@ -26,6 +27,11 @@ def safe_loads_json(json_string: str):
         logger.warn("json_string could not be parser: %s", json_string)
         parsed_json = {}
     return parsed_json
+
+
+def safe_loads_yaml(full_path: str):
+    with open(full_path, "r") as f:
+        return yaml.safe_load(f)
 
 
 def is_blank(input: str):
