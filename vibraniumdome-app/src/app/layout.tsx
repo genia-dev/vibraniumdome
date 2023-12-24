@@ -29,7 +29,7 @@ export default function RootLayout({
 }
 
 export const metadata = {
-  title: "Vibranium",
+  title: "Vibranium Dome",
   description: "Security for LLM Apps",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

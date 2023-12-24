@@ -1,4 +1,4 @@
-import { LayoutDashboard, ListTodo, Users } from "lucide-react";
+import { LayoutDashboard, BookLock, Users } from "lucide-react";
 import { type NavItem } from "~/app/types";
 
 export const NavItems: NavItem[] = [
@@ -6,19 +6,19 @@ export const NavItems: NavItem[] = [
         title: "Dashboard",
         icon: LayoutDashboard,
         href: "/dashboard",
-        color: "text-sky-500",
+        color: "text-red-500",
     },
     {
         title: "Policies",
-        icon: ListTodo,
+        icon: BookLock,
         href: "/policies",
-        color: "text-orange-500",
+        color: "text-green-500",
     },
     {
         title: "Users",
         icon: Users,
         href: "/users",
-        color: "text-green-500",
+        color: "text-sky-500",
     },
     // {
     //     title: "TodoList",

@@ -16,6 +16,10 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Plus Jakarta Sans', 'sans-serif', 'system-ui'],
+        // Add any additional fonts or fallbacks here
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

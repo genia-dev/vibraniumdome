@@ -1,5 +1,7 @@
 import { Metadata } from "next"
 import Link from "next/link"
+import Image from 'next/image'
+import { Shield } from "lucide-react";
 
 import { cn } from "~/app/lib/utils"
 import { buttonVariants } from "~/app/components/ui/button"
@@ -34,8 +36,16 @@ export default async function AuthenticationPage() {
         </Link>
         <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div className="absolute inset-0 bg-zinc-900" />
+          {/* <Image
+            priority
+            src="/dark-logo.svg"
+            width={100}
+            height={100}
+            alt="Logo"
+          /> */}
+          <Shield className="bg-primary h-6 w-6" />
           <div className="relative z-20 flex items-center text-lg font-medium">
-            VibraniumDome
+            Vibranium Dome
           </div>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">

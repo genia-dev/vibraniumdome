@@ -3,10 +3,11 @@
 import { cn } from "~/app/lib/utils";
 import { MobileSidebar } from "~/app/components/layout/mobile-sidebar";
 import Link from "next/link";
-import { Boxes } from "lucide-react";
+import { Shield } from "lucide-react";
 import { UserNav } from "~/app/components/layout/user-nav";
 import { signIn, useSession } from "next-auth/react";
 import { Button } from "~/app/components/ui/button";
+import Image from 'next/image'
 
 export default function Header() {
     const { data: sessionData } = useSession();
@@ -17,8 +18,15 @@ export default function Header() {
                     href={"/dashboard"}
                     className="hidden items-center justify-between gap-2 md:flex"
                 >
-                    <Boxes className="h-6 w-6" />
-                    <h1 className="text-lg font-semibold">VibraniumDome</h1>
+                    {/* <Image
+                        priority
+                        src="/dark-logo.svg"
+                        width={100}
+                        height={100}
+                        alt="Logo"
+                    /> */}
+                    <Shield className="bg-primary h-6 w-6" />
+                    <h1 className="text-lg font-semibold">Vibranium Dome</h1>
                 </Link>
                 <div className={cn("block md:!hidden")}>
                     <MobileSidebar />

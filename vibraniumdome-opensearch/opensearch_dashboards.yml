@@ -156,18 +156,18 @@
 # ]
 # vis_type_timeline.graphiteBlockedIPs: []
 
-# opensearchDashboards.branding:
-#   logo:
-#     defaultUrl: ""
-#     darkModeUrl: ""
-#   mark:
-#     defaultUrl: ""
-#     darkModeUrl: ""
-#   loadingLogo:
-#     defaultUrl: ""
-#     darkModeUrl: ""
-#   faviconUrl: ""
-#   applicationTitle: ""
+opensearchDashboards.branding:
+  logo:
+    defaultUrl: "https://www.vibraniumdome.com/_next/static/media/logo.83b784c8.svg"
+    darkModeUrl: ""
+  mark:
+    defaultUrl: "https://www.vibraniumdome.com/_next/static/media/logo.83b784c8.svg"
+    # darkModeUrl: ""
+  loadingLogo:
+    defaultUrl: "http://localhost:5601/ui/assets/icon.svg"
+  #   darkModeUrl: ""
+  faviconUrl: "https://www.vibraniumdome.com/favicon.ico"
+  applicationTitle: "Vibranium Dome"
 
 # Set the value of this setting to true to capture region blocked warnings and errors
 # for your map rendering services.
