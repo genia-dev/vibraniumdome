@@ -25,8 +25,8 @@ export default function Header() {
                         height={100}
                         alt="Logo"
                     /> */}
-                    <Shield className="bg-primary h-6 w-6" />
-                    <h1 className="text-lg font-semibold">Vibranium Dome</h1>
+                    <Shield color="rgb(134, 70, 244)" className="h-7 w-7"/>
+                    <h1 className="text-2xl font-semibold">Vibranium Dome</h1>
                 </Link>
                 <div className={cn("block md:!hidden")}>
                     <MobileSidebar />

@@ -42,14 +42,16 @@ export default function Sidebar({ className }: SidebarProps) {
                     </div>
                 </div>
             </div>
-            <div className="mt-30 absolute bottom-5 w-full space-y-2 px-3">
+            <div className="mt-30 absolute bottom-2 w-full space-y-2">
                 <Separator />
-                <Button
-                    onClick={handleToggle}
-                    className={cn("h-10 w-full bg-foreground", isOpen && "rotate-180")}
-                >
-                    <ChevronRight className="h-4 w-4" />
-                </Button>
+                <div className="w-full flex justify-end">
+                    <Button
+                        onClick={handleToggle}
+                        className={cn("bg-background h-10 w-10 mx-2 px-2", isOpen && "rotate-180")}
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
         </nav>
     );
