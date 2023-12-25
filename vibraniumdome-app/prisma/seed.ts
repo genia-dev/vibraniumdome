@@ -12,6 +12,7 @@ const defaultPolicy = {
           {"type": "com.vibraniumdome.shield.input.transformer", "metadata": {}},
           {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}},
           {"type": "com.vibraniumdome.shield.input.sensitive_info_disc", "metadata": {}},
+          {"type": "com.vibraniumdome.shield.input.arbitrary_image", "metadata": {}},
           {"type": "com.vibraniumdome.shield.input.model_dos", "metadata": {"threshold": 10, "interval_sec": 60, "limit_by": "llm.user"}},
       ],
       "output_shields": [

@@ -79,10 +79,7 @@ class LLMInteraction:
         messages_reverse = self._messages[::-1]
         res = None
         for msg in messages_reverse:
-            if msg["role"] == "assistant" and msg.get("validation") is not None:
-                res = msg.get("validation")
-                break
-            elif msg["role"] == "assistant" and msg.get("function_call") is not None:
+            if msg["role"] == "assistant" and msg.get("function_call") is not None:
                 res = msg["function_call"].get("name")
                 break
             elif msg["role"] == "function":
@@ -94,9 +91,7 @@ class LLMInteraction:
         res = set()
         for index, msg in enumerate(self._messages):
             if index <= self._max_chain_length:
-                if msg["role"] == "assistant" and msg.get("validation") is not None:
-                    res.add(msg.get("validation"))
-                elif msg["role"] == "assistant" and msg.get("function_call") is not None:
+                if msg["role"] == "assistant" and msg.get("function_call") is not None:
                     res.add(msg["function_call"].get("name"))
                 elif msg["role"] == "function":
                     res.add(msg.get("name"))
@@ -158,6 +153,12 @@ class LLMInteraction:
             user_messages = user_messages[:limit]
         return "\n".join(user_messages)
 
+    def get_all_user_messages_or_function_results(self, limit: int = -1):
+        user_messages = [item["content"] for item in self._messages if item["role"] == "user" or item["role"] == "function"]
+        if limit > 0:
+            user_messages = user_messages[:limit]
+        return "\n".join(user_messages)
+    
     def get_assistant_non_validation_messages(self, limit):
         return [item["content"] for item in self._messages if (item["role"] == "assistant" and is_not_blank(item["content"]))][:limit]
 

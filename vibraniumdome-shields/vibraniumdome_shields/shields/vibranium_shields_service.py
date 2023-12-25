@@ -5,6 +5,7 @@ from typing import Dict, List
 import openai
 
 from vibraniumdome_shields.settings_loader import settings
+from vibraniumdome_shields.shields.input.arbitrary_images_shield import ArbitraryImagesShield
 from vibraniumdome_shields.shields.input.captains_shield import CaptainsShield
 from vibraniumdome_shields.shields.input.model_denial_of_service_shield import ModelDenialOfServiceShield
 from vibraniumdome_shields.shields.input.prompt_injection_transformer_shield import PromptInjectionTransformerShield
@@ -43,6 +44,7 @@ class VibraniumShieldsFactory:
                 PromptSafetyShield(),
                 SensitiveInformationDisclosureShieldInput(),
                 ModelDenialOfServiceShield(),
+                ArbitraryImagesShield(),
             ]
         }
 
