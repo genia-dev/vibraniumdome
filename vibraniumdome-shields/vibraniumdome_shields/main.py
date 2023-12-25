@@ -82,7 +82,7 @@ def receive_traces():
         try:
             policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service_name", "default"))
             llm_interaction._shields_result = captain_llm.deflect_shields(llm_interaction, policy)
-            interaction_service.save_llm_interaction(llm_interaction)
+            interaction_service.save_llm_interaction(llm_interaction, policy)
         except Exception:
             logger.exception("error while deflecting shields for interaction= %s with policy= %s", llm_interaction, policy)
 

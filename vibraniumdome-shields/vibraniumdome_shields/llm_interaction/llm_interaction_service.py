@@ -29,7 +29,18 @@ class LLMInteractionService:
             ssl_show_warn=False,
         )
 
-    def save_llm_interaction(self, llm_interaction: LLMInteraction):
+    def redact(self, document: dict) -> LLMInteraction:
+        if document.get("llm_prompts"):
+            document["llm_prompts"] = [{"role": "system", "content": "reducted"}]
+        if document.get("llm.completions.0.content"):
+            document["llm.completions.0.content"] = "reducted"
+        if document.get("completion"):
+            document["completion"] = "reducted"
+        if document.get("last_prompt"):
+            document["last_prompt"] = "reducted"
+        return document
+
+    def save_llm_interaction(self, llm_interaction: LLMInteraction, policy: dict):
         # json_data = model_instance.json()
         document = llm_interaction._interaction
         scan_id = str(llm_interaction._shields_result.scan_id)
@@ -39,6 +50,9 @@ class LLMInteractionService:
         document["shields_result"] = json.dumps(llm_interaction._shields_result.results, default=pydantic_json_encoder)
         document["last_prompt"] = llm_interaction.get_last_user_message()
         document["completion"] = llm_interaction.get_chat_completion()
+
+        if policy.get("content").get("redact_conversation", "false") is True:
+            document = self.redact(document)
 
         response = self._repository.index(index=self._index_name, body=document, id=scan_id, refresh=True)
         self._logger.info(response)
