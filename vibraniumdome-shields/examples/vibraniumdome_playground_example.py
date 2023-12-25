@@ -17,8 +17,8 @@ session_id_header = "cdef-1234-abcd"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-# # ------------------------------------------------------
-# # instructions hijacking
+# ------------------------------------------------------
+# instructions hijacking
 
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
@@ -167,8 +167,8 @@ print(response)
 # time.sleep(5)
 
 
-# # # ------------------------------------------------------
-# # # fox
+# # ------------------------------------------------------
+# # fox
 
 # response = openai.ChatCompletion.create(
 #     model="gpt-3.5-turbo",

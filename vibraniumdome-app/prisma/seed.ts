@@ -5,6 +5,7 @@ const defaultPolicy = {
       "shields_filter": "all",
       "high_risk_threshold": 0.8,
       "low_risk_threshold": 0.2,
+      "redact_conversation": true,
       "input_shields": [
           {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}},
           {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "name": "policy number"},
