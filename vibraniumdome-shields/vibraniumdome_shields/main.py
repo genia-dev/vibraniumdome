@@ -76,11 +76,11 @@ def scan():
 @app.route("/v1/traces", methods=["POST"])
 def receive_traces():
     llm_interaction: LLMInteraction = parser.parse_llm_call(request.data)
-    executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix="traces")
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix="traces-" + llm_interaction._id)
 
     def process_traces(llm_interaction: LLMInteraction):
         try:
-            policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service_name", "default"))
+            policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service.name", "default"))
             llm_interaction._shields_result = captain_llm.deflect_shields(llm_interaction, policy)
             interaction_service.save_llm_interaction(llm_interaction, policy)
         except Exception:

@@ -97,14 +97,14 @@ class LLMInteraction:
                     res.add(msg.get("name"))
         return res
 
-    def is_concecutive_function_call(self):
+    def get_last_concecutive_function_call(self):
+        # TODO: fix
         messages_reverse = self._messages[::-1]
         list_length = len(messages_reverse)
         length = 0
         for index, msg in enumerate(messages_reverse):
             if index < list_length - 1:
-                # count user messages which are not a reply to validation request
-                if msg["role"] != "user" or messages_reverse[index + 1].get("validation") is not None:
+                if msg["role"] == "function":
                     length += 1
                 else:
                     break
@@ -158,7 +158,7 @@ class LLMInteraction:
         if limit > 0:
             user_messages = user_messages[:limit]
         return "\n".join(user_messages)
-    
+
     def get_assistant_non_validation_messages(self, limit):
         return [item["content"] for item in self._messages if (item["role"] == "assistant" and is_not_blank(item["content"]))][:limit]
 

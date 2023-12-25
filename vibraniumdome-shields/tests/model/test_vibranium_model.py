@@ -41,6 +41,36 @@ class TestVibraniumLLMInteraction(unittest.TestCase):
             {"role": "user", "content": "5"},
         ]
 
+        self.function_call_message = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "1"},
+            {"role": "assistant", "content": None, "function_call": {"name": "get_current_weather", "arguments": {"location": "NY"}}},
+        ]
+
+        self.function_call_response_message = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "1"},
+            {"role": "assistant", "content": None, "function_call": {"name": "get_current_weather", "arguments": {"location": "NY"}}},
+            {"role": "function", "name": "get_current_weather", "content": {"temp": 20, "units": "celsius"}},
+        ]
+
+        self.consecutive_function_call_message = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "1"},
+            {"role": "assistant", "content": None, "function_call": {"name": "get_current_weather", "arguments": {"location": "NY"}}},
+            {"role": "function", "name": "get_current_weather", "content": {"temp": 20, "units": "celsius"}},
+            {"role": "assistant", "content": None, "function_call": {"name": "get_current_weather", "arguments": {"location": "LA"}}},
+        ]
+
+        self.consecutive_function_call_response_message = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "1"},
+            {"role": "assistant", "content": None, "function_call": {"name": "get_current_weather", "arguments": {"location": "NY"}}},
+            {"role": "function", "name": "get_current_weather", "content": {"temp": 20, "units": "celsius"}},
+            {"role": "assistant", "content": None, "function_call": {"name": "get_current_weather", "arguments": {"location": "LA"}}},
+            {"role": "function", "name": "get_current_weather", "content": {"temp": 30, "units": "celsius"}},
+        ]
+
     def test_last_message(self):
         interaction = LLMInteraction({"id": "1", "service.name": "test", "llm_prompts": self._simple_user_message})
         self.assertEqual(interaction.get_last_message(), "Where was it played shlomi@vibranium-dome.com?")
@@ -65,6 +95,10 @@ class TestVibraniumLLMInteraction(unittest.TestCase):
         interaction = LLMInteraction({"id": "1", "service.name": "test", "llm_prompts": self._another_user_message})
         self.assertEqual(interaction.get_last_user_message(), "5")
 
+    @unittest.skip("TODO")
+    def get_last_function_call(self):
+        interaction = LLMInteraction({"id": "1", "service.name": "test", "llm_prompts": self._another_user_message})
+        self.assertEqual(interaction.get_last_user_message(), "5")
 
 if __name__ == "__main__":
     unittest.main()
