@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -25,13 +26,13 @@
     --ring: 262.1 83.3% 57.8%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
-    --background: rgb(3 0 20 / var(--tw-bg-opacity));
+    --background: 224 71.4% 4.1%;
     --foreground: 210 20% 98%;
-    --card: rgb(3 0 20 / var(--tw-bg-opacity));
+    --card: 224 71.4% 4.1%;
     --card-foreground: 210 20% 98%;
-    --popover: rgb(3 0 20 / var(--tw-bg-opacity));
+    --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 20% 98%;
     --primary: 263.4 70% 50.4%;
     --primary-foreground: 210 20% 98%;

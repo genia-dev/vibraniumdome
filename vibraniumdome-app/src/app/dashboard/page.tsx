@@ -15,7 +15,7 @@ export default async function LogsTable() {
   const token = session?.jwt ?? ""
   const opensearchDashboardUrl = process.env.OPENSEARCH_DASHBOARD_URL
   const iframesrc = opensearchDashboardUrl?.replace('<JWT>', token);
-  return <iframe src={iframesrc} height="2000" width="100%"></iframe>
+  return <iframe className="bg-background" src={iframesrc} height="100%" width="100%"/>
   // return (
   //     <div className="hidden flex-col md:flex">
   //       <div className="border-b">

@@ -30,7 +30,7 @@ export function UserNav({ user }: Props) {
                     <div className="flex flex-col space-y-1 leading-none">
                         {user.name && <p className="font-medium">{user.name}</p>}
                         {user.email && (
-                            <p className="w-[200px] truncate text-sm text-zinc-700">
+                            <p className="w-[200px] truncate text-sm text-muted-foreground">
                                 {user.email}
                             </p>
                         )}
@@ -43,7 +43,7 @@ export function UserNav({ user }: Props) {
                 {/* <DropdownMenuSeparator /> */}
                 <DropdownMenuItem asChild>
                     <Button
-                        variant="outline"
+                        variant="secondary"
                         className="w-full"
                         onClick={() => {
                             void signOut();

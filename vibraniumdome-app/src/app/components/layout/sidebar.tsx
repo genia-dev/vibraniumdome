@@ -46,6 +46,7 @@ export default function Sidebar({ className }: SidebarProps) {
                 <Separator />
                 <div className="w-full flex justify-end">
                     <Button
+                        variant="outline" size="icon"
                         onClick={handleToggle}
                         className={cn("bg-background h-10 w-10 mx-2 px-2", isOpen && "rotate-180")}
                     >

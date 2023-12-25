@@ -50,9 +50,9 @@ export default async function PoliciesTable() {
         
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-2xl font-semibold">Policies</h2>
+            <h2 className="text-2xl font-semibold">Users</h2>
             <div className="flex items-center space-x-2">
-              <CreatePolicyDialog/>
+              {/* <CreatePolicyDialog/> */}
             </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
@@ -63,7 +63,7 @@ export default async function PoliciesTable() {
                   <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
                     <div className="flex items-center justify-between space-y-2">
                     </div>
-                    <DataTable data={policiesData} />
+                    {/* <DataTable data={policiesData} /> */}
                   </div>
                   </CardContent>
                 </Card>
