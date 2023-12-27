@@ -47,7 +47,17 @@ class LLMInteractionService:
         document["risk"] = llm_interaction._shields_result.risk.value
         document["scan_id"] = scan_id
         document["risk_factor"] = llm_interaction._shields_result.risk_factor
-        document["shields_result"] = json.dumps(llm_interaction._shields_result.results, default=pydantic_json_encoder)
+        document["shields_results"] = json.dumps(llm_interaction._shields_result.results, default=pydantic_json_encoder)
+
+        # Iterate over the dictionary and print key-value pairs
+        for key, value_list in llm_interaction._shields_result.results.items():
+            for idx, res_val in enumerate(value_list):
+                if idx == 0:
+                    res_val_key = "shields_result_" + key.replace(".", "_")
+                else:
+                    res_val_key = "shields_result_" + key.replace(".", "_") + "_" + str(idx)
+                document[res_val_key] = json.dumps(res_val, default=pydantic_json_encoder)
+
         document["last_prompt"] = llm_interaction.get_last_user_message()
         document["completion"] = llm_interaction.get_chat_completion()
 

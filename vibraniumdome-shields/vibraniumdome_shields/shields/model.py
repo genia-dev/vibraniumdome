@@ -7,11 +7,10 @@ from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
 from termcolor import colored
 
-from vibraniumdome_shields.utils import is_not_blank, timestamp_str
+from vibraniumdome_shields.utils import timestamp_str
 
 
 class ShieldDeflectionResult(BaseModel):
-    name: str = ""
     risk: float = 0
 
 

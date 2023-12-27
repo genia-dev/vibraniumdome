@@ -29,7 +29,7 @@ class SemanticSimilarityShield(VibraniumShield):
 
         shield_matches = []
         try:
-            matches: List[Tuple[Document, float]] = self._vector_db_service.query(llm_message)
+            matches: List[Tuple[Document, float]] = self._vector_db_service.query(llm_message, 3)
             existing_texts: set = set()
 
             for match in matches:

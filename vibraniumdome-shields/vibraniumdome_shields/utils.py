@@ -60,5 +60,5 @@ def timestamp_str():
 # Define a custom encoding function to handle Pydantic objects
 def pydantic_json_encoder(obj):
     if isinstance(obj, BaseModel):
-        return obj.dict()
+        return obj.model_dump()
     return obj

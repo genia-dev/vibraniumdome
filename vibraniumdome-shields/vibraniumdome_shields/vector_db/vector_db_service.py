@@ -60,10 +60,10 @@ class VectorDBService:
             self._logger.exception("exception while adding embeddings to collection")
             raise err
 
-    def query(self, text: str) -> List[Tuple[Document, float]]:
-        self._logger.debug("vectordb query: %s", text)
+    def query(self, text: str, k: int = 3) -> List[Tuple[Document, float]]:
+        self._logger.debug("vectordb query: %s", text, k=k)
         try:
-            return self._vector_store.similarity_search_with_score(text)
+            return self._vector_store.similarity_search_with_score(text, k=k)
         except Exception as e:
             self._logger.exception("exception while query vectordb: %s", text)
             raise e
