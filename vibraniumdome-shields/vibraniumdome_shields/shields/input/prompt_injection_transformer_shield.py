@@ -16,6 +16,7 @@ class PromptInjectionTransformerShieldDeflectionResult(ShieldDeflectionResult):
 class PromptInjectionTransformerShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
     _shield_name: str = "com.vibraniumdome.shield.input.transformer"
+    _default_threshold = 0.98
 
     def __init__(self, model):
         super().__init__(self._shield_name)
@@ -31,7 +32,7 @@ class PromptInjectionTransformerShield(VibraniumShield):
 
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         # TODO: take threshold by policy, check if should be 0.9
-        threshold = shield_policy_config.get("threshold", 0.98)
+        threshold = shield_policy_config.get("threshold", self._default_threshold)
         shield_matches = []
         hits = []
 
