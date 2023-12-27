@@ -78,7 +78,7 @@ class LLMInteraction:
     def get_last_function_call(self):
         messages_reverse = self._messages[::-1]
         res = None
-        for msg in messages_reverse:
+        for index, msg in enumerate(self._messages):
             if msg["role"] == "assistant" and msg.get("function_call") is not None:
                 res = msg["function_call"].get("name")
                 break
@@ -123,9 +123,6 @@ class LLMInteraction:
         if msg is not None:
             self._messages.append(msg)
 
-    # def get_init_message(self):
-    #     return [{"role": "system", "content": settings["agent_prompt"]["system"]}]
-
     def get_last_user_message(self):
         messages_reverse = self._messages[::-1]
         res = None
@@ -159,8 +156,13 @@ class LLMInteraction:
             user_messages = user_messages[:limit]
         return "\n".join(user_messages)
 
-    def get_assistant_non_validation_messages(self, limit):
-        return [item["content"] for item in self._messages if (item["role"] == "assistant" and is_not_blank(item["content"]))][:limit]
+    def get_last_user_message_or_function_result(self):
+        res = None
+        for msg in self._messages[::-1]:
+            if msg["role"] == "user" or msg["role"] == "function":
+                res = msg.get("content")
+                break
+        return res
 
     # def _take_k_or_less(self, messages_list, k):
     #     return messages_list[:k] if len(messages_list) >= k else messages_list

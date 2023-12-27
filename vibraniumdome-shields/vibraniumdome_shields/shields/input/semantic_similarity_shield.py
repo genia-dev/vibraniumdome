@@ -25,7 +25,7 @@ class SemanticSimilarityShield(VibraniumShield):
 
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         threshold = shield_policy_config.get("threshold", 0.4)
-        llm_message = llm_interaction.get_last_user_message()
+        llm_message = llm_interaction.get_last_user_message_or_function_result()
 
         shield_matches = []
         try:

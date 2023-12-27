@@ -36,7 +36,7 @@ class PromptInjectionTransformerShield(VibraniumShield):
         hits = []
 
         try:
-            hits = self.pipeline(llm_interaction.get_last_user_message())
+            hits = self.pipeline(llm_interaction.get_last_user_message_or_function_result())
         except Exception as err:
             self._logger.exception("Pipeline error")
             raise err
