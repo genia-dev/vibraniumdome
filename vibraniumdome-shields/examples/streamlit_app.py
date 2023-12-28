@@ -141,8 +141,7 @@ with st.sidebar:
 if vibranium_dome_base_url:
     os.environ["VIBRANIUM_DOME_BASE_URL"] = vibranium_dome_base_url
 
-# TODO: unremark
-# VibraniumDome.init(app_name=llm_agent_name or "openai_test_app")
+VibraniumDome.init(app_name=llm_agent_name or "openai_test_app")
 
 st.title("Vibranium Dome Chatbot 💬")
 st.caption(
