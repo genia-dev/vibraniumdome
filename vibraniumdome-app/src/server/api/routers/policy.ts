@@ -120,6 +120,26 @@ export const policyRouter = createTRPCRouter({
     });
   }),
 
+  get: protectedProcedure
+  .input(z.object({ id: z.string().min(1) }))
+  .query(async ({ ctx, input }) => {
+    const membership = await ctx.db.membership.findFirst({
+      // @ts-ignore
+      where: { userId: ctx.session.user.id },
+    });
+    
+    const policy = await ctx.db.policy.findFirst({
+      orderBy: { createdAt: "desc" },
+      // @ts-ignore
+      where: {
+        id: input.id,
+        createdBy: { id: membership?.teamId },
+      },
+    });
+
+    return policy
+  }),
+
   getDefaultPolicy: protectedProcedure.query(async ({ ctx }) => {
     const policy = await ctx.db.policy.findFirst({
       where: {

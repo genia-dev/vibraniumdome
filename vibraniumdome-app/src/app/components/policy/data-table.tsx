@@ -22,9 +22,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/app/components/ui/dropdown-menu"
 import { Input } from "~/app/components/ui/input"
@@ -37,20 +34,7 @@ import {
   TableRow,
 } from "~/app/components/ui/table"
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/app/components/ui/dialog"
-import { Label } from "~/app/components/ui/label"
-import { Textarea } from "~/app/components/ui/textarea"
-
 import { useRouter } from "next/navigation";
-
 import { format } from "date-fns"
 
 
@@ -113,93 +97,15 @@ export const columns: ColumnDef<Policy>[] = [
           router.refresh();
         },
       })
-      const [policyId, setPolicyId] = React.useState(policy.id);
-      const [policyName, setPolicyName] = React.useState(policy.name);
-      const [llmAppName, setLlmAppName] = React.useState(policy.llmAppName);
-      const [policyContent, setPolicyContent] = React.useState(policy.content);
-      const textareaRef = React.useRef(null);
-
-      const updatePolicy = api.policy.update.useMutation({
-        onSuccess: () => {
-          router.refresh();
-        },
-      });
-    const saveChanges = async () => {
-        setOpen(false);
-        await updatePolicy.mutate({ id: policyId,
-                                    name: policyName,
-                                    llmAppName: llmAppName,
-                                    // @ts-ignore
-                                    content: textareaRef.current?.value,
-                                })
-    };
-
-      const [open, setOpen] = React.useState(false);
 
       return (
         <>
               <div className="flex gap-2">
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild>
-                      <Button disabled={policy.name === "Default Policy"} variant="ghost">Edit Policy</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[825px]">
-                      <DialogHeader>
-                        <DialogTitle>Edit policy</DialogTitle>
-                        <DialogDescription>
-                          Make policy changes. Click save when you're done.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="id" className="text-right">
-                            Policy ID
-                          </Label>
-                          <Input
-                            id="id"
-                            defaultValue={policy.id}
-                            className="col-span-3"
-                            onChange={(e) => setPolicyId(e.target.value)}
-                            readOnly
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="policyName" className="text-right">
-                            Policy Name
-                          </Label>
-                          <Input
-                            id="name"
-                            defaultValue={policy.name}
-                            className="col-span-3"
-                            onChange={(e) => setPolicyName(e.target.value)}
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="llmAppName" className="text-right">
-                            LLM App Name
-                          </Label>
-                          <Input
-                            id="llmAppName"
-                            defaultValue={policy.llmAppName}
-                            className="col-span-3"
-                            onChange={(e) => setLlmAppName(e.target.value)}
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="llmAppName" className="text-right">
-                            Policy Content
-                          </Label>
-                          <Textarea ref={textareaRef} className="col-span-3" defaultValue={JSON.stringify(JSON.parse(policy.content), null, 4)} onChange={(e) => setPolicyContent(e.target.value)}/>
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit" onClick={saveChanges}>Save changes</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                  
-                  <Button disabled={policy.name === "Default Policy"} variant="ghost" onClick={async () => 
-                      await deletePolicyMutation.mutate({ id: policy.id })
+                  <Button disabled={policy.name === "Default Policy"} variant="ghost" 
+                          onClick={async () => router.push('/policy/create?policyId=' + policy.id)}>Edit Policy</Button>
+                  <Button disabled={policy.name === "Default Policy"} variant="ghost" 
+                          onClick={async () => 
+                              await deletePolicyMutation.mutate({ id: policy.id })
                   }>Delete Policy</Button>
                 </div>
         </>
