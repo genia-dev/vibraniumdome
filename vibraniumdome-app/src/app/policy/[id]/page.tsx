@@ -268,7 +268,7 @@ export default function CreatePolicyPage() {
               <div className="flex items-center space-x-2">
                 <CreateShieldDialog
                   isinput={true}
-                  title="Create Input Shield"
+                  title="Add Input Shield"
                   shields={inputShields}
                 />
               </div>
@@ -285,7 +285,7 @@ export default function CreatePolicyPage() {
               <div className="flex items-center space-x-2">
                 <CreateShieldDialog
                   isinput={false}
-                  title="Create Output Shield"
+                  title="Add Output Shield"
                   shields={outputShields}
                 />
               </div>
@@ -294,10 +294,12 @@ export default function CreatePolicyPage() {
               <ShieldsDataTable data={outputShieldsData} />
             </div>
           </Card>
-          <Button type="submit" onClick={createPolicyButton}>
-            {policyId ? "Update" : "Create"} Policy
-          </Button>
         </div>
+      </div>
+      <div className="mx-6 mb-6">
+        <Button type="submit" onClick={createPolicyButton}>
+              {policyId ? "Update" : "Create"} Policy
+        </Button>
       </div>
     </>
   );
