@@ -8,11 +8,11 @@ export type StateProps = {
   defaultValue: any;
 };
 
-export function LowRiskThreshold({ setState, defaultValue }: StateProps) {
+export function LowRiskThreshold({ setState, defaultValue}: StateProps) {
   return (
     <>
       <Label htmlFor="low-risk-threshold">
-        Low risk threshold
+        Low risk threshold: {defaultValue}
       </Label>
       <Slider
         id="low-risk-threshold"

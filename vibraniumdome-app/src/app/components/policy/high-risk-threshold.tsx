@@ -12,7 +12,7 @@ export function HighRiskThreshold({ setState, defaultValue }: StateProps) {
   return (
     <>
       <Label htmlFor="high-risk-threshold">
-        High risk threshold
+        High risk threshold: {defaultValue}
       </Label>
       <Slider
         id="high-risk-threshold"
