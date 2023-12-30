@@ -198,108 +198,102 @@ export default function CreatePolicyPage() {
 
   return (
     <>
-      <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex-1 space-y-4 p-6 pt-6">
         <h2 className="text-2xl font-semibold">Policy Settings</h2>
         <Card className="w-full">
-          <CardHeader>
-            <CardDescription>Policy keys</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid w-full grid-cols-3 items-center gap-4">
-              <div className="col-span-1 flex flex-col space-y-1.5">
-                <Label htmlFor="policyName">Policy Name</Label>
-                <Input
-                  className="w-[180px]"
-                  id="name"
-                  defaultValue={policyName}
-                  onChange={(e) => setPolicyName(e.target.value)}
-                />
-                <Label htmlFor="llmAppName">LLM App Name</Label>
-                <Input
-                  className="w-[180px]"
-                  id="llmAppName"
-                  defaultValue={llmAppName}
-                  onChange={(e) => setLlmAppName(e.target.value)}
-                />
+          <CardContent className="p-6">
+            <div className="grid w-full grid-cols-3 items-start gap-4">
+              <div className="col-span-1 items-start">
+              <div className="pt-2 pb-4 space-y-2">
+                  <Label htmlFor="policyName">Policy Name</Label>
+                  <Input
+                    className="w-[180px]"
+                    id="name"
+                    defaultValue={policyName}
+                    onChange={(e) => setPolicyName(e.target.value)}
+                  />
+                </div>
+                <div className="pt-2 pb-4 space-y-2">
+                  <Label htmlFor="llmAppName">LLM App Name</Label>
+                  <Input
+                    className="w-[180px]"
+                    id="llmAppName"
+                    defaultValue={llmAppName}
+                    onChange={(e) => setLlmAppName(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="col-span-1 flex flex-col space-y-1.5">
-                <HighRiskThreshold
-                  setState={setHighRiskThreshold}
-                  defaultValue={highRiskThreshold}
-                />
-                <LowRiskThreshold
-                  setState={setLowRiskThreshold}
-                  defaultValue={lowRiskThreshold}
-                />
+              <div className="col-span-1 items-start">
+                <div className="pt-2 pb-4 space-y-2">
+                  <HighRiskThreshold
+                    setState={setHighRiskThreshold}
+                    defaultValue={highRiskThreshold}
+                  />
+                </div>
+                <div className="pt-2 pb-4 space-y-2">
+                  <LowRiskThreshold
+                    setState={setLowRiskThreshold}
+                    defaultValue={lowRiskThreshold}
+                  />
+                </div>
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <ShieldsFilter
-                  setState={setShieldsFilter}
-                  defaultValue={shieldsFilter}
-                />
-                <RedactConversation
-                  setState={setRedactConversation}
-                  defaultValue={redactConversation}
-                />
+              <div className="col-span-1 items-start">
+              <div className="pt-2 pb-4 space-y-2">
+                  <Label htmlFor="shields-filter">Shields Filter</Label>
+                  <ShieldsFilter
+                    setState={setShieldsFilter}
+                    defaultValue={shieldsFilter}
+                  />
+                </div>
+                <div className="pt-2 pb-4 space-y-2">
+                  <Label htmlFor="redact-conversation">
+                    Redact conversation
+                  </Label>
+                  <RedactConversation
+                    setState={setRedactConversation}
+                    defaultValue={redactConversation}
+                  />
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-      <div className="hidden flex-col md:flex">
-        <div className="flex-1 space-y-4 p-8 pt-6">
-          <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-2xl font-semibold">Input Shields</h2>
-            <div className="flex items-center space-x-2">
-              <CreateShieldDialog
-                isinput={true}
-                title="Create Input Shield"
-                shields={inputShields}
-              />
-            </div>
-          </div>
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-8">
-                  <CardContent className="pl-2">
-                    <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-                      <div className="flex items-center justify-between space-y-2"></div>
-                      <ShieldsDataTable data={inputShieldsData} />
-                    </div>
-                  </CardContent>
-                </Card>
+
+      <div className="grid w-full grid-cols-2 gap-4 p-6 pt-0">
+        <div className="col-span-1 flex-1 space-y-4">
+          <Card className="p-2">
+            <div className="m-4 flex items-center justify-between space-y-2">
+              <h2 className="text-xl font-semibold">Input Shields</h2>
+              <div className="flex items-center space-x-2">
+                <CreateShieldDialog
+                  isinput={true}
+                  title="Create Input Shield"
+                  shields={inputShields}
+                />
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+            <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
+              <ShieldsDataTable data={inputShieldsData} />
+            </div>
+          </Card>
         </div>
-      </div>
-      <div className="hidden flex-col md:flex">
-        <div className="flex-1 space-y-4 p-8 pt-6">
-          <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-2xl font-semibold">Output Shields</h2>
-            <div className="flex items-center space-x-2">
-              <CreateShieldDialog
-                isinput={false}
-                title="Create Output Shield"
-                shields={outputShields}
-              />
-            </div>
-          </div>
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-8">
-                  <CardContent className="pl-2">
-                    <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-                      <div className="flex items-center justify-between space-y-2"></div>
-                      <ShieldsDataTable data={outputShieldsData} />
-                    </div>
-                  </CardContent>
-                </Card>
+        <div className="col-span-1 flex-1 space-y-4">
+          <Card className="p-2">
+            <div className="m-4 flex items-center justify-between space-y-2">
+              <h2 className="text-xl font-semibold">Output Shields</h2>
+              <div className="flex items-center space-x-2">
+                <CreateShieldDialog
+                  isinput={false}
+                  title="Create Output Shield"
+                  shields={outputShields}
+                />
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+            <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
+              <ShieldsDataTable data={outputShieldsData} />
+            </div>
+          </Card>
           <Button type="submit" onClick={createPolicyButton}>
             {policyId ? "Update" : "Create"} Policy
           </Button>

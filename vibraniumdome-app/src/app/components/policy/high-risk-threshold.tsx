@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import { Slider } from "~/app/components/ui/slider";
 import { Label } from "~/app/components/ui/label";
+import { Slider } from "~/app/components/ui/slider";
 
 export type StateProps = {
   setState: any;
@@ -17,7 +17,7 @@ export function HighRiskThreshold({ setState, defaultValue }: StateProps) {
       <Slider
         id="high-risk-threshold"
         onValueChange={setState}
-        className="w-[180px]"
+        className="w-[60%]"
         defaultValue={[0.8]}
         max={1}
         step={0.1}

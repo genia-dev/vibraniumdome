@@ -17,7 +17,7 @@ export type StateProps = {
 
 export function RedactConversation({setState, defaultValue}: StateProps) {
   return (
-    <Select onValueChange={setState} value={defaultValue}>
+    <Select name="redact-conversation" onValueChange={setState} value={defaultValue}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Redact Conversation" />
       </SelectTrigger>

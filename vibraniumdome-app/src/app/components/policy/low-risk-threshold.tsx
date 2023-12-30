@@ -17,7 +17,7 @@ export function LowRiskThreshold({ setState, defaultValue }: StateProps) {
       <Slider
         id="low-risk-threshold"
         onValueChange={setState}
-        className="w-[180px]"
+        className="w-[60%]"
         defaultValue={[0.4]}
         max={1}
         step={0.1}

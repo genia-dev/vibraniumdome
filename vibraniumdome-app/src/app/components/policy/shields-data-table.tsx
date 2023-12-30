@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,10 +12,10 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "~/app/components/ui/button"
+import { Button } from "~/app/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -24,8 +24,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/app/components/ui/dropdown-menu"
-import { Input } from "~/app/components/ui/input"
+} from "~/app/components/ui/dropdown-menu";
+import { Input } from "~/app/components/ui/input";
 import {
   Table,
   TableBody,
@@ -33,16 +33,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/app/components/ui/table"
+} from "~/app/components/ui/table";
 
-import { useDispatch } from 'react-redux';
-import { removeInputShield, removeOutputShield } from '~/app/store/actions';
-
+import { useDispatch } from "react-redux";
+import { removeInputShield, removeOutputShield } from "~/app/store/actions";
 
 export type Shield = {
-  id: string,
-  shield: string,
-}
+  id: string;
+  shield: string;
+};
 
 export const columns: ColumnDef<Shield>[] = [
   {
@@ -61,15 +60,17 @@ export const columns: ColumnDef<Shield>[] = [
           Shield
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("shield")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("shield")}</div>
+    ),
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const shield = row.original
+      const shield = row.original;
       const dispatch = useDispatch();
 
       return (
@@ -84,30 +85,37 @@ export const columns: ColumnDef<Shield>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                dispatch(removeInputShield(shield.id))
-                dispatch(removeOutputShield(shield.id))  
-                }
-              }
+                dispatch(removeInputShield(shield.id));
+                dispatch(removeOutputShield(shield.id));
+              }}
+            >
+              Edit Shield
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                dispatch(removeInputShield(shield.id));
+                dispatch(removeOutputShield(shield.id));
+              }}
             >
               Delete Shield
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 //@ts-ignore
 export function ShieldsDataTable({ data }) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+    [],
+  );
 
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -126,12 +134,11 @@ export function ShieldsDataTable({ data }) {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-      </div>
+      <div className="flex"></div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -144,10 +151,10 @@ export function ShieldsDataTable({ data }) {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -163,7 +170,7 @@ export function ShieldsDataTable({ data }) {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -182,26 +189,6 @@ export function ShieldsDataTable({ data }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
     </div>
-  )
+  );
 }

@@ -17,7 +17,7 @@ export type StateProps = {
 
 export function ShieldsFilter({setState, defaultValue}: StateProps) {
   return (
-    <Select onValueChange={setState} value={defaultValue}>
+    <Select name="shields-filter" onValueChange={setState} value={defaultValue}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select Shields Filter" />
       </SelectTrigger>

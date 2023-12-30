@@ -22,6 +22,9 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/app/components/ui/dropdown-menu"
 import { Input } from "~/app/components/ui/input"
@@ -61,7 +64,7 @@ export const columns: ColumnDef<Policy>[] = [
     header: "Name",
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("name")}</div>
-    ),
+    )
   },
   {
     accessorKey: "llmAppName",
@@ -100,15 +103,40 @@ export const columns: ColumnDef<Policy>[] = [
 
       return (
         <>
-              <div className="flex gap-2">
-                  <Button disabled={policy.name === "Default Policy"} variant="ghost" 
-                          onClick={async () => router.push('/policy/create?policyId=' + policy.id)}>Edit Policy</Button>
-                  <Button disabled={policy.name === "Default Policy"} variant="ghost" 
-                          onClick={async () => 
-                              await deletePolicyMutation.mutate({ id: policy.id })
-                  }>Delete Policy</Button>
-                </div>
+          <div className="flex gap-2">
+            <Button disabled={policy.name === "Default Policy"} variant="ghost" 
+                    onClick={async () => router.push('/policy/create?policyId=' + policy.id)}>Edit Policy</Button>
+            <Button disabled={policy.name === "Default Policy"} variant="ghost" 
+                    onClick={async () => await deletePolicyMutation.mutate({ id: policy.id })}>Delete Policy</Button>
+          </div>
         </>
+      )
+    },
+  },
+  {
+    id: "actions-1",
+    cell: ({ row }) => {
+      const policy = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(policy.id)}
+            >
+              Copy policy ID
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>View policy</DropdownMenuItem>
+            <DropdownMenuItem>Clone this policy</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )
     },
   },
