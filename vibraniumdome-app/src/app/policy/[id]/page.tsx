@@ -49,12 +49,12 @@ export default function CreatePolicyPage() {
 
   const policyId = searchParams.get("policyId");
 
-  const [policyName, setPolicyName] = React.useState("");
-  const [llmAppName, setLlmAppName] = React.useState("");
-  const [lowRiskThreshold, setLowRiskThreshold] = React.useState("");
-  const [highRiskThreshold, setHighRiskThreshold] = React.useState("");
-  const [shieldsFilter, setShieldsFilter] = React.useState("");
-  const [redactConversation, setRedactConversation] = React.useState("");
+  const [policyName, setPolicyName] = React.useState();
+  const [llmAppName, setLlmAppName] = React.useState();
+  const [lowRiskThreshold, setLowRiskThreshold] = React.useState();
+  const [highRiskThreshold, setHighRiskThreshold] = React.useState();
+  const [shieldsFilter, setShieldsFilter] = React.useState();
+  const [redactConversation, setRedactConversation] = React.useState();
 
   const inputShieldsState = useSelector((state: any) => state.inputShields);
   const outputShieldsState = useSelector((state: any) => state.outputShields);
@@ -205,7 +205,7 @@ export default function CreatePolicyPage() {
             <div className="grid w-full grid-cols-3 items-start gap-4">
               <div className="col-span-1 items-start">
               <div className="pt-2 pb-4 space-y-2">
-                  <Label htmlFor="policyName">Policy Name</Label>
+                  <Label htmlFor="policyName">Policy Name:</Label>
                   <Input
                     className="w-[180px]"
                     id="name"
@@ -214,7 +214,7 @@ export default function CreatePolicyPage() {
                   />
                 </div>
                 <div className="pt-2 pb-4 space-y-2">
-                  <Label htmlFor="llmAppName">LLM App Name</Label>
+                  <Label htmlFor="llmAppName">LLM App Name:</Label>
                   <Input
                     className="w-[180px]"
                     id="llmAppName"
@@ -239,7 +239,7 @@ export default function CreatePolicyPage() {
               </div>
               <div className="col-span-1 items-start">
               <div className="pt-2 pb-4 space-y-2">
-                  <Label htmlFor="shields-filter">Shields Filter</Label>
+                  <Label htmlFor="shields-filter">Shields Filter:</Label>
                   <ShieldsFilter
                     setState={setShieldsFilter}
                     defaultValue={shieldsFilter}
@@ -247,7 +247,7 @@ export default function CreatePolicyPage() {
                 </div>
                 <div className="pt-2 pb-4 space-y-2">
                   <Label htmlFor="redact-conversation">
-                    Redact conversation
+                    Redact conversation:
                   </Label>
                   <RedactConversation
                     setState={setRedactConversation}
