@@ -18,14 +18,11 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "~/app/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/app/components/ui/dropdown-menu";
-import { Input } from "~/app/components/ui/input";
 import {
   Table,
   TableBody,

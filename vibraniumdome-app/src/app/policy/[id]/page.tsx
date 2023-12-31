@@ -56,17 +56,6 @@ export default function CreatePolicyPage() {
   const inputShieldsState = useSelector((state: any) => state.inputShields);
   const outputShieldsState = useSelector((state: any) => state.outputShields);
 
-
-  // const inputShieldsData = inputShieldsState.map((item) => ({
-  //   id: item,
-  //   shield: item,
-  // }));
-  // 
-  // const outputShieldsData = outputShieldsState.map((item) => ({
-  //   id: item,
-  //   shield: item,
-  // }));
-
   const createPolicy = api.policy.create.useMutation({
     onSuccess: () => {
       router.push("/policies");
@@ -95,36 +84,32 @@ export default function CreatePolicyPage() {
 
   React.useEffect(() => {
     if (isSuccess && currentPolicy) {
+      console.log(currentPolicy)
       setPolicyName(currentPolicy.name);
       setLlmAppName(currentPolicy.llmApp);
-      
       setLowRiskThreshold(currentPolicy.content?.low_risk_threshold);
-      
       setHighRiskThreshold(currentPolicy.content?.high_risk_threshold);
-      
       setShieldsFilter(currentPolicy.content?.shields_filter);
-      
       setRedactConversation(currentPolicy.content?.redact_conversation);
       
-      const input = currentPolicy?.content?.input_shields.map((shield) => { 
+      const input = currentPolicy?.content?.input_shields.map((shield) => {
         return {id: uuidv4(), shield: shield.type }
       });
       
-      const output = currentPolicy?.content?.output_shields.map((shield) => { 
+      const output = currentPolicy?.content?.output_shields.map((shield) => {
         return {id: uuidv4(), shield: shield.type }
       });
 
       dispatch(setInputShield(input));      
       dispatch(setOutputShield(output));
     }
-  }, [currentPolicy, isSuccess, policyName, llmAppName, lowRiskThreshold, highRiskThreshold, shieldsFilter, redactConversation]);
+  }, [currentPolicy, isSuccess]);
 
   const defaultPolicy = api.policy.getDefaultPolicy.useQuery().data;
   if (!defaultPolicy) {
     return;
   }
 
-  
   const inputShields = extractShieldsInfo(
     defaultPolicy?.content?.input_shields,
   );
@@ -133,17 +118,15 @@ export default function CreatePolicyPage() {
     defaultPolicy?.content?.output_shields,
   );
 
-  const createPolicyButton = async () => {
-    
+  const createOrUpdatePolicyButton = async () => {
+
     const createShieldsMap = (shieldsArray) => {
-      
       return shieldsArray.reduce((acc, shield) => {
         acc[shield.type] = shield;
         return acc;
       }, {});
     };
 
-    
     const inputShieldsMap = createShieldsMap(
       defaultPolicy?.content?.input_shields,
     );
@@ -163,15 +146,15 @@ export default function CreatePolicyPage() {
 
     
     inputShieldsState.forEach((shieldKey) => {
-      const shieldValue = inputShieldsMap[shieldKey];
+      const shieldValue = inputShieldsMap[shieldKey.shield];
       if (shieldValue) {
         basePolicy.input_shields.push(shieldValue);
       }
     });
 
-    
+
     outputShieldsState.forEach((shieldKey) => {
-      const shieldValue = outputShieldsMap[shieldKey];
+      const shieldValue = outputShieldsMap[shieldKey.shield];
       if (shieldValue) {
         basePolicy.output_shields.push(shieldValue);
       }
@@ -297,7 +280,7 @@ export default function CreatePolicyPage() {
         </div>
       </div>
       <div className="mx-6 mb-6">
-        <Button type="submit" onClick={createPolicyButton}>
+        <Button type="submit" onClick={createOrUpdatePolicyButton}>
               {policyId ? "Update" : "Create"} Policy
         </Button>
       </div>
