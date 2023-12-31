@@ -1,16 +1,13 @@
+// @ts-nocheck
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "~/app/components/ui/card";
 import { Input } from "~/app/components/ui/input";
 import { Label } from "~/app/components/ui/label";
-import { Tabs, TabsContent } from "~/app/components/ui/tabs";
 
 import { Button } from "~/app/components/ui/button";
 
@@ -29,13 +26,13 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   resetInputShield,
   resetOutputShield,
-  addInputShield,
-  addOutputShield,
+  setInputShield,
+  setOutputShield,
 } from "~/app/store/actions";
 
-//@ts-ignore
+import { v4 as uuidv4 } from 'uuid';
+
 function extractShieldsInfo(shields) {
-  //@ts-ignore
   const resultArray = shields.map((shield) => {
     return { key: shield.type, value: shield.type };
   });
@@ -58,16 +55,17 @@ export default function CreatePolicyPage() {
 
   const inputShieldsState = useSelector((state: any) => state.inputShields);
   const outputShieldsState = useSelector((state: any) => state.outputShields);
-  //@ts-ignore
-  const inputShieldsData = inputShieldsState.map((item) => ({
-    id: item,
-    shield: item,
-  }));
-  //@ts-ignore
-  const outputShieldsData = outputShieldsState.map((item) => ({
-    id: item,
-    shield: item,
-  }));
+
+
+  // const inputShieldsData = inputShieldsState.map((item) => ({
+  //   id: item,
+  //   shield: item,
+  // }));
+  // 
+  // const outputShieldsData = outputShieldsState.map((item) => ({
+  //   id: item,
+  //   shield: item,
+  // }));
 
   const createPolicy = api.policy.create.useMutation({
     onSuccess: () => {
@@ -90,60 +88,66 @@ export default function CreatePolicyPage() {
     },
   );
 
+  if (!policyId && inputShieldsState === undefined && outputShieldsState === undefined) {
+    dispatch(resetInputShield());
+    dispatch(resetOutputShield());
+  }
+
   React.useEffect(() => {
     if (isSuccess && currentPolicy) {
       setPolicyName(currentPolicy.name);
       setLlmAppName(currentPolicy.llmApp);
-      //@ts-ignore
+      
       setLowRiskThreshold(currentPolicy.content?.low_risk_threshold);
-      //@ts-ignore
+      
       setHighRiskThreshold(currentPolicy.content?.high_risk_threshold);
-      //@ts-ignore
+      
       setShieldsFilter(currentPolicy.content?.shields_filter);
-      //@ts-ignore
+      
       setRedactConversation(currentPolicy.content?.redact_conversation);
-
-      //@ts-ignore
-      currentPolicy?.content?.input_shields.forEach((element) => {
-        dispatch(addInputShield(element.type));
+      
+      const input = currentPolicy?.content?.input_shields.map((shield) => { 
+        return {id: uuidv4(), shield: shield.type }
+      });
+      
+      const output = currentPolicy?.content?.output_shields.map((shield) => { 
+        return {id: uuidv4(), shield: shield.type }
       });
 
-      //@ts-ignore
-      currentPolicy?.content?.output_shields.forEach((element) => {
-        dispatch(addOutputShield(element.type));
-      });
+      dispatch(setInputShield(input));      
+      dispatch(setOutputShield(output));
     }
-  }, [currentPolicy, isSuccess]);
+  }, [currentPolicy, isSuccess, policyName, llmAppName, lowRiskThreshold, highRiskThreshold, shieldsFilter, redactConversation]);
 
   const defaultPolicy = api.policy.getDefaultPolicy.useQuery().data;
   if (!defaultPolicy) {
     return;
   }
 
-  //@ts-ignore
+  
   const inputShields = extractShieldsInfo(
     defaultPolicy?.content?.input_shields,
   );
-  //@ts-ignore
+  
   const outputShields = extractShieldsInfo(
     defaultPolicy?.content?.output_shields,
   );
 
   const createPolicyButton = async () => {
-    //@ts-ignore
+    
     const createShieldsMap = (shieldsArray) => {
-      //@ts-ignore
+      
       return shieldsArray.reduce((acc, shield) => {
         acc[shield.type] = shield;
         return acc;
       }, {});
     };
 
-    //@ts-ignore
+    
     const inputShieldsMap = createShieldsMap(
       defaultPolicy?.content?.input_shields,
     );
-    //@ts-ignore
+    
     const outputShieldsMap = createShieldsMap(
       defaultPolicy?.content?.output_shields,
     );
@@ -157,20 +161,18 @@ export default function CreatePolicyPage() {
       output_shields: [],
     };
 
-    //@ts-ignore
+    
     inputShieldsState.forEach((shieldKey) => {
       const shieldValue = inputShieldsMap[shieldKey];
       if (shieldValue) {
-        //@ts-ignore
         basePolicy.input_shields.push(shieldValue);
       }
     });
 
-    //@ts-ignore
+    
     outputShieldsState.forEach((shieldKey) => {
       const shieldValue = outputShieldsMap[shieldKey];
       if (shieldValue) {
-        //@ts-ignore
         basePolicy.output_shields.push(shieldValue);
       }
     });
@@ -179,7 +181,6 @@ export default function CreatePolicyPage() {
       await createPolicy.mutate({
         name: policyName,
         llmAppName: llmAppName,
-        // @ts-ignore
         content: JSON.stringify(basePolicy),
       });
     } else {
@@ -187,7 +188,6 @@ export default function CreatePolicyPage() {
         id: policyId,
         name: policyName,
         llmAppName: llmAppName,
-        // @ts-ignore
         content: JSON.stringify(basePolicy),
       });
     }
@@ -274,7 +274,7 @@ export default function CreatePolicyPage() {
               </div>
             </div>
             <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
-              <ShieldsDataTable data={inputShieldsData} />
+              <ShieldsDataTable data={inputShieldsState} />
             </div>
           </Card>
         </div>
@@ -291,7 +291,7 @@ export default function CreatePolicyPage() {
               </div>
             </div>
             <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
-              <ShieldsDataTable data={outputShieldsData} />
+              <ShieldsDataTable data={outputShieldsState} />
             </div>
           </Card>
         </div>

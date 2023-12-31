@@ -18,6 +18,9 @@ import { Info } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addInputShield, addOutputShield } from "~/app/store/actions";
 
+import { v4 as uuidv4 } from 'uuid';
+
+
 export type Policy = {
   id: string;
   name: string;
@@ -44,9 +47,9 @@ export function CreateShieldDialog({
   const saveChanges = () => {
     setOpen(false);
     if (isinput) {
-      dispatch(addInputShield(value));
+      dispatch(addInputShield({id: uuidv4(), shield: value}));
     } else {
-      dispatch(addOutputShield(value));
+      dispatch(addOutputShield({id: uuidv4(), shield: value}));
     }
   };
 

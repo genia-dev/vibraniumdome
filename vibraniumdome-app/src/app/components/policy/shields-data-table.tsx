@@ -85,8 +85,6 @@ export const columns: ColumnDef<Shield>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
-                dispatch(removeInputShield(shield.id));
-                dispatch(removeOutputShield(shield.id));
               }}
             >
               Edit Shield

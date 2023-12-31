@@ -105,7 +105,7 @@ export const columns: ColumnDef<Policy>[] = [
         <>
           <div className="flex gap-2">
             <Button disabled={policy.name === "Default Policy"} variant="ghost" 
-                    onClick={async () => router.push('/policy/create?policyId=' + policy.id)}>Edit Policy</Button>
+                    onClick={async () => router.push('/policy/update?policyId=' + policy.id)}>Edit Policy</Button>
             <Button disabled={policy.name === "Default Policy"} variant="ghost" 
                     onClick={async () => await deletePolicyMutation.mutate({ id: policy.id })}>Delete Policy</Button>
           </div>
