@@ -69,6 +69,7 @@ def handle_input(prompt, from_button):
     if not from_button:
         st.chat_message("user").write(prompt)
 
+    print("handle_input: " + prompt + ", from_button=" + str(from_button))
     for _ in range(5):
         response = call_completion()
         response_message = response.choices[0].message
@@ -78,6 +79,7 @@ def handle_input(prompt, from_button):
         # # Step 2: check if the model wanted to call a function
         if finish_reason == "stop":
             msg = response.choices[0].message.content
+            print("add assistant message: " + msg + ", " + str(not from_button))
             st.session_state.messages.append({"role": "assistant", "content": msg})
             if not from_button:
                 st.chat_message("assistant").write(msg)
