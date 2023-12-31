@@ -34,7 +34,7 @@ class CaptainsShield(VibraniumShield):
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         self.logger.info("performing scan, id='%s'", scan_id)
         llm_shield_prompt = settings[self._shield_name]["prompt"]
-        llm_message = llm_interaction.get_all_user_messages()
+        llm_message = llm_interaction.get_all_user_messages_or_function_results()
         messages = [
             {"role": "system", "content": llm_shield_prompt},
             {"role": "user", "content": f"""<~START~>\n{llm_message}\n<~END~>"""},
