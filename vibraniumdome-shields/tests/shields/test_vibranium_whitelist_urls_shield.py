@@ -1,6 +1,6 @@
 import unittest
 from vibraniumdome_shields.policies.policy_service import PolicyService
-from vibraniumdome_shields.shields.input.whitelist_urls_shield import WhitelistURLsShield
+from vibraniumdome_shields.shields.output.whitelist_urls_shield import WhitelistURLsShield
 
 from vibraniumdome_shields.shields.model import LLMInteraction
 

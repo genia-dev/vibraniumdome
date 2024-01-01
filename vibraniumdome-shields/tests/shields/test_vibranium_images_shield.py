@@ -1,5 +1,5 @@
 import unittest
-from vibraniumdome_shields.shields.input.arbitrary_images_shield import ArbitraryImagesShield
+from vibraniumdome_shields.shields.output.arbitrary_images_shield import ArbitraryImagesShield
 from vibraniumdome_shields.policies.policy_service import PolicyService
 
 from vibraniumdome_shields.shields.model import LLMInteraction
