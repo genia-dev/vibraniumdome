@@ -135,6 +135,9 @@ class LLMInteraction:
         return self._completion
 
     def get_last_assistant_message(self):
+        if len(self._completion) > 0:
+            return self._completion
+
         messages_reverse = self._messages[::-1]
         res = None
         for msg in messages_reverse:
@@ -154,6 +157,16 @@ class LLMInteraction:
         if limit > 0:
             user_messages = user_messages[:limit]
         return "\n".join(user_messages)
+
+    def get_last_assistant_message_and_function_result(self):
+        results = []
+        if len(self._completion) > 0:
+            results.append(self._completion)
+
+        msg = self._messages[-1]
+        if msg["role"] == "assistant" or msg["role"] == "function":
+            results.append(msg.get("content"))
+        return "\n".join(results)
 
     def get_last_user_message_or_function_result(self):
         res = None

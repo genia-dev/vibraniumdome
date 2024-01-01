@@ -101,8 +101,7 @@ Vibranium shields are the core of the Vibranium Dome layer of defences, and they
 * [X] Regex Input shield
 * [X] Prompt safety moderation shield
 * [X] PII and Sensetive information disclosure shield
-* [X] Arbitrary Images Shield
-* [X] White List URLs Shield
+* [X] No IP in URLs
 * [ ] Secret prompt detection shield
 * [ ] Bad URLs shield
 
@@ -112,6 +111,8 @@ Vibranium shields are the core of the Vibranium Dome layer of defences, and they
 * [X] Model refusal shield
 * [X] PII and Sensetive information disclosure shield
 * [X] Regex output shield
+* [X] Arbitrary Images Shield
+* [X] White List URLs Shield
 * [ ] Language detection shield
 * [ ] Code completion shield
 * [ ] Markdown completion shield

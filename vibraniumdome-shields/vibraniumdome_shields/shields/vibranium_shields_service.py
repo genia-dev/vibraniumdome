@@ -8,6 +8,7 @@ from vibraniumdome_shields.settings_loader import settings
 from vibraniumdome_shields.shields.input.arbitrary_images_shield import ArbitraryImagesShield
 from vibraniumdome_shields.shields.input.captains_shield import CaptainsShield
 from vibraniumdome_shields.shields.input.model_denial_of_service_shield import ModelDenialOfServiceShield
+from vibraniumdome_shields.shields.input.no_ip_in_urls_shield import NoIPInURLsShield
 from vibraniumdome_shields.shields.input.prompt_injection_transformer_shield import PromptInjectionTransformerShield
 from vibraniumdome_shields.shields.input.prompt_safety_shield import PromptSafetyShield
 from vibraniumdome_shields.shields.input.regex_shield import InputRegexShield
@@ -45,8 +46,7 @@ class VibraniumShieldsFactory:
                 PromptSafetyShield(),
                 SensitiveInformationDisclosureShieldInput(),
                 ModelDenialOfServiceShield(),
-                ArbitraryImagesShield(),
-                WhitelistURLsShield(),
+                NoIPInURLsShield(),
             ]
         }
 
@@ -57,6 +57,8 @@ class VibraniumShieldsFactory:
                 RefusalShield(settings.get("vibraniumdome_shields.refusal_model_name")),
                 CanaryTokenDisclosureShield(),
                 SensitiveInformationDisclosureShieldOutput(),
+                ArbitraryImagesShield(),
+                WhitelistURLsShield(),
             ]
         }
 

@@ -1,8 +1,8 @@
 import logging
 import re
+import urllib.parse
 from typing import List
 from uuid import UUID
-from urllib.parse import urlparse
 
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
@@ -26,7 +26,7 @@ class WhitelistURLsShield(VibraniumShield):
         if len(urls) > 0:
             self._logger.debug("found urls in the prompt %s", urls)
             for url in urls:
-                domain = urlparse(url).netloc
+                domain = urllib.parse.urlparse(url).hostname
                 if domain not in policy_domains:
                     self._logger.debug("domain url: %s, does not exist in policy domains %s", domain, policy_domains)
                     shield_matches.append(WhitelistURLsShieldDeflectionResult(matches=[domain], risk=1))
@@ -34,7 +34,7 @@ class WhitelistURLsShield(VibraniumShield):
             shield_matches.append(WhitelistURLsShieldDeflectionResult(matches=urls))
 
     def _get_message_to_validate(self, llm_interaction: LLMInteraction):
-        return llm_interaction.get_all_user_messages_or_function_results()
+        return llm_interaction.get_last_assistant_message_and_function_result()
 
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         llm_message = self._get_message_to_validate(llm_interaction)

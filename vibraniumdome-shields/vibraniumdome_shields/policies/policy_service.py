@@ -34,13 +34,15 @@ class PolicyService:
                     {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.input.sensitive_info_disc", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.input.model_dos", "metadata": {"threshold": 10, "interval_sec": 60, "limit_by": "llm.user"}},
-                    {"type": "com.vibraniumdome.shield.input.banned_ip", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}},
                 ],
                 "output_shields": [
                     {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "name": "credit card"},
                     {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.output.refusal.canary_token_disc", "metadata": {"canary_tokens": []}},
                     {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.output.arbitrary_image", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.output.whitelist_urls", "metadata": {}},
                 ],
             },
         }

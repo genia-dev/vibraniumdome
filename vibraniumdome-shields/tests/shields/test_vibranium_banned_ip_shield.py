@@ -1,17 +1,17 @@
 import unittest
-from vibraniumdome_shields.shields.input.banned_ip_shield import BannedIpShield
+from vibraniumdome_shields.shields.input.no_ip_in_urls_shield import NoIPInURLsShield
 from vibraniumdome_shields.policies.policy_service import PolicyService
 
 from vibraniumdome_shields.shields.model import LLMInteraction
 
 
 class TestVibraniumBannedIpShield(unittest.TestCase):
-    _shield: BannedIpShield = None
+    _shield: NoIPInURLsShield = None
     _scan_id = 1
     _full_policy: dict
 
     def setUp(self):
-        self._shield = BannedIpShield()
+        self._shield = NoIPInURLsShield()
         self._full_policy = PolicyService("mock_key")._get_default_policy()
 
     def create_interaction_from_string(self, str):
