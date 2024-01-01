@@ -34,6 +34,7 @@ class PolicyService:
                     {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.input.sensitive_info_disc", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.input.model_dos", "metadata": {"threshold": 10, "interval_sec": 60, "limit_by": "llm.user"}},
+                    {"type": "com.vibraniumdome.shield.input.banned_ip", "metadata": {}},
                 ],
                 "output_shields": [
                     {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "name": "credit card"},
