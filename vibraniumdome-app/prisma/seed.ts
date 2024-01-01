@@ -19,9 +19,7 @@ const defaultPolicy = {
       "output_shields": [
           {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}},
           {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}},
-          {"type": "com.vibraniumdome.shield.output.refusal.canary_token_disc", "metadata": {"canary_tokens": []}},
-          {"type": "com.vibraniumdome.shield.input.arbitrary_image", "metadata": {}},
-          {"type": "com.vibraniumdome.shield.input.whitelist_urls", "metadata": {}},    
+          {"type": "com.vibraniumdome.shield.output.canary_token_disc", "metadata": {"canary_tokens": []}},
           {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": {}},
           {"type": "com.vibraniumdome.shield.output.arbitrary_image", "metadata": {}},
           {"type": "com.vibraniumdome.shield.output.whitelist_urls", "metadata": {}},

@@ -40,7 +40,7 @@ class TestVibraniumShieldsIT(unittest.TestCase):
                 "output_shields": [
                     {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "name": "credit card"},
                     {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.output.refusal.canary_token_disc", "metadata": {"canary_tokens": []}},
+                    {"type": "com.vibraniumdome.shield.output.canary_token_disc", "metadata": {"canary_tokens": []}},
                     {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": {}},
                 ],
             },

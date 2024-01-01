@@ -12,7 +12,7 @@ class CanaryTokenDisclosureShieldDeflectionResult(ShieldDeflectionResult):
 
 class CanaryTokenDisclosureShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "com.vibraniumdome.shield.output.refusal.canary_token_disc"
+    _shield_name: str = "com.vibraniumdome.shield.output.canary_token_disc"
 
     def __init__(self):
         super().__init__(self._shield_name)
