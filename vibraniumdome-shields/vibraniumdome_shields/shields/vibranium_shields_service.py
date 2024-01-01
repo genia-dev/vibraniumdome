@@ -13,6 +13,7 @@ from vibraniumdome_shields.shields.input.prompt_safety_shield import PromptSafet
 from vibraniumdome_shields.shields.input.regex_shield import InputRegexShield
 from vibraniumdome_shields.shields.input.sensitive_information_disclosoure_shield import SensitiveInformationDisclosureShieldInput
 from vibraniumdome_shields.shields.input.semantic_similarity_shield import SemanticSimilarityShield
+from vibraniumdome_shields.shields.input.whitelist_urls_shield import WhitelistURLsShield
 from vibraniumdome_shields.shields.model import LLMInteraction, Risk, ShieldDeflectionResult, ShieldsDeflectionResult, VibraniumShield
 from vibraniumdome_shields.shields.output.canary_token_disclosoure_shield import CanaryTokenDisclosureShield
 from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield
@@ -45,6 +46,7 @@ class VibraniumShieldsFactory:
                 SensitiveInformationDisclosureShieldInput(),
                 ModelDenialOfServiceShield(),
                 ArbitraryImagesShield(),
+                WhitelistURLsShield(),
             ]
         }
 
