@@ -2,7 +2,10 @@
 
 ## Run locally
 ```
-pip3 install streamlit openai==0.28.1 vibraniumdome-sdk 
+pip3 install virtualenv
+python3 -m venv ~/.venv
+source ~/.venv/bin/activate
+pip3 install vibraniumdome-sdk openai==0.28.1 streamlit termcolor bs4
 streamlit run streamlit_app.py
 ```
 
