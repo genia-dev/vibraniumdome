@@ -13,7 +13,7 @@ class WhitelistURLsShieldDeflectionResult(ShieldDeflectionResult):
 
 class WhitelistURLsShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "com.vibraniumdome.shield.input.whitelist_urls"
+    _shield_name: str = "com.vibraniumdome.shield.output.whitelist_urls"
     _default_pattern = re.compile(r"(?i)\b(?:https?|ftp):\/\/[-A-Z0-9+&@#/%=~_|$?!:,.]*\b")
 
     def __init__(self):

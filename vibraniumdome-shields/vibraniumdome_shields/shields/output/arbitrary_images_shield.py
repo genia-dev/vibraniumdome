@@ -13,7 +13,7 @@ class ArbitraryImagesShieldDeflectionResult(ShieldDeflectionResult):
 
 class ArbitraryImagesShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
-    _shield_name: str = "com.vibraniumdome.shield.input.arbitrary_image"
+    _shield_name: str = "com.vibraniumdome.shield.output.arbitrary_image"
     _default_pattern = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\.(?:png|jpg|jpeg|gif|bmp|svg)")
 
     def __init__(self):
