@@ -30,7 +30,6 @@ class NoIPInURLsShield(VibraniumShield):
                 if ipaddress.ip_address(domain):
                     shield_matches.append(NoIPInURLsDeflectionResult(matches=[domain], risk=1))
             except ValueError:
-                self._logger.exception("Failed to perform BannedIpShield, scan_id=%d", scan_id)
                 continue
         if len(shield_matches) == 0:
             shield_matches.append(NoIPInURLsDeflectionResult(matches=[], risk=0))
