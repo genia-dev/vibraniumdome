@@ -39,7 +39,11 @@ class VibraniumShieldsFactory:
         self._input_shields = {
             shield._shield_name: shield
             for shield in [
-                SemanticSimilarityShield(self._vector_db_service),
+                SemanticSimilarityShield(
+                    self._vector_db_service,
+                    settings.get("vibraniumdome_shields.semantic_similarity.min_prompt_len"),
+                    settings.get("vibraniumdome_shields.semantic_similarity.default_thresold"),
+                ),
                 InputRegexShield(),
                 CaptainsShield(settings.get("OPENAI_API_KEY")),
                 PromptInjectionTransformerShield(settings.get("vibraniumdome_shields.transformer_model_name")),
@@ -113,17 +117,19 @@ class CaptainLLM:
 
     def _calculate_risk(self, shield_deflection_result: ShieldsDeflectionResult, policy: dict):
         calculated_risk = 0
-        hrt = settings.get("vibraniumdome_shields.high_risk_threshold")
-        lrt = settings.get("vibraniumdome_shields.low_risk_threshold")
+        hrt = policy.get("content", {}).get("high_risk_threshold", settings.get("vibraniumdome_shields.high_risk_threshold"))
+        lrt = policy.get("content", {}).get("low_risk_threshold", settings.get("vibraniumdome_shields.low_risk_threshold"))
         for shield_name, matches in shield_deflection_result.results.items():
             for match in matches:
                 calculated_risk = max(calculated_risk, match.risk)
+                if match.risk >= hrt:
+                    shield_deflection_result.high_risk_shields.add(shield_name)
 
         self._logger.debug("calculated risk for scan_id=%s is %d", shield_deflection_result.scan_id, calculated_risk)
         shield_deflection_result.risk_factor = calculated_risk
-        if calculated_risk > policy.get("content", {}).get("high_risk_threshold", hrt):
+        if calculated_risk >= hrt:
             shield_deflection_result.risk = Risk.HIGH
-        elif calculated_risk < policy.get("content", {}).get("low_risk_threshold", lrt):
+        elif calculated_risk < lrt:
             shield_deflection_result.risk = Risk.NONE
         else:
             shield_deflection_result.risk = Risk.LOW

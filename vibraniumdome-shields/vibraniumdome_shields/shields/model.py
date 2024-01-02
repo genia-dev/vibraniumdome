@@ -26,6 +26,7 @@ class ShieldsDeflectionResult(BaseModel):
     results: Dict[str, List[ShieldDeflectionResult]] = {}
     risk: Risk = Risk.NONE
     risk_factor: float = 0
+    high_risk_shields: Set[str] = set()
 
     def merge(this, that: BaseModel):
         this.risk_factor = max(this.risk_factor, that.risk_factor)
@@ -73,18 +74,6 @@ class LLMInteraction:
 
     def get_llm_app(self):
         return self._llm_app
-
-    def get_last_function_call(self):
-        messages_reverse = self._messages[::-1]
-        res = None
-        for index, msg in enumerate(self._messages):
-            if msg["role"] == "assistant" and msg.get("function_call") is not None:
-                res = msg["function_call"].get("name")
-                break
-            elif msg["role"] == "function":
-                res = msg.get("name")
-                break
-        return res
 
     def get_previous_function_calls(self) -> Set:
         res = set()

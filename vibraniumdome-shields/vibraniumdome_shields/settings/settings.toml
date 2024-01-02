@@ -23,6 +23,8 @@ cache_embeddings=false
 app="server"
 high_risk_threshold=0.8
 low_risk_threshold=0.2
+semantic_similarity.min_prompt_len=10
+semantic_similarity.default_thresold=0.34
 # false for sync or true for async
 # execution_mode_async=true
 transformer_model_name="deepset/deberta-v3-base-injection"

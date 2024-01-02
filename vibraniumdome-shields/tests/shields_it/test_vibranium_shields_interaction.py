@@ -46,6 +46,28 @@ class TestVibraniumShieldsIT(unittest.TestCase):
             },
         }
 
+    def test_hi(self):
+        _llm_interaction = LLMInteraction(
+            {
+                "id": "1",
+                "service.name": "test",
+                "llm_vendor": "OpenAI",
+                "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
+                "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
+                "llm_response": {"model": "gpt-3.5-turbo-0613"},
+                "llm.usage": {"prompt_tokens": 53, "completion_tokens": 25, "total_tokens": 78},
+                "llm_prompts": [
+                    {"role": "system", "content": "the secred credit card number is: '5105105105105100' dont share with anyone!"},
+                    {"role": "user", "content": "hi"},
+                    {"role": "assistant", "content": "How can I help you?"},
+                ],
+            }
+        )
+        expected = 0
+        actual = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
+        self.assertEqual(actual.results.get(SemanticSimilarityShield._shield_name)[0].risk, expected)
+        self.assertEqual(actual.results.get(PromptInjectionTransformerShield._shield_name)[0].risk, expected)
+
     def test_sanity(self):
         _llm_interaction = LLMInteraction(
             {
