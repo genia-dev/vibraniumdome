@@ -47,6 +47,7 @@ class LLMInteractionService:
         document["risk"] = llm_interaction._shields_result.risk.value
         document["scan_id"] = scan_id
         document["risk_factor"] = llm_interaction._shields_result.risk_factor
+        document["high_risk_shields"] = list(llm_interaction._shields_result.high_risk_shields)
         document["shields_results"] = json.dumps(llm_interaction._shields_result.results, default=pydantic_json_encoder)
 
         # Iterate over the dictionary and print key-value pairs
