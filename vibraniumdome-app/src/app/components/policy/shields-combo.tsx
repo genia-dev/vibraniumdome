@@ -33,7 +33,7 @@ export function ShieldsCombobox({ shields, policyMetadata }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[500px] justify-between"
+          className="w-full justify-between"
         >
           {lastShield
           //@ts-ignore

@@ -70,7 +70,7 @@ export function CreateShieldDialog({
         <Button>{title}</Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[825px]">
+      <DialogContent className="sm:max-w-[825px] p-10">
         <DialogHeader>
           <DialogTitle>Add shield</DialogTitle>
           <DialogDescription>
@@ -79,25 +79,28 @@ export function CreateShieldDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4"></div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">
+            <Label className="col-span-1 text-right">
               Shield
             </Label>
-            <ShieldsCombobox
-              shields={shields}
-              policyMetadata={policyMetadata}
-            />
+            <div className="col-span-3">
+              <ShieldsCombobox
+                shields={shields}
+                policyMetadata={policyMetadata}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">
-                Shield Metadata
-                </Label>
-                <Textarea className="col-span-3" 
-                            value={ lastShieldMetadata }
-                            onChange={setValueChange}
-                            placeholder="" />
+            <Label className="col-span-1 text-right">
+              Shield Metadata
+            </Label>
+            <div className="col-span-3">
+              <Textarea className="col-span-3" 
+                          value={ lastShieldMetadata }
+                          onChange={setValueChange}
+                          placeholder="" />
             </div>
+          </div>
         </div>
         <DialogFooter>
           <Button type="submit" onClick={saveChanges}>
