@@ -39,7 +39,7 @@ class PolicyService:
                         "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"},
                         "full_name": "Captain's shield",
                     },
-                    {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}, "full_name": " Semantic vector similarity shield"},
+                    {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}, "full_name": "Semantic vector similarity shield"},
                     {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "full_name": "Regex input shield"},
                     {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}, "full_name": "Prompt safety moderation shield"},
                     {
