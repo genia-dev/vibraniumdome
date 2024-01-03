@@ -98,21 +98,21 @@ Vibranium shields are the core of the Vibranium Dome layer of defences, and they
 * [X] Model denial of service shield
 * [X] Captain's shield
 * [X] Semantic vector similarity shield
-* [X] Regex Input shield
+* [X] Regex input shield
 * [X] Prompt safety moderation shield
 * [X] PII and Sensetive information disclosure shield
-* [X] No IP in URLs
+* [X] No IP in URLs shield
 * [ ] Secret prompt detection shield
 * [ ] Bad URLs shield
 
 #### Output shields
 
 * [X] Canary token disclosure shield
-* [X] Model refusal shield
+* [X] Model output refusal shield
 * [X] PII and Sensetive information disclosure shield
 * [X] Regex output shield
-* [X] Arbitrary Images Shield
-* [X] White List URLs Shield
+* [X] Arbitrary image domain URL shield
+* [X] White list domains URL shield
 * [ ] Language detection shield
 * [ ] Code completion shield
 * [ ] Markdown completion shield
