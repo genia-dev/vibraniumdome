@@ -1,4 +1,4 @@
-import { policyRouter, getPolicyByLLMAppApi } from "~/server/api/routers/policy";
+import { policyRouter, getPolicyByLLMAppApi, getBasePolicy } from "~/server/api/routers/policy";
 import { membershipRouter } from "~/server/api/routers/membership";
 import { apiTokenRouter } from "~/server/api/routers/apitoken";
 import { createTRPCRouter } from "~/server/api/trpc";
@@ -13,6 +13,7 @@ export const appRouter = createTRPCRouter({
   membership: membershipRouter,
   apitoken: apiTokenRouter,
   policies: getPolicyByLLMAppApi,
+  base_policy: getBasePolicy,
 });
 
 // export type definition of API

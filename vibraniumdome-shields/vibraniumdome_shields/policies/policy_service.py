@@ -26,26 +26,62 @@ class PolicyService:
                 "shields_filter": "all",
                 "high_risk_threshold": 0.8,
                 "low_risk_threshold": 0.2,
+                "redact_conversation": False,
                 "input_shields": [
-                    {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "name": "policy number"},
-                    {"type": "com.vibraniumdome.shield.input.captain", "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"}},
-                    {"type": "com.vibraniumdome.shield.input.transformer", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.input.sensitive_info_disc", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.input.model_dos", "metadata": {"threshold": 10, "interval_sec": 60, "limit_by": "llm.user"}},
-                    {"type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}},
+                    {"type": "com.vibraniumdome.shield.input.transformer", "metadata": {}, "full_name": "Prompt injection transformer shield"},
+                    {
+                        "type": "com.vibraniumdome.shield.input.model_dos",
+                        "metadata": {"threshold": 10, "interval_sec": 60, "limit_by": "llm.user"},
+                        "full_name": "Model denial of service shield",
+                    },
+                    {
+                        "type": "com.vibraniumdome.shield.input.captain",
+                        "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"},
+                        "full_name": "Captain's shield",
+                    },
+                    {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}, "full_name": " Semantic vector similarity shield"},
+                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "full_name": "Regex input shield"},
+                    {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}, "full_name": "Prompt safety moderation shield"},
+                    {
+                        "type": "com.vibraniumdome.shield.input.sensitive_info_disc",
+                        "metadata": {},
+                        "full_name": "PII and Sensetive information disclosure shield",
+                    },
+                    {"type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}, "full_name": "No IP in URLs shield"},
                 ],
                 "output_shields": [
-                    {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "name": "credit card"},
-                    {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.output.canary_token_disc", "metadata": {"canary_tokens": []}},
-                    {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.output.arbitrary_image", "metadata": {}},
-                    {"type": "com.vibraniumdome.shield.output.whitelist_urls", "metadata": {}},
+                    {
+                        "type": "com.vibraniumdome.shield.output.refusal.canary_token_disc",
+                        "metadata": {"canary_tokens": []},
+                        "full_name": "Canary token disclosure shield",
+                    },
+                    {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}, "full_name": "Model output refusal shield"},
+                    {
+                        "type": "com.vibraniumdome.shield.output.sensitive_info_disc",
+                        "metadata": {},
+                        "full_name": "PII and sensetive information disclosure shield",
+                    },
+                    {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "full_name": "Regex output shield"},
+                    {"type": "com.vibraniumdome.shield.output.arbitrary_image", "metadata": {}, "full_name": "Arbitrary image domain URL shield"},
+                    {"type": "com.vibraniumdome.shield.output.whitelist_urls", "metadata": {}, "full_name": "White list domains URL shield"},
                 ],
             },
         }
+
+    def get_base_policy(self) -> dict:
+        full_url = f"{self._vibranium_dome_base_url}/api/trpc/base_policy"
+        headers = {"Authorization": f"Bearer {self._vibranium_dome_api_key}"}
+        try:
+            response = requests.get(full_url, headers=headers)
+            if response.ok:
+                response_data = response.json()
+                result = response_data["result"]["data"]["json"]
+                self._logger.debug("policy: %s", result)
+        except Exception:
+            self._logger.exception("failed loading base policy")
+            result = self._get_default_policy()
+
+        return result
 
     def get_policy_by_name(self, llm_app_name) -> dict:
         encoded_input_json = quote(json.dumps({"0": {"json": {"llmAppName": llm_app_name}}}))
@@ -57,7 +93,7 @@ class PolicyService:
             if response.ok:
                 response_data = response.json()
                 json_content = response_data[0]["result"]["data"]["json"]
-                self._logger.info("policy: %s", json_content)
+                self._logger.debug("policy: %s", json_content)
                 result = json_content
         except Exception:
             self._logger.exception("failed loading policy %s", llm_app_name)

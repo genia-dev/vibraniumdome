@@ -33,6 +33,11 @@ const defaultPolicy = {
   ],
 }
 
+export const getBasePolicy = protectedProcedure
+.query(async ({ ctx }) => {
+  return defaultPolicy
+})
+
 export const getPolicyByLLMAppApi = protectedProcedure
 .input(z.object({ llmApp: z.string().min(1) }))
 .query(async ({ ctx, input }) => {
