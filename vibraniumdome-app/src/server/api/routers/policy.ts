@@ -10,7 +10,7 @@ import {
 /*
 NOTE: FOUND ALSO IN prisma/seed.ts
 */
-const defaultPolicy = {
+const basePolicy = {
   "shields_filter": "all",
   "high_risk_threshold": 0.8,
   "low_risk_threshold": 0.2,
@@ -37,7 +37,7 @@ const defaultPolicy = {
 
 export const getBasePolicy = protectedProcedure
 .query(async ({ ctx }) => {
-  return defaultPolicy
+  return basePolicy
 })
 
 export const getPolicyByLLMAppApi = protectedProcedure
@@ -197,7 +197,7 @@ export const policyRouter = createTRPCRouter({
   }),
 
   getBasePolicy: protectedProcedure.query(async ({ ctx }) => {
-    return defaultPolicy
+    return basePolicy
   }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
