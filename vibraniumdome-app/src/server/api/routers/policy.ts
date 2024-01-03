@@ -21,15 +21,16 @@ const defaultPolicy = {
       {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}, "full_name": "Prompt Safety"},
       {"type": "com.vibraniumdome.shield.input.sensitive_info_disc", "metadata": {}, "full_name": "Sensitive Info Disclosure"},
       {"type": "com.vibraniumdome.shield.input.arbitrary_image", "metadata": {}, "full_name": "Arbitrary Image"},
-      {"type": "com.vibraniumdome.shield.input.whitelist_urls", "metadata": {}, "full_name": "Whitelist URLs"},
       {"type": "com.vibraniumdome.shield.input.model_dos", "metadata": {"threshold": 10, "interval_sec": 60, "limit_by": "llm.user"}, "full_name": "Model Denial Of Service"},
-      {"type": "com.vibraniumdome.shield.input.banned_ip", "metadata": {}, "full_name": "Banned IP"},
+      {"type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}, "full_name": "No IP in URLs"},
   ],
   "output_shields": [
       {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "full_name": "Regex"},
       {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}, "full_name": "Model Refusal"},
       {"type": "com.vibraniumdome.shield.output.refusal.canary_token_disc", "metadata": {"canary_tokens": []}, "full_name": "Canary Token Disclosure"},
       {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": {}, "full_name": "Sensitive Info Disclosure"},
+      {"type": "com.vibraniumdome.shield.output.arbitrary_image", "metadata": {}, "full_name": "Arbitrary Image"},
+      {"type": "com.vibraniumdome.shield.output.whitelist_urls", "metadata": {}, "full_name": "Whitelist URLs"},
   ],
 }
 
