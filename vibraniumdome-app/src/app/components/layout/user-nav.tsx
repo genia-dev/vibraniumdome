@@ -22,7 +22,7 @@ export function UserNav({ user }: Props) {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="relative rounded">
-                    <span className="text-lg">{user.name}</span>
+                    <span className="text-base">{user.name}</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
