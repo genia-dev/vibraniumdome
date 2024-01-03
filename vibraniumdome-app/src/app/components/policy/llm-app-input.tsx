@@ -15,7 +15,7 @@ export function LLMAppInput({ state }) {
  return (<>
         <Input
           className="w-[180px]"
-          id="name"
+          id="llm-app-name"
           value={value}
           onChange={(e) => setLlmApp(e.target.value)}
         />

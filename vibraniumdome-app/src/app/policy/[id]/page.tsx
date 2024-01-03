@@ -75,11 +75,11 @@ export default async function CreatePolicyPage(props: Props) {
             <div className="grid w-full grid-cols-3 items-start gap-4">
               <div className="col-span-1 items-start">
               <div className="pt-2 pb-4 space-y-2">
-                  <Label htmlFor="policyName">Policy Name:</Label>
+                  <Label htmlFor="policy-name">Policy Name:</Label>
                   <PolicyInput state={policyName} />
                 </div>
                 <div className="pt-2 pb-4 space-y-2">
-                  <Label htmlFor="llmAppName">LLM App Name:</Label>
+                  <Label htmlFor="llm-app-name">LLM App Name:</Label>
                   <LLMAppInput state={llmApp}/>
                 </div>
               </div>

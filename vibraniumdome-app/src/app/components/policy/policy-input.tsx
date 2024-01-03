@@ -15,7 +15,7 @@ export function PolicyInput({ state }) {
         <>
         <Input
           className="w-[180px]"
-          id="name"
+          id="policy-name"
           defaultValue={value}
           onChange={(e) => setPolicyName(e.target.value)}
         />
