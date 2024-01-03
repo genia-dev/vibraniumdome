@@ -216,7 +216,7 @@ export const policyRouter = createTRPCRouter({
         data: {
           name: "Default Policy",
           seq: -99,
-          llmApp: "Default Any",
+          llmApp: "default",
           content: defaultPolicy,
           createdBy: { connect: { id: membership?.teamId } },
         },
