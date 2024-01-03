@@ -40,14 +40,14 @@ class LLMInteractionService:
             document["last_prompt"] = "reducted"
         return document
 
-    def save_llm_interaction(self, llm_interaction: LLMInteraction, policy: dict):
-        # json_data = model_instance.json()
+    def save_llm_interaction(self, llm_interaction: LLMInteraction, policy: dict, shield_names: dict):
         document = llm_interaction._interaction
         scan_id = str(llm_interaction._shields_result.scan_id)
         document["risk"] = llm_interaction._shields_result.risk.value
         document["scan_id"] = scan_id
         document["risk_factor"] = llm_interaction._shields_result.risk_factor
         document["high_risk_shields"] = list(llm_interaction._shields_result.high_risk_shields)
+        document["high_risk_shield_names"] = [shield_names[key] for key in llm_interaction._shields_result.high_risk_shields]
         document["shields_results"] = json.dumps(llm_interaction._shields_result.results, default=pydantic_json_encoder)
 
         # Iterate over the dictionary and print key-value pairs

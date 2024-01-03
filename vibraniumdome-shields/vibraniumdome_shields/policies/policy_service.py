@@ -83,6 +83,10 @@ class PolicyService:
 
         return result
 
+    def get_shields_names(self) -> dict:
+        policy = self.get_base_policy()
+        return dict(map(lambda item: (item['type'], item['full_name']), policy["input_shields"] + policy["output_shields"]))
+
     def get_policy_by_name(self, llm_app_name) -> dict:
         encoded_input_json = quote(json.dumps({"0": {"json": {"llmAppName": llm_app_name}}}))
         full_url = f"{self._vibranium_dome_base_url}/api/trpc/policies?batch=1&input={encoded_input_json}"

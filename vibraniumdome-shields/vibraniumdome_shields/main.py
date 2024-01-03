@@ -81,9 +81,9 @@ def receive_traces():
     def process_traces(llm_interaction: LLMInteraction):
         try:
             policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service.name", "default"))
-            base_policy = policy_service.get_base_policy()
             llm_interaction._shields_result = captain_llm.deflect_shields(llm_interaction, policy)
-            interaction_service.save_llm_interaction(llm_interaction, policy)
+            shield_names = policy_service.get_shields_names()
+            interaction_service.save_llm_interaction(llm_interaction, policy, shield_names)
         except Exception:
             logger.exception("error while deflecting shields for interaction= %s with policy= %s", llm_interaction, policy)
 
