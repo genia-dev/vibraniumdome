@@ -39,7 +39,7 @@ export const getBasePolicy = protectedProcedure
 })
 
 export const getPolicyByLLMAppApi = protectedProcedure
-.input(z.object({ llmApp: z.string().min(1) }))
+.input(z.object({ llmAppName: z.string().min(1) }))
 .query(async ({ ctx, input }) => {
   const membership = await ctx.db.membership.findFirst({
     where: { userId: ctx.session.user?.id },
@@ -47,7 +47,7 @@ export const getPolicyByLLMAppApi = protectedProcedure
   var policy = await ctx.db.policy.findFirst({
     where: {
       createdById: membership?.teamId,
-      llmApp: input.llmApp,
+      llmApp: input.llmAppName,
     },
     select: {
       id: true,
@@ -60,6 +60,17 @@ export const getPolicyByLLMAppApi = protectedProcedure
   });
   
   if (!policy) {
+    await ctx.db.policy.create({
+      // @ts-ignore
+      data: {
+        name: "Default Policy",
+        seq: -99,
+        llmApp: "default",
+        content: defaultPolicy,
+        createdBy: { connect: { id: membership?.teamId } },
+      },
+    });
+    
     policy = await ctx.db.policy.findFirst({
       where: {
         seq: -99,
