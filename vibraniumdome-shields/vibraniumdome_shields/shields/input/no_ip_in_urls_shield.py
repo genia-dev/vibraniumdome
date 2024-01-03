@@ -21,7 +21,7 @@ class NoIPInURLsShield(VibraniumShield):
         super().__init__(self._shield_name)
 
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[NoIPInURLsDeflectionResult]:
-        llm_message = llm_interaction.get_last_assistant_message_and_function_result()
+        llm_message = llm_interaction.get_last_user_message_or_function_result()
         shield_matches = []
         urls = re.findall(self._url_pattern, llm_message)
         for url in urls:
