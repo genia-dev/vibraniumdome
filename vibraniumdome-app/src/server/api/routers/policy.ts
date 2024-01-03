@@ -7,7 +7,9 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-
+/*
+NOTE: FOUND ALSO IN prisma/seed.ts
+*/
 const defaultPolicy = {
   "shields_filter": "all",
   "high_risk_threshold": 0.8,
@@ -60,17 +62,6 @@ export const getPolicyByLLMAppApi = protectedProcedure
   });
   
   if (!policy) {
-    await ctx.db.policy.create({
-      // @ts-ignore
-      data: {
-        name: "Default Policy",
-        seq: -99,
-        llmApp: "default",
-        content: defaultPolicy,
-        createdBy: { connect: { id: membership?.teamId } },
-      },
-    });
-    
     policy = await ctx.db.policy.findFirst({
       where: {
         seq: -99,
@@ -215,32 +206,12 @@ export const policyRouter = createTRPCRouter({
       where: { userId: ctx.session.user.id },
     });
     
-    var policies = await ctx.db.policy.findMany({
+    const policies = await ctx.db.policy.findMany({
       orderBy: { createdAt: "desc" },
       where: { 
         createdBy: { id: membership?.teamId },
       },
     });
-
-    if (!policies || policies.length == 0) {
-      await ctx.db.policy.create({
-        // @ts-ignore
-        data: {
-          name: "Default Policy",
-          seq: -99,
-          llmApp: "default",
-          content: defaultPolicy,
-          createdBy: { connect: { id: membership?.teamId } },
-        },
-      });
-
-      policies = await ctx.db.policy.findMany({
-        orderBy: { createdAt: "desc" },
-        where: { 
-          createdBy: { id: membership?.teamId },
-        },
-      });
-    }
 
     return policies
   }),

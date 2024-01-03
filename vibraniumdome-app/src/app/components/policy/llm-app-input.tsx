@@ -8,13 +8,15 @@ import { llmAppAtom } from "~/app/state"
 
 //@ts-ignore
 export function LLMAppInput({ state }) {
- const [llmApp, setLlmApp] = useAtom(llmAppAtom, state)
+ const [llmApp, setLlmApp] = useAtom(llmAppAtom)
+ var value = llmApp !== '' ? llmApp: state
+ setLlmApp(value)
 
  return (<>
         <Input
           className="w-[180px]"
-          id="llmAppName"
-          value={llmApp}
+          id="name"
+          value={value}
           onChange={(e) => setLlmApp(e.target.value)}
         />
         </>)
