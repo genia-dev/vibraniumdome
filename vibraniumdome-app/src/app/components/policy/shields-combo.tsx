@@ -18,13 +18,14 @@ import {
 } from "~/app/components/ui/popover"
 
 import { useAtom } from 'jotai'
-import { lastShieldAtom } from "~/app/state"
+import { lastShieldAtom, lastShieldMetadataAtom } from "~/app/state"
 
 
 //@ts-ignore
-export function ShieldsCombobox({ shields }) {
+export function ShieldsCombobox({ shields, policyMetadata }) {
   const [open, setOpen] = React.useState(false)
   const [lastShield, setLastShieldAtom] = useAtom(lastShieldAtom)
+  const [lastShieldMetadata, setLastShieldMetadataAtom] = useAtom(lastShieldMetadataAtom)
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -53,8 +54,10 @@ export function ShieldsCombobox({ shields }) {
                 key={shield.key}
                 value={shield.value}
                 onSelect={(currentValue) => {
-                 setLastShieldAtom(currentValue)
-                 setOpen(false)
+                  const shieldMetadata = policyMetadata.find((shield) => shield.full_name.toLowerCase() === currentValue)
+                  setLastShieldMetadataAtom(JSON.stringify(shieldMetadata.metadata))
+                  setLastShieldAtom(currentValue)
+                  setOpen(false)
                 }}
               >
                 {shield.value}

@@ -11,11 +11,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/app/components/ui/dialog";
+import { Textarea } from "~/app/components/ui/textarea"
 import { Label } from "~/app/components/ui/label";
 import { ShieldsCombobox } from "~/app/components/policy/shields-combo";
 import { Info } from "lucide-react";
 import { useAtom } from 'jotai'
-import { inputShieldsAtom, outputShieldsAtom, lastShieldAtom } from "~/app/state"
+import { inputShieldsAtom, outputShieldsAtom, lastShieldAtom, lastShieldMetadataAtom } from "~/app/state"
 import { v4 as uuidv4 } from 'uuid';
 
 export type Policy = {
@@ -43,20 +44,26 @@ export function CreateShieldDialog({
   const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
   const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
   const [lastShield, setLastShieldAtom] = useAtom(lastShieldAtom)
-
-
+  const [lastShieldMetadata, setLastShieldMetadata] = useAtom(lastShieldMetadataAtom)
+  
   const saveChanges = () => {
     setOpen(false);
     const shield = policyMetadata.find((shield) => shield.full_name.toLowerCase() === lastShield)
     if (isinput) {
       //@ts-ignore
-      setInputShieldsAtom([...inputShields, {id: uuidv4(), shield: shield?.full_name}])
+      setInputShieldsAtom([...inputShields, {id: uuidv4(), shield: shield?.full_name, metadata: lastShieldMetadata}])
     } else {
       //@ts-ignore
-      setOutputShieldsAtom([...outputShields, {id: uuidv4(), shield: shield?.full_name}])
+      setOutputShieldsAtom([...outputShields, {id: uuidv4(), shield: shield?.full_name, metadata: lastShieldMetadata}])
     }
+    setLastShieldAtom('')
   };
 
+  //@ts-ignore
+  const setValueChange = async (e) => {
+    setLastShieldMetadata(e.target.value)
+  }
+  
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -74,13 +81,23 @@ export function CreateShieldDialog({
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4"></div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="llmAppName" className="text-right">
+            <Label className="text-right">
               Shield
             </Label>
             <ShieldsCombobox
               shields={shields}
+              policyMetadata={policyMetadata}
             />
           </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">
+                Shield Metadata
+                </Label>
+                <Textarea className="col-span-3" 
+                            value={ lastShieldMetadata }
+                            onChange={setValueChange}
+                            placeholder="" />
+            </div>
         </div>
         <DialogFooter>
           <Button type="submit" onClick={saveChanges}>

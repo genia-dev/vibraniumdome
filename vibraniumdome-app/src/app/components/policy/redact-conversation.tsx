@@ -17,12 +17,16 @@ import { redactConversationAtom } from "~/app/state"
 
 //@ts-ignore
 export function RedactConversation({ state }) {
-  const [redactConversation, setRedactConversation] = useAtom(redactConversationAtom)
+  const [redactConversation, setRedactConversation] = useAtom(redactConversationAtom, state)
+
+  const setValueChange = async (value: string) => {
+    setRedactConversation(value == "yes" ? true : false)
+  }
 
   return (
     <Select name="redact-conversation" 
-            onValueChange={setRedactConversation}
-            value={redactConversation || state === true ? "yes" : "no"}>
+            onValueChange={setValueChange}
+            value={redactConversation === true ? "yes" : "no"}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="select..." />
       </SelectTrigger>

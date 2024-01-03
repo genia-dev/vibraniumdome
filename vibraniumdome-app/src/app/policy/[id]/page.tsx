@@ -57,7 +57,7 @@ export default async function CreatePolicyPage(props: Props) {
   var highRiskThreshold = currentPolicy?.content?.high_risk_threshold
   var shieldsFilter = currentPolicy?.content?.shields_filter
   var redactConversation = currentPolicy?.content?.redact_conversation
-
+  
   const input = currentPolicy?.content?.input_shields.map((shield) => {
     return {key: uuidv4(), shield: shield.full_name }
   });
@@ -151,7 +151,7 @@ export default async function CreatePolicyPage(props: Props) {
         </div>
       </div>
       <div className="mx-6 mb-6">
-        <CreateUpdatePolicyButton policyId={policyId}/>
+        <CreateUpdatePolicyButton policyId={policyId} policyMetadata={basePolicy}/>
       </div>
     </>
   );

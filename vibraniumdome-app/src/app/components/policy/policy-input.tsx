@@ -7,17 +7,14 @@ import { policyNameAtom } from "~/app/state"
 
 //@ts-ignore
 export function PolicyInput({ state }) {
- const [policyName, setPolicyName] = useAtom(policyNameAtom)
- const value = policyName ? policyName : state??""
- 
- setPolicyName(value)
+ const [policyName, setPolicyName] = useAtom(policyNameAtom, state)
 
  return (
         <>
         <Input
           className="w-[180px]"
           id="name"
-          value={value}
+          value={policyName}
           onChange={(e) => setPolicyName(e.target.value)}
         />
         </>

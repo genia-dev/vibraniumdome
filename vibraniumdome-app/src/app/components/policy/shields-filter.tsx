@@ -17,11 +17,11 @@ import { shieldsFilterAtom } from "~/app/state"
 
 //@ts-ignore
 export function ShieldsFilter({ state }) {
-  const [shieldsFilter, setShieldsFilter] = useAtom(shieldsFilterAtom)
+  const [shieldsFilter, setShieldsFilter] = useAtom(shieldsFilterAtom, state)
   return (
     <Select name="shields-filter"
             onValueChange={setShieldsFilter}
-            value={shieldsFilter || state}>
+            value={shieldsFilter}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="select..." />
       </SelectTrigger>

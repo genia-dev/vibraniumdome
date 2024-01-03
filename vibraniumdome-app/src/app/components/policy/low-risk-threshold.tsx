@@ -10,8 +10,7 @@ import { lowRiskThresholdAtom } from "~/app/state"
 
 //@ts-ignore
 export function LowRiskThreshold({ state }) {
-  const [lowRiskThreshold, setLowRiskThreshold] = useAtom(lowRiskThresholdAtom)
-  const value = lowRiskThreshold ? lowRiskThreshold : state??0.4
+  const [lowRiskThreshold, setLowRiskThreshold] = useAtom(lowRiskThresholdAtom, state)
 
   const setValueChange = async (value: number[]) => {
     setLowRiskThreshold(value[0])
@@ -20,14 +19,13 @@ export function LowRiskThreshold({ state }) {
   return (
     <>
       <Label htmlFor="low-risk-threshold">
-        Low risk threshold: {value}
+        Low risk threshold: {lowRiskThreshold}
       </Label>
       <Slider
         id="low-risk-threshold"
         onValueChange={setValueChange}
-        value={[value]}
         className="w-[60%]"
-        defaultValue={[value]}
+        defaultValue={[lowRiskThreshold]}
         max={1}
         step={0.1}
       />

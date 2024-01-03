@@ -18,7 +18,7 @@ import { policyNameAtom,
         } from "~/app/state"
 
 //@ts-ignore
-export function CreateUpdatePolicyButton({ policyId }) {
+export function CreateUpdatePolicyButton({ policyId, policyMetadata }) {
  const router = useRouter();
 
  const policyName = useAtomValue(policyNameAtom)
@@ -29,46 +29,66 @@ export function CreateUpdatePolicyButton({ policyId }) {
  const redactConversation = useAtomValue(redactConversationAtom)
  const inputShields = useAtomValue(inputShieldsAtom)
  const outputShields = useAtomValue(outputShieldsAtom)
-
+ 
  const createPolicy = api.policy.create.useMutation({
-  onSuccess: () => {
-    router.push("/policies");
-    router.refresh();
-  },
-});
+    onSuccess: () => {
+      router.push("/policies");
+      router.refresh();
+    },
+ });
 
-const updatePolicy = api.policy.update.useMutation({
-  onSuccess: () => {
-    router.push("/policies");
-    router.refresh();
-  },
-});
+  const updatePolicy = api.policy.update.useMutation({
+    onSuccess: () => {
+      router.push("/policies");
+      router.refresh();
+    },
+  });
 
- const createUpdatePolicyButton = async () => {
+  const createUpdatePolicyButton = async () => {
 
-  const basePolicy = {
-    shields_filter: shieldsFilter,
-    high_risk_threshold: highRiskThreshold,
-    low_risk_threshold: lowRiskThreshold,
-    redact_conversation: redactConversation,
-    input_shields: [],
-    output_shields: [],
-  };
-
-  if (!policyId) {
-    await createPolicy.mutate({
-      name: policyName,
-      llmApp: llmApp,
-      content: JSON.stringify(basePolicy),
+    const inputShieldsArray = inputShields.map(item => {
+      const shield = policyMetadata.input_shields.find(
+        (shield) => {
+          return shield.full_name.toLowerCase() == item.shield.toLowerCase()
+        })
+      if (item['metadata'] !== undefined) {
+        //@ts-ignore
+        shield.metadata = JSON.parse(item.metadata)
+      }
+      return shield;
     });
-  } else {
-    await updatePolicy.mutate({
-      id: policyId,
-      name: policyName,
-      llmApp: llmApp,
-      content: JSON.stringify(basePolicy),
+
+    const outputShieldsArray = outputShields.map(item => {
+      const shield = policyMetadata.output_shields.find(
+        (shield) => {
+          return shield.full_name.toLowerCase() === item.shield.toLowerCase()
+        })
+      return shield;
     });
-  }
+
+    const basePolicy = {
+      shields_filter: shieldsFilter,
+      high_risk_threshold: highRiskThreshold,
+      low_risk_threshold: lowRiskThreshold,
+      redact_conversation: redactConversation,
+      input_shields: inputShieldsArray,
+      output_shields: outputShieldsArray,
+    };
+
+    if (!policyId) {
+      await createPolicy.mutate({
+        name: policyName,
+        llmApp: llmApp,
+        content: JSON.stringify(basePolicy),
+      });
+    } else {
+      await updatePolicy.mutate({
+        id: policyId,
+        name: policyName,
+        llmApp: llmApp,
+        content: JSON.stringify(basePolicy),
+      });
+    }
 };
 
 

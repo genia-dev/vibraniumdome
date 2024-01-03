@@ -62,7 +62,8 @@ export const getPolicyByLLMAppApi = protectedProcedure
   if (!policy) {
     policy = await ctx.db.policy.findFirst({
       where: {
-        seq: -99
+        seq: -99,
+        createdById: membership?.teamId,
       },
       select: {
         id: true,
