@@ -14,12 +14,9 @@ import {
 import { Label } from "~/app/components/ui/label";
 import { ShieldsCombobox } from "~/app/components/policy/shields-combo";
 import { Info } from "lucide-react";
-
-import { useDispatch } from "react-redux";
-import { addInputShield, addOutputShield } from "~/app/store/actions";
-
+import { useAtom } from 'jotai'
+import { inputShieldsAtom, outputShieldsAtom, lastShieldAtom } from "~/app/state"
 import { v4 as uuidv4 } from 'uuid';
-
 
 export type Policy = {
   id: string;
@@ -29,27 +26,34 @@ export type Policy = {
   createdAt: string;
 };
 
-export type CreateShieldDialogProps = {
+export type Props = {
   isinput: boolean;
   title: string;
   shields: { key: string; value: string }[];
+  policyMetadata: { type: string; full_name: string }[];
 };
 
 export function CreateShieldDialog({
   isinput,
   title,
   shields,
-}: CreateShieldDialogProps) {
+  policyMetadata,
+}: Props) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const dispatch = useDispatch();
+  const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
+  const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
+  const [lastShield, setLastShieldAtom] = useAtom(lastShieldAtom)
+
 
   const saveChanges = () => {
     setOpen(false);
+    const shield = policyMetadata.find((shield) => shield.full_name.toLowerCase() === lastShield)
     if (isinput) {
-      dispatch(addInputShield({id: uuidv4(), shield: value}));
+      //@ts-ignore
+      setInputShieldsAtom([...inputShields, {id: uuidv4(), shield: shield?.full_name}])
     } else {
-      dispatch(addOutputShield({id: uuidv4(), shield: value}));
+      //@ts-ignore
+      setOutputShieldsAtom([...outputShields, {id: uuidv4(), shield: shield?.full_name}])
     }
   };
 
@@ -74,8 +78,6 @@ export function CreateShieldDialog({
               Shield
             </Label>
             <ShieldsCombobox
-              value={value}
-              setValue={setValue}
               shields={shields}
             />
           </div>

@@ -8,11 +8,13 @@ import { DataTable, Policy } from "~/app/components/policy/data-table";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 
+
 function transformToPolicyArray(jsonData: any[]): Policy[] {
   const policyArray: Policy[] = [];
   for (const item of jsonData) {
     const policy: Policy = {
       id: item.id,
+      seq: item.seq,
       name: item.name,
       llmAppName: item.llmApp,
       content: JSON.stringify(item.content),

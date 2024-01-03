@@ -32,16 +32,21 @@ import {
   TableRow,
 } from "~/app/components/ui/table";
 
-import { useDispatch } from "react-redux";
-import { removeInputShield, removeOutputShield } from "~/app/store/actions";
+import { useAtom } from 'jotai'
+import { inputShieldsAtom, outputShieldsAtom } from "~/app/state"
 
 export type Shield = {
   id: string;
   shield: string;
 };
 
-export const columns: ColumnDef<Shield>[] = [
-  {
+
+//@ts-ignore
+export const createColumns = (isinput: boolean): ColumnDef<Shield>[] => {
+ const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
+ const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
+
+  return [{
     id: "select",
     enableSorting: false,
     enableHiding: false,
@@ -68,7 +73,6 @@ export const columns: ColumnDef<Shield>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const shield = row.original;
-      const dispatch = useDispatch();
 
       return (
         <DropdownMenu>
@@ -88,8 +92,13 @@ export const columns: ColumnDef<Shield>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                dispatch(removeInputShield(shield.id));
-                dispatch(removeOutputShield(shield.id));
+                if (isinput) {
+                  //@ts-ignore
+                  setInputShieldsAtom(inputShields.filter(item => item.shield !== shield.shield));
+                } else {
+                  //@ts-ignore
+                  setOutputShieldsAtom(outputShields.filter(item => item.shield !== shield.shield));
+                }
               }}
             >
               Delete Shield
@@ -99,14 +108,25 @@ export const columns: ColumnDef<Shield>[] = [
       );
     },
   },
-];
+]};
 
 //@ts-ignore
-export function ShieldsDataTable({ data }) {
+export function ShieldsDataTable({ data, isinput }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  
+  const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
+  const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
+
+  if (isinput) {
+    data = inputShields.length === 0 ? data : inputShields
+    setInputShieldsAtom(data)
+  } else {
+    data = outputShields.length === 0 ? data : outputShields
+    setOutputShieldsAtom(data)
+  }
 
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -114,7 +134,8 @@ export function ShieldsDataTable({ data }) {
 
   const table = useReactTable({
     data,
-    columns,
+    //@ts-ignore
+    columns: createColumns(isinput),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -174,7 +195,7 @@ export function ShieldsDataTable({ data }) {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={createColumns.length}
                   className="h-24 text-center"
                 >
                   No results.

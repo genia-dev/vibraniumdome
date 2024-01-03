@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 
 import {
@@ -10,14 +12,17 @@ import {
   SelectValue,
 } from "~/app/components/ui/select"
 
-export type StateProps = {
-  setState: any
-  defaultValue: any
-};
+import { useAtom } from 'jotai'
+import { redactConversationAtom } from "~/app/state"
 
-export function RedactConversation({setState, defaultValue}: StateProps) {
+//@ts-ignore
+export function RedactConversation({ state }) {
+  const [redactConversation, setRedactConversation] = useAtom(redactConversationAtom)
+
   return (
-    <Select name="redact-conversation" onValueChange={setState} value={defaultValue}>
+    <Select name="redact-conversation" 
+            onValueChange={setRedactConversation}
+            value={redactConversation || state === true ? "yes" : "no"}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="select..." />
       </SelectTrigger>

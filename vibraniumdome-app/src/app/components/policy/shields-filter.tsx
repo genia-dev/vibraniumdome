@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react";
 
 import {
@@ -10,14 +12,16 @@ import {
   SelectValue,
 } from "~/app/components/ui/select";
 
-export type StateProps = {
-  setState: any;
-  defaultValue: any;
-};
+import { useAtom } from 'jotai'
+import { shieldsFilterAtom } from "~/app/state"
 
-export function ShieldsFilter({ setState, defaultValue }: StateProps) {
+//@ts-ignore
+export function ShieldsFilter({ state }) {
+  const [shieldsFilter, setShieldsFilter] = useAtom(shieldsFilterAtom)
   return (
-    <Select name="shields-filter" onValueChange={setState} value={defaultValue}>
+    <Select name="shields-filter"
+            onValueChange={setShieldsFilter}
+            value={shieldsFilter || state}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="select..." />
       </SelectTrigger>

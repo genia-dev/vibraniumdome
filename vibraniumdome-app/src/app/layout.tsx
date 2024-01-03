@@ -6,6 +6,9 @@ import { headers } from "next/headers";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Layout } from "~/app/components/layout";
 
+import Providers from './providers'
+
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -20,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
+      <Providers>
         <Layout>
           <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
         </Layout>
+      </Providers>
       </body>
     </html>
   );

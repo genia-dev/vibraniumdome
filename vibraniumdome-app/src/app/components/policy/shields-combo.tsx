@@ -17,16 +17,14 @@ import {
   PopoverTrigger,
 } from "~/app/components/ui/popover"
 
-export type Shields = {
- shields: { key: string; value: string }[];
- value: any
- setValue: any
-};
+import { useAtom } from 'jotai'
+import { lastShieldAtom } from "~/app/state"
+
 
 //@ts-ignore
-export function ShieldsCombobox({ shields, value, setValue }: Shields) {
+export function ShieldsCombobox({ shields }) {
   const [open, setOpen] = React.useState(false)
-  
+  const [lastShield, setLastShieldAtom] = useAtom(lastShieldAtom)
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -36,8 +34,9 @@ export function ShieldsCombobox({ shields, value, setValue }: Shields) {
           aria-expanded={open}
           className="w-[500px] justify-between"
         >
-          {value
-            ? shields.find((shield) => shield.value === value)?.value
+          {lastShield
+          //@ts-ignore
+            ? shields.find((shield) => shield.value.toLowerCase() === lastShield)?.value
             : "Select shield..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -47,13 +46,14 @@ export function ShieldsCombobox({ shields, value, setValue }: Shields) {
           <CommandInput placeholder="Search shield..." />
           <CommandEmpty>No shield found.</CommandEmpty>
           <CommandGroup>
-            {shields.map((shield) => (
+            {
+              //@ts-ignore
+              shields.map((shield) => (
               <CommandItem
                 key={shield.key}
                 value={shield.value}
                 onSelect={(currentValue) => {
-                 currentValue
-                 setValue(currentValue)
+                 setLastShieldAtom(currentValue)
                  setOpen(false)
                 }}
               >

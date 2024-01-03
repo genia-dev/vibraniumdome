@@ -1,25 +1,33 @@
+"use client"
+
 import * as React from "react";
 
 import { Slider } from "~/app/components/ui/slider";
 import { Label } from "~/app/components/ui/label";
 
-export type StateProps = {
-  setState: any;
-  defaultValue: any;
-};
+import { useAtom } from 'jotai'
+import { lowRiskThresholdAtom } from "~/app/state"
 
-export function LowRiskThreshold({ setState, defaultValue}: StateProps) {
+//@ts-ignore
+export function LowRiskThreshold({ state }) {
+  const [lowRiskThreshold, setLowRiskThreshold] = useAtom(lowRiskThresholdAtom)
+  const value = lowRiskThreshold ? lowRiskThreshold : state??0.4
+
+  const setValueChange = async (value: number[]) => {
+    setLowRiskThreshold(value[0])
+  }
+
   return (
     <>
       <Label htmlFor="low-risk-threshold">
-        Low risk threshold: {defaultValue??0.4}
+        Low risk threshold: {value}
       </Label>
       <Slider
         id="low-risk-threshold"
-        onValueChange={setState}
-        value={[defaultValue??0.4]}
+        onValueChange={setValueChange}
+        value={[value]}
         className="w-[60%]"
-        defaultValue={[0.4]}
+        defaultValue={[value]}
         max={1}
         step={0.1}
       />
