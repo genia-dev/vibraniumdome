@@ -15,7 +15,7 @@ import { ShieldsFilter } from "~/app/components/policy/shields-filter";
 import { RedactConversation } from "~/app/components/policy/redact-conversation";
 import { LowRiskThreshold } from "~/app/components/policy/low-risk-threshold";
 import { HighRiskThreshold } from "~/app/components/policy/high-risk-threshold";
-import { CreateShieldDialog } from "~/app/components/policy/create-policy-dialog";
+import { CreateShieldDialog } from "~/app/components/policy/create-shield-dialog";
 import { LLMAppInput } from "~/app/components/policy/llm-app-input";
 import { PolicyInput } from "~/app/components/policy/policy-input";
 import { CreateUpdatePolicyButton } from "~/app/components/policy/create-update-policy-button";
@@ -119,7 +119,7 @@ export default async function CreatePolicyPage(props: Props) {
               <h2 className="text-xl font-semibold">Input Shields</h2>
               <div className="flex items-center space-x-2">
                 <CreateShieldDialog
-                  isinput={true}
+                  shieldCategory="input"
                   title="Add Input Shield"
                   shields={inputShieldsArray}
                   policyMetadata={basePolicy?.input_shields}
@@ -127,7 +127,7 @@ export default async function CreatePolicyPage(props: Props) {
               </div>
             </div>
             <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
-              <ShieldsDataTable data={input} isinput={true}/>
+              <ShieldsDataTable data={input} shieldCategory="input"/>
             </div>
           </Card>
         </div>
@@ -137,7 +137,7 @@ export default async function CreatePolicyPage(props: Props) {
               <h2 className="text-xl font-semibold">Output Shields</h2>
               <div className="flex items-center space-x-2">
                 <CreateShieldDialog
-                  isinput={false}
+                  shieldCategory="output"
                   title="Add Output Shield"
                   shields={outputShieldsArray}
                   policyMetadata={basePolicy?.output_shields}
@@ -145,7 +145,7 @@ export default async function CreatePolicyPage(props: Props) {
               </div>
             </div>
             <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
-              <ShieldsDataTable data={output} isinput={false}/>
+              <ShieldsDataTable data={output} shieldCategory="output"/>
             </div>
           </Card>
         </div>

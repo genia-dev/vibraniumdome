@@ -71,7 +71,7 @@ async function main() {
       data: {
         seq: -99,
         name: "Default Policy",
-        llmApp: "DefaultAny",
+        llmApp: "Default",
         createdById: team1.id,
         content: defaultPolicy
       }

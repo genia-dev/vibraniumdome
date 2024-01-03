@@ -28,14 +28,14 @@ export type Policy = {
 };
 
 export type Props = {
-  isinput: boolean;
+  shieldCategory: string;
   title: string;
   shields: { key: string; value: string }[];
   policyMetadata: { type: string; full_name: string }[];
 };
 
 export function CreateShieldDialog({
-  isinput,
+  shieldCategory,
   title,
   shields,
   policyMetadata,
@@ -49,7 +49,7 @@ export function CreateShieldDialog({
   const saveChanges = () => {
     setOpen(false);
     const shield = policyMetadata.find((shield) => shield.full_name.toLowerCase() === lastShield)
-    if (isinput) {
+    if (shieldCategory == "input") {
       //@ts-ignore
       setInputShieldsAtom([...inputShields, {id: uuidv4(), shield: shield?.full_name, metadata: lastShieldMetadata}])
     } else {

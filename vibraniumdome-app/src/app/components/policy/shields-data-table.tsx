@@ -42,7 +42,7 @@ export type Shield = {
 
 
 //@ts-ignore
-export const createColumns = (isinput: boolean): ColumnDef<Shield>[] => {
+export const createColumns = (shieldCategory: string): ColumnDef<Shield>[] => {
  const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
  const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
 
@@ -92,7 +92,7 @@ export const createColumns = (isinput: boolean): ColumnDef<Shield>[] => {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                if (isinput) {
+                if (shieldCategory=="input") {
                   //@ts-ignore
                   setInputShieldsAtom(inputShields.filter(item => item.shield !== shield.shield));
                 } else {
@@ -111,7 +111,7 @@ export const createColumns = (isinput: boolean): ColumnDef<Shield>[] => {
 ]};
 
 //@ts-ignore
-export function ShieldsDataTable({ data, isinput }) {
+export function ShieldsDataTable({ data, shieldCategory }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -120,7 +120,7 @@ export function ShieldsDataTable({ data, isinput }) {
   const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
   const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
 
-  if (isinput) {
+  if (shieldCategory=="input") {
     data = inputShields.length === 0 ? data : inputShields
     setInputShieldsAtom(data)
   } else {
@@ -135,7 +135,7 @@ export function ShieldsDataTable({ data, isinput }) {
   const table = useReactTable({
     data,
     //@ts-ignore
-    columns: createColumns(isinput),
+    columns: createColumns(shieldCategory),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
