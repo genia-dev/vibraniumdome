@@ -64,6 +64,14 @@ class TestVibraniumCaptainShield(unittest.TestCase):
         actual = self._llm_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertEqual(actual[0].llm_response["eval"], expected)
 
+    @unittest.skip("TODO: working fine on 4, work on 3.5 prompt engineering")
+    def test_hellp(self):
+        test = "hellp"
+        expected = "false"
+        policy = {"model": "gpt-4"}
+        actual = self._llm_shield.deflect(self.create_interaction_from_string(test), {**self._policy, **policy}, self._scan_id, self._full_policy)
+        self.assertEqual(actual[0].llm_response["eval"], expected)
+
 
 if __name__ == "__main__":
     unittest.main()

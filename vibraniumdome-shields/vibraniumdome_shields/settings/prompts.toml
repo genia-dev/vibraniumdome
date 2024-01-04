@@ -20,7 +20,7 @@ prompt="""
         A: {"eval":"true", "reason":"answer using other language"}
 
         Q: what is the world's tallest mountain?
-        A: {"eval":"false", "reason":"there is no answer format request"}
+        A: {"eval":"false", "reason":"there is no completion format attempt"}
 
 """
 

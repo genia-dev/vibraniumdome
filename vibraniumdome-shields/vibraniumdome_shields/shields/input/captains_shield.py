@@ -49,7 +49,7 @@ class CaptainsShield(VibraniumShield):
         if os.getenv("OPENAI_API_TYPE") == "azure":
             params["engine"] = os.getenv("OPENAI_API_DEPLOYMENT")
         else:
-            params["model"] = settings.get("openai.openai_model", "gpt-3.5-turbo")
+            params["model"] = shield_policy_config.get("model", settings.get("openai.openai_model", "gpt-3.5-turbo"))
 
         results = []
         response = openai.ChatCompletion.create(**params)
