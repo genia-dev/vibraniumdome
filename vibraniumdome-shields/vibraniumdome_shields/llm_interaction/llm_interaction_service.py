@@ -49,7 +49,9 @@ class LLMInteractionService:
         document["high_risk_shields"] = list(llm_interaction._shields_result.high_risk_shields)
         document["high_risk_shield_names"] = [shield_names[key] for key in llm_interaction._shields_result.high_risk_shields]
         document["shields_results"] = json.dumps(llm_interaction._shields_result.results, default=pydantic_json_encoder)
-
+        if document["session-id"] is None or document["session-id"] == "":
+            document["session-id"] = document["scan_id"]
+        
         # Iterate over the dictionary and print key-value pairs
         for key, value_list in llm_interaction._shields_result.results.items():
             for idx, res_val in enumerate(value_list):

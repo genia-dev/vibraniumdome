@@ -10,12 +10,24 @@ from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflection
 
 
 class SensitiveShieldDeflectionResult(ShieldDeflectionResult):
-    result: list
+    result: dict
 
 
 class SensitiveInformationDisclosureShieldBase(VibraniumShield):
     _logger = logging.getLogger(__name__)
-    _entites = ["PERSON", "URL", "PHONE_NUMBER", "IP_ADDRESS", "EMAIL_ADDRESS", "DATE_TIME", "LOCATION", "US_PASSPORT", "US_BANK_NUMBER", "US_DRIVER_LICENSE"]
+    _entites = [
+        "CREDIT_CARD",
+        "PERSON",
+        "URL",
+        "PHONE_NUMBER",
+        "IP_ADDRESS",
+        "EMAIL_ADDRESS",
+        "DATE_TIME",
+        "LOCATION",
+        "US_PASSPORT",
+        "US_BANK_NUMBER",
+        "US_DRIVER_LICENSE",
+    ]
     _model_name: str = "en_core_web_lg"
 
     def __init__(self, shield_name: str):
@@ -34,22 +46,24 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
 
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
+        threshold = shield_policy_config.get("threshold", 0.1)
         try:
             # TODO: consider moving to ctor
             analyzer: AnalyzerEngine = AnalyzerEngine()
             message: str = self._get_message_to_validate(llm_interaction)
             if message:
-                result = analyzer.analyze(text=message, entities=self._entites, language="en")
-                if result:
-                    shield_matches.append(
-                        SensitiveShieldDeflectionResult(
-                            result=[{key: value for key, value in r.to_dict().items() if key != "recognition_metadata"} for r in result]
+                analyzer_results = analyzer.analyze(text=message, entities=self._entites, language="en")
+                for result in analyzer_results:
+                    if result.score > threshold:
+                        shield_matches.append(
+                            SensitiveShieldDeflectionResult(
+                                risk=result.score, result={key: value for key, value in result.to_dict().items() if key != "recognition_metadata"}
+                            )
                         )
-                    )
         except Exception:
             self._logger.exception("Presidio Analyzer error, scan_id: %s", scan_id)
 
         if len(shield_matches) == 0:
-            shield_matches.append(SensitiveShieldDeflectionResult(result=[]))
+            shield_matches.append(SensitiveShieldDeflectionResult(result={}))
 
         return shield_matches

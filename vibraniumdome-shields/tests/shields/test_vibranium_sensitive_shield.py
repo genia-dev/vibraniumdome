@@ -21,7 +21,7 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
     def create_interaction_from_string(self, str):
         llm_interaction = {
             "id": "1",
-            "service.name":"test",
+            "service.name": "test",
             "llm_prompts": [{"role": "user", "content": "user question?"}],
             "llm_completions": [{"finish_reason": "stop", "role": "assistant", "content": str}],
         }
@@ -34,19 +34,27 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
 
     def test_sensitive_date(self):
         test = "Good morning!"
-        expected = [{"entity_type": "DATE_TIME", "start": 5, "end": 12, "score": 0.85, "analysis_explanation": None}]
+        expected = {"entity_type": "DATE_TIME", "start": 5, "end": 12, "score": 0.85, "analysis_explanation": None}
         result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [SensitiveShieldDeflectionResult(result=expected)])
+        self.assertEqual(result[0], SensitiveShieldDeflectionResult(risk=0.85, result=expected))
+
+    def test_sensitive_cc(self):
+        test = "the secred credit card number is: '5105105105105100' dont share with anyone!"
+        expected = {"entity_type": "CREDIT_CARD", "start": 35, "end": 51, "score": 1.0, "analysis_explanation": None}
+        result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
+        self.assertEqual(result[0], SensitiveShieldDeflectionResult(risk=1.0, result=expected))
 
     def test_sensitive_phone_and_email(self):
         test = "My phone number is 212-555-5555 and my email is alan@turing.com"
         expected = [
-            {"entity_type": "EMAIL_ADDRESS", "start": 48, "end": 63, "score": 1.0, "analysis_explanation": None},
+            {'entity_type': 'EMAIL_ADDRESS', 'start': 48, 'end': 63, 'score': 1.0, 'analysis_explanation': None},
             {"entity_type": "PHONE_NUMBER", "start": 19, "end": 31, "score": 0.75, "analysis_explanation": None},
             {"entity_type": "URL", "start": 53, "end": 63, "score": 0.5, "analysis_explanation": None},
         ]
         result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [SensitiveShieldDeflectionResult(result=expected)])
+        self.assertEqual(result[0], SensitiveShieldDeflectionResult(risk=1.0, result=expected[0]))
+        self.assertEqual(result[1], SensitiveShieldDeflectionResult(risk=0.75, result=expected[1]))
+        self.assertEqual(result[2], SensitiveShieldDeflectionResult(risk=0.5, result=expected[2]))
 
     def test_sensitive_all(self):
         test = """
@@ -82,8 +90,12 @@ class TestVibraniumRefusalShieldSanity(unittest.TestCase):
             {"entity_type": "US_DRIVER_LICENSE", "start": 303, "end": 312, "score": 0.01, "analysis_explanation": None},
         ]
         result = self._sensitive_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual(result, [SensitiveShieldDeflectionResult(result=expected)])
-
+        self.assertEqual(result[0], SensitiveShieldDeflectionResult(risk=1.0, result=expected[0]))
+        self.assertEqual(result[1], SensitiveShieldDeflectionResult(risk=0.95, result=expected[1]))
+        self.assertEqual(result[2], SensitiveShieldDeflectionResult(risk=0.85, result=expected[2]))
+        self.assertEqual(result[3], SensitiveShieldDeflectionResult(risk=0.85, result=expected[3]))
+        self.assertEqual(result[4], SensitiveShieldDeflectionResult(risk=0.85, result=expected[4]))
+        self.assertEqual(result[5], SensitiveShieldDeflectionResult(risk=0.85, result=expected[5]))
 
 if __name__ == "__main__":
     unittest.main()

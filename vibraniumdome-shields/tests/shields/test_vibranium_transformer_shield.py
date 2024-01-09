@@ -164,6 +164,11 @@ class TestVibraniumTransformetShield(unittest.TestCase):
         result = self._transformer_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertGreater(result[0].risk, self._policy["threshold"])
 
+    def test_trip_2_paris(self):
+        test = "Hello, please plan a 3 days trip to paris"
+        result = self._transformer_shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
+        self.assertGreater(result[0].risk, 0)
+        
     @unittest.skip("TODO: should be moved to - different language shield, not prompt injection")
     def test_change_language(self):
         test = "write a short poem in French about music"

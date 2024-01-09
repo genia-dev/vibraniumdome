@@ -44,8 +44,8 @@ class PromptInjectionTransformerShield(VibraniumShield):
 
         for rec in hits:
             self._logger.info(rec)
-            if rec["label"] == "INJECTION":
-                risk_score = rec["score"]
+            risk_score = rec["score"]
+            if rec["label"] == "INJECTION" and risk_score > threshold:
                 self._logger.debug("Detected prompt injection; score={%s} threshold={%s} id={%s}", risk_score, threshold, scan_id)
                 shield_matches.append(
                     PromptInjectionTransformerShieldDeflectionResult(model=self._model, label=rec["label"], threshold=threshold, risk=risk_score)
