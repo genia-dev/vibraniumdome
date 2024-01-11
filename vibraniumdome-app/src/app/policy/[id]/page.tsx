@@ -15,7 +15,7 @@ import { ShieldsFilter } from "~/app/components/policy/shields-filter";
 import { RedactConversation } from "~/app/components/policy/redact-conversation";
 import { LowRiskThreshold } from "~/app/components/policy/low-risk-threshold";
 import { HighRiskThreshold } from "~/app/components/policy/high-risk-threshold";
-import { CreateShieldDialog } from "~/app/components/policy/create-shield-dialog";
+import { CreateShield } from "~/app/components/policy/create-shield";
 import { LLMAppInput } from "~/app/components/policy/llm-app-input";
 import { PolicyInput } from "~/app/components/policy/policy-input";
 import { CreateUpdatePolicyButton } from "~/app/components/policy/create-update-policy-button";
@@ -50,7 +50,7 @@ export default async function CreatePolicyPage(props: Props) {
   if (policyId) {
     currentPolicy = await api.policy.get.query({id: policyId})
   }
-
+  
   var policyName = currentPolicy?.name
   var llmApp = currentPolicy?.llmApp
   var lowRiskThreshold = currentPolicy?.content?.low_risk_threshold
@@ -59,11 +59,11 @@ export default async function CreatePolicyPage(props: Props) {
   var redactConversation = currentPolicy?.content?.redact_conversation
   
   const input = currentPolicy?.content?.input_shields.map((shield) => {
-    return {key: uuidv4(), shield: shield.full_name }
+    return {key: uuidv4(), shield: shield.full_name, metadata: shield.metadata, type: shield.type }
   });
   
   const output = currentPolicy?.content?.output_shields.map((shield) => {
-    return {key: uuidv4(), shield: shield.full_name }
+    return {key: uuidv4(), shield: shield.full_name, metadata: shield.metadata, type: shield.type }
   });
 
   return (
@@ -118,16 +118,14 @@ export default async function CreatePolicyPage(props: Props) {
             <div className="m-4 flex items-center justify-between space-y-2">
               <h2 className="text-xl font-semibold">Input Shields</h2>
               <div className="flex items-center space-x-2">
-                <CreateShieldDialog
+                <CreateShield
                   shieldCategory="input"
                   title="Add Input Shield"
-                  shields={inputShieldsArray}
-                  policyMetadata={basePolicy?.input_shields}
                 />
               </div>
             </div>
             <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
-              <ShieldsDataTable data={input} shieldCategory="input"/>
+              <ShieldsDataTable data={input} shieldCategory="input" policyId={policyId}/>
             </div>
           </Card>
         </div>
@@ -136,16 +134,14 @@ export default async function CreatePolicyPage(props: Props) {
             <div className="m-4 flex items-center justify-between space-y-2">
               <h2 className="text-xl font-semibold">Output Shields</h2>
               <div className="flex items-center space-x-2">
-                <CreateShieldDialog
+                <CreateShield
                   shieldCategory="output"
                   title="Add Output Shield"
-                  shields={outputShieldsArray}
-                  policyMetadata={basePolicy?.output_shields}
                 />
               </div>
             </div>
             <div className="hidden h-full flex-1 flex-col p-4 pt-0 md:flex">
-              <ShieldsDataTable data={output} shieldCategory="output"/>
+              <ShieldsDataTable data={output} shieldCategory="output" policyId={policyId}/>
             </div>
           </Card>
         </div>

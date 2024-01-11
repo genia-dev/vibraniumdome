@@ -45,25 +45,14 @@ export function CreateUpdatePolicyButton({ policyId, policyMetadata }) {
   });
 
   const createUpdatePolicyButton = async () => {
-
     const inputShieldsArray = inputShields.map(item => {
-      const shield = policyMetadata.input_shields.find(
-        (shield) => {
-          return shield.full_name.toLowerCase() == item.shield.toLowerCase()
-        })
-      if (item['metadata'] !== undefined) {
-        //@ts-ignore
-        shield.metadata = JSON.parse(item.metadata)
-      }
-      return shield;
+      const { shield, type, metadata } = item;
+      return { full_name: shield, type: type, metadata: metadata };
     });
 
     const outputShieldsArray = outputShields.map(item => {
-      const shield = policyMetadata.output_shields.find(
-        (shield) => {
-          return shield.full_name.toLowerCase() === item.shield.toLowerCase()
-        })
-      return shield;
+      const { shield, type, metadata } = item;
+      return { full_name: shield, type: type, metadata: metadata };
     });
 
     const basePolicy = {

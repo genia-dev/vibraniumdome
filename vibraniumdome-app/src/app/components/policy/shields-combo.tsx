@@ -17,15 +17,16 @@ import {
   PopoverTrigger,
 } from "~/app/components/ui/popover"
 
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { lastShieldAtom, lastShieldMetadataAtom } from "~/app/state"
 
 
 //@ts-ignore
-export function ShieldsCombobox({ shields, policyMetadata }) {
+export function ShieldsCombobox({ shields, policyMetadata, policyId=null }) {
   const [open, setOpen] = React.useState(false)
   const [lastShield, setLastShieldAtom] = useAtom(lastShieldAtom)
-  const [lastShieldMetadata, setLastShieldMetadataAtom] = useAtom(lastShieldMetadataAtom)
+  const setLastShieldMetadataAtom = useSetAtom(lastShieldMetadataAtom)
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -34,11 +35,9 @@ export function ShieldsCombobox({ shields, policyMetadata }) {
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
+          disabled={policyId ? true : false}
         >
-          {lastShield
-          //@ts-ignore
-            ? shields.find((shield) => shield.value.toLowerCase() === lastShield)?.value
-            : "Select shield..."}
+          {lastShield || "Select shield..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

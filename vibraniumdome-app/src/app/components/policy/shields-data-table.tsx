@@ -32,8 +32,10 @@ import {
   TableRow,
 } from "~/app/components/ui/table";
 
-import { useAtom } from 'jotai'
-import { inputShieldsAtom, outputShieldsAtom } from "~/app/state"
+import { useAtom, useSetAtom } from 'jotai'
+import { inputShieldsAtom, outputShieldsAtom, lastShieldAtom, lastShieldMetadataAtom } from "~/app/state"
+
+import { useRouter } from "next/navigation";
 
 export type Shield = {
   id: string;
@@ -42,9 +44,13 @@ export type Shield = {
 
 
 //@ts-ignore
-export const createColumns = (shieldCategory: string): ColumnDef<Shield>[] => {
- const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
- const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
+export const createColumns = (shieldCategory: string, policyId: string): ColumnDef<Shield>[] => {
+  const router = useRouter();
+
+  const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
+  const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
+  const setLastShield = useSetAtom(lastShieldAtom)
+  const setLastShieldMetadata = useSetAtom(lastShieldMetadataAtom)
 
   return [{
     id: "select",
@@ -86,6 +92,11 @@ export const createColumns = (shieldCategory: string): ColumnDef<Shield>[] => {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => {
+                setLastShield(shield.shield)
+                setLastShieldMetadata(JSON.stringify(shield.metadata));
+                
+                router.push(policyId ? `/shield/edit?category=${shieldCategory}&policyId=${policyId}` : `/shield/edit?category=${shieldCategory}`);
+                router.refresh();
               }}
             >
               Edit Shield
@@ -111,7 +122,7 @@ export const createColumns = (shieldCategory: string): ColumnDef<Shield>[] => {
 ]};
 
 //@ts-ignore
-export function ShieldsDataTable({ data, shieldCategory }) {
+export function ShieldsDataTable({ data, shieldCategory, policyId }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -135,7 +146,7 @@ export function ShieldsDataTable({ data, shieldCategory }) {
   const table = useReactTable({
     data,
     //@ts-ignore
-    columns: createColumns(shieldCategory),
+    columns: createColumns(shieldCategory, policyId),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
