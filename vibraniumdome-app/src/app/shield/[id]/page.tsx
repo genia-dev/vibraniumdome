@@ -53,11 +53,12 @@ export default async function CreateShieldPage(props: Props) {
                     <ShieldsCombobox shields={category === "input" ? inputShieldsArray : outputShieldsArray}
                                     policyMetadata={category === "input" ? basePolicy.input_shields : basePolicy.output_shields}
                                     policyId={policyId}
+                                    view={id === "view"}
                     />
                 </div>
                 <div className="pt-2 pb-4 space-y-2">
                   <Label htmlFor="shield-metadata">Shield Metadata:</Label>
-                  <ShieldMetadata/>
+                  <ShieldMetadata view={id === "view"}/>
                 </div>
               </div>
             </div>
@@ -66,7 +67,7 @@ export default async function CreateShieldPage(props: Props) {
       </div>
 
       <div className="mx-6 mb-6">
-        <CreateUpdateShieldButton policyId={policyId} category={category} basePolicy={basePolicy}/>
+        <CreateUpdateShieldButton policyId={policyId} category={category} basePolicy={basePolicy} view={id === "view"}/>
       </div>
     </>
   );

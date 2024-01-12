@@ -101,28 +101,9 @@ export const columns: ColumnDef<Policy>[] = [
           router.refresh();
         },
       })
-
-      return (
-        <>
-          <div className="flex gap-2">
-            <Button variant="ghost" 
-                    onClick={async () => router.push('/policy/update?policyId=' + policy.id)}>Edit Policy</Button>
-            <Button disabled={policy.seq === -99} variant="ghost" 
-                    onClick={async () => 
-                      await deletePolicyMutation.mutate({ id: policy.id })}>Delete Policy
-            </Button>
-          </div>
-        </>
-      )
-    },
-  },
-  {
-    id: "actions-1",
-    cell: ({ row }) => {
-      const policy = row.original
       return (
         <DropdownMenu>
-          {/* <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
@@ -131,14 +112,17 @@ export const columns: ColumnDef<Policy>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(policy.id)}
+              onClick={() => router.push('/policy/update?policyId=' + policy.id) }
             >
-              Copy policy ID
+              Edit Policy
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View policy</DropdownMenuItem>
-            <DropdownMenuItem>Clone this policy</DropdownMenuItem>
-          </DropdownMenuContent> */}
+            <DropdownMenuItem disabled={policy.seq === -99}
+              onClick={async () => 
+                await deletePolicyMutation.mutate({ id: policy.id })}
+            >
+              Delete Policy
+            </DropdownMenuItem>
+          </DropdownMenuContent>
         </DropdownMenu>
       )
     },

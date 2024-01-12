@@ -103,6 +103,17 @@ export const createColumns = (shieldCategory: string, policyId: string): ColumnD
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
+                setLastShield(shield.shield)
+                setLastShieldMetadata(JSON.stringify(shield.metadata));
+                
+                router.push(policyId ? `/shield/view?category=${shieldCategory}&policyId=${policyId}` : `/shield/view?category=${shieldCategory}`);
+                router.refresh();
+              }}
+            >
+              View Shield
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
                 if (shieldCategory=="input") {
                   //@ts-ignore
                   setInputShieldsAtom(inputShields.filter(item => item.shield !== shield.shield));

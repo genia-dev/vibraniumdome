@@ -22,7 +22,7 @@ import { lastShieldAtom, lastShieldMetadataAtom } from "~/app/state"
 
 
 //@ts-ignore
-export function ShieldsCombobox({ shields, policyMetadata, policyId=null }) {
+export function ShieldsCombobox({ shields, policyMetadata, policyId=null, view=false }) {
   const [open, setOpen] = React.useState(false)
   const [lastShield, setLastShieldAtom] = useAtom(lastShieldAtom)
   const setLastShieldMetadataAtom = useSetAtom(lastShieldMetadataAtom)
@@ -35,7 +35,7 @@ export function ShieldsCombobox({ shields, policyMetadata, policyId=null }) {
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
-          disabled={policyId ? true : false}
+          disabled={policyId || view ? true : false}
         >
           {lastShield || "Select shield..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

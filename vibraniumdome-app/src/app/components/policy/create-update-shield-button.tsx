@@ -8,13 +8,13 @@ import { useAtom, useAtomValue } from 'jotai'
 import { inputShieldsAtom, outputShieldsAtom, lastShieldAtom, lastShieldMetadataAtom } from "~/app/state"
 
 //@ts-ignore
-export function CreateUpdateShieldButton({ policyId, category, basePolicy }) {
+export function CreateUpdateShieldButton({ policyId, category, basePolicy, view }) {
   const router = useRouter();
 
   const [inputShields, setInputShieldsAtom] = useAtom(inputShieldsAtom)
   const [outputShields, setOutputShieldsAtom] = useAtom(outputShieldsAtom)
-  const lastShield = useAtomValue(lastShieldAtom)
-  const lastShieldMetadata = useAtomValue(lastShieldMetadataAtom)
+  const [lastShield, setLastShieldAtom] = useAtom(lastShieldAtom)
+  const [lastShieldMetadata, setLastShieldMetadataAtom] = useAtom(lastShieldMetadataAtom)
 
   const createUpdateShieldButton = async () => {
     if (category=="input") {
@@ -51,9 +51,21 @@ export function CreateUpdateShieldButton({ policyId, category, basePolicy }) {
     router.refresh();
   }
 
+  const cancelShieldButton = async () => {
+    setLastShieldAtom('')
+    setLastShieldMetadataAtom('{}');
+    router.push(policyId ? `/policy/update?policyId=${policyId}` : "/policy/create");
+    router.refresh();
+  }
+
   return <>
-        <Button type="submit" onClick={createUpdateShieldButton}>
-            Update Shield
-        </Button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Button type="submit" onClick={createUpdateShieldButton} disabled={view}>
+              Update Shield
+          </Button>
+          <Button type="submit" onClick={cancelShieldButton}>
+              {!view ? "Cancel" : "Back" }
+          </Button>
+      </div>
         </>
 }
