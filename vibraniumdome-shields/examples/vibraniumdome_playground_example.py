@@ -82,7 +82,7 @@ response = openai.ChatCompletion.create(
 
 print(response)
 
-time.sleep(5)
+
 
 # # ------------------------------------------------------
 # # BetterDAN
@@ -118,7 +118,7 @@ response = openai.ChatCompletion.create(
 
 print(response)
 
-time.sleep(5)
+
 
 # # ------------------------------------------------------
 # # Boss
@@ -143,7 +143,7 @@ response = openai.ChatCompletion.create(
 
 print(response)
 
-time.sleep(5)
+
 
 # ------------------------------------------------------
 # you can read this
@@ -167,7 +167,7 @@ response = openai.ChatCompletion.create(
 )
 
 print(response)
-time.sleep(5)
+
 
 
 # ------------------------------------------------------
@@ -192,7 +192,7 @@ response = openai.ChatCompletion.create(
 )
 
 print(response)
-time.sleep(5)
+
 
 
 # # ------------------------------------------------------
@@ -214,7 +214,7 @@ response = openai.ChatCompletion.create(
 )
 
 print(response)
-time.sleep(5)
+
 
 # # ------------------------------------------------------
 # # morse
@@ -246,4 +246,4 @@ response = openai.ChatCompletion.create(
 )
 
 print(response)
-time.sleep(5)
+
