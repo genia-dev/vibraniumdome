@@ -179,34 +179,45 @@ class OpenTelemetryParser:
         return llm_interaction
 
     def _parse_trace_request(self, export_trace_service_request):
-        document = {}
-
+        documents = []
         for resource_span in export_trace_service_request.resource_spans:
+            resource_attributes = {}
+
             for attribute_kv in resource_span.resource.attributes:
                 key, value = self._extract_value(attribute_kv)
-                document[key] = value
+                resource_attributes[key] = value
+
             for scope_spans in resource_span.scope_spans:
                 for span in scope_spans.spans:
-                    document = document | self._extract_id_attributes(span)
+                    document = resource_attributes.copy()
+                    document.update(self._extract_id_attributes(span))
+
                     for attribute_kv in span.attributes:
                         key, value = self._extract_value(attribute_kv)
                         document[key] = value
-        self._logger.debug("document: %s", document)
-        return document
 
-    def parse_llm_call(self, request_data) -> LLMInteraction:
+                    documents.append(document)
+                    self._logger.debug("document: %s", document)
+        self._logger.debug("number of documents: %d", len(documents))
+        return documents
+
+    def parse_llm_call(self, request_data) -> list[LLMInteraction]:
+        llm_interactions = []
+
         export_trace_service_request = ExportTraceServiceRequest()
         export_trace_service_request.ParseFromString(request_data)
-        document = self._parse_trace_request(export_trace_service_request)
+        documents = self._parse_trace_request(export_trace_service_request)
 
-        llm_interaction = {key: value for key, value in document.items() if not key.startswith("llm.prompts") and not key.startswith("llm.request.functions")}
-        # convert timestamp to unix iso 8601 type
-        llm_interaction = {key: self.convert_unix_nano_str_to_iso(value) if key.endswith("_timestamp") else value for key, value in llm_interaction.items()}
-        llm_interaction["shields_timestamp"] = datetime.now().strftime(self._datetime_format)
-        self._parse_headers(llm_interaction, document)
-        self._parse_prompts(llm_interaction, document)
-        self._parse_functions(llm_interaction, document)
-        result = LLMInteraction(llm_interaction)
-        self._parse_completions(result)
-        self._logger.debug("llm_interaction: %s", llm_interaction)
-        return result
+        for document in documents:
+            llm_interaction = {key: value for key, value in document.items() if not key.startswith("llm.prompts") and not key.startswith("llm.request.functions")}
+            # convert timestamp to unix iso 8601 type
+            llm_interaction = {key: self.convert_unix_nano_str_to_iso(value) if key.endswith("_timestamp") else value for key, value in llm_interaction.items()}
+            llm_interaction["shields_timestamp"] = datetime.now().strftime(self._datetime_format)
+            self._parse_headers(llm_interaction, document)
+            self._parse_prompts(llm_interaction, document)
+            self._parse_functions(llm_interaction, document)
+            result = LLMInteraction(llm_interaction)
+            self._parse_completions(result)
+            self._logger.debug("llm_interaction: %s", llm_interaction)
+            llm_interactions.append(result)
+        return llm_interactions

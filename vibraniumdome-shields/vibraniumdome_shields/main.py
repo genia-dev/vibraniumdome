@@ -75,8 +75,8 @@ def scan():
 
 @app.route("/v1/traces", methods=["POST"])
 def receive_traces():
-    llm_interaction: LLMInteraction = parser.parse_llm_call(request.data)
-    executor = concurrent.futures.ThreadPoolExecutor(max_workers=1, thread_name_prefix="traces-" + llm_interaction._id)
+    llm_interactions: list(LLMInteraction) = parser.parse_llm_call(request.data)
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=1000, thread_name_prefix="traces")
 
     def process_traces(llm_interaction: LLMInteraction):
         try:
@@ -87,7 +87,8 @@ def receive_traces():
         except Exception:
             logger.exception("error while deflecting shields for interaction= %s with policy= %s", llm_interaction, policy)
 
-    executor.submit(process_traces, llm_interaction)
+    for llm_interaction in llm_interactions:
+        executor.submit(process_traces, llm_interaction)
 
     return Response(ExportTraceServiceResponse().SerializeToString(), mimetype="application/octet-stream")
 
