@@ -8,6 +8,7 @@ import { lastShieldMetadataAtom } from "~/app/state"
 //@ts-ignore
 export function ShieldMetadata({view}) {
   const [lastShieldMetadata, setLastShieldMetadata] = useAtom(lastShieldMetadataAtom)
+  //@ts-ignore
   const setValueChange = async (e) => {
     setLastShieldMetadata(e.target.value)
   }

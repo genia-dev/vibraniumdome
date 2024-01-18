@@ -93,6 +93,7 @@ export const createColumns = (shieldCategory: string, policyId: string): ColumnD
             <DropdownMenuItem
               onClick={() => {
                 setLastShield(shield.shield)
+                //@ts-ignore
                 setLastShieldMetadata(JSON.stringify(shield.metadata));
                 
                 router.push(policyId ? `/shield/edit?category=${shieldCategory}&policyId=${policyId}` : `/shield/edit?category=${shieldCategory}`);
@@ -104,6 +105,7 @@ export const createColumns = (shieldCategory: string, policyId: string): ColumnD
             <DropdownMenuItem
               onClick={() => {
                 setLastShield(shield.shield)
+                //@ts-ignore
                 setLastShieldMetadata(JSON.stringify(shield.metadata));
                 
                 router.push(policyId ? `/shield/view?category=${shieldCategory}&policyId=${policyId}` : `/shield/view?category=${shieldCategory}`);

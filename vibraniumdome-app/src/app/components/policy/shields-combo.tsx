@@ -53,6 +53,7 @@ export function ShieldsCombobox({ shields, policyMetadata, policyId=null, view=f
                 key={shield.key}
                 value={shield.value}
                 onSelect={(currentValue) => {
+                  //@ts-ignore
                   const shieldMetadata = policyMetadata.find((shield) => shield.full_name.toLowerCase() === currentValue)
                   setLastShieldMetadataAtom(JSON.stringify(shieldMetadata.metadata))
                   setLastShieldAtom(currentValue)

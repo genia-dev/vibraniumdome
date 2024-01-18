@@ -13,7 +13,7 @@ export function LowRiskThreshold({ state }) {
   const [lowRiskThreshold, setLowRiskThreshold] = useAtom(lowRiskThresholdAtom, state)
 
   const setValueChange = async (value: number[]) => {
-    setLowRiskThreshold(value[0])
+    setLowRiskThreshold(value[0] || 0.2)
   }
 
   return (
