@@ -126,7 +126,7 @@ Vibranium Dome ecosystem is growing fast, we are working with security researche
 
 ## Demo
 
-https://github.com/genia-dev/vibraniumdome/assets/16246393/82c18d40-0b94-4831-a2a4-af1a4ab06497
+https://github.com/genia-dev/vibraniumdome/assets/16246393/abc91686-8fd4-4bf3-b915-759bc68541e5
 
 ## Getting Started
 
