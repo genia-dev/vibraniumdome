@@ -46,7 +46,7 @@ export function UserNav({ user }: Props) {
                         variant="secondary"
                         className="w-full"
                         onClick={() => {
-                            void signOut();
+                            signOut({ callbackUrl: "/" });
                         }}
                     >
                         <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
