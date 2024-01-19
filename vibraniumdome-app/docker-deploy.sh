@@ -11,4 +11,5 @@ docker buildx build --platform linux/amd64,linux/arm64 \
                     --build-arg GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
                     --build-arg OPENSEARCH_JWT_HMAC_SIGNING_KEY=${OPENSEARCH_JWT_HMAC_SIGNING_KEY} \
                     --build-arg OPENSEARCH_DASHBOARD_URL=${OPENSEARCH_DASHBOARD_URL} \
+                    --build-arg OPENSEARCH_GOVERNANCE_URL=${OPENSEARCH_GOVERNANCE_URL} \
                     --tag=vibraniumdome/vibraniumdome-app:0.1.0 --push .

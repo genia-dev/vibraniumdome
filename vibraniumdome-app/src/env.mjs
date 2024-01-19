@@ -33,6 +33,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     OPENSEARCH_JWT_HMAC_SIGNING_KEY: z.string(),
     OPENSEARCH_DASHBOARD_URL: z.string(),
+    OPENSEARCH_GOVERNANCE_URL: z.string(),
   },
 
   /**
@@ -57,6 +58,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     OPENSEARCH_JWT_HMAC_SIGNING_KEY: process.env.OPENSEARCH_JWT_HMAC_SIGNING_KEY,
     OPENSEARCH_DASHBOARD_URL: process.env.OPENSEARCH_DASHBOARD_URL,
+    OPENSEARCH_GOVERNANCE_URL: process.env.OPENSEARCH_GOVERNANCE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
