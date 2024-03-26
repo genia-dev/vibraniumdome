@@ -5,7 +5,7 @@ import tempfile
 import time
 
 from dotenv import load_dotenv
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, request, make_response
 from marshmallow import Schema, fields
 from opentelemetry.proto.collector.trace.v1.trace_service_pb2 import ExportTraceServiceResponse
 
@@ -17,6 +17,8 @@ from vibraniumdome_shields.shields.model import LLMInteraction
 from vibraniumdome_shields.shields.vibranium_shields_service import CaptainLLM, VibraniumShieldsFactory
 from vibraniumdome_shields.user_interface.cli_app import main
 from vibraniumdome_shields.vector_db.vector_db_service import VectorDBService
+
+from vibraniumdome_shields.utils import check_api_token
 
 from prometheus_client import multiprocess
 from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST, Counter, Histogram
@@ -86,7 +88,7 @@ def vector_reload():
     return jsonify({"response": "Done"}), 200
 
 
-@app.route("/api/scan", methods=["POST"])
+@app.route("/v1/scan", methods=["POST"])
 def scan():
     data = request.json
     try:
@@ -100,6 +102,23 @@ def scan():
 
 @app.route("/v1/traces", methods=["POST"])
 def receive_traces():
+    try:
+        vibranium_dome_base_url = settings.get("VIBRANIUM_DOME_APP_BASE_URL", "http://localhost:3000")
+        auth_header = request.headers.get('Authorization')
+    
+        if not auth_header:
+            return make_response('Unauthorized Access', 401)
+        
+        token_type, vibranium_dome_api_key = auth_header.split()
+        if token_type.lower() != 'bearer':
+            return make_response('Unauthorized Access', 401)
+        
+        if not check_api_token(vibranium_dome_base_url, vibranium_dome_api_key):
+            logger.warning("got an invalid API key")
+            return make_response('Unauthorized Access', 401)
+    except Exception:
+        return make_response('Unauthorized Access', 401)
+    
     number_of_requests.inc()
     llm_interactions: list(LLMInteraction) = parser.parse_llm_call(request.data)
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=1000, thread_name_prefix="traces")

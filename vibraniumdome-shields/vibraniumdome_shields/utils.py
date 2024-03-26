@@ -7,6 +7,7 @@ from uuid import uuid4
 
 import yaml
 from pydantic import BaseModel
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -62,3 +63,14 @@ def pydantic_json_encoder(obj):
     if isinstance(obj, BaseModel):
         return obj.model_dump()
     return obj
+
+def check_api_token(vibranium_dome_base_url, vibranium_dome_api_key) -> bool:
+    full_url = f"{vibranium_dome_base_url}/api/trpc/validateAPIToken"
+    headers = {"Authorization": f"Bearer {vibranium_dome_api_key}"}
+    try:
+        response = requests.get(full_url, headers=headers)
+        logger.debug(response)
+        return response.ok
+    except Exception:
+        logger.exception("failed to check_api_token")
+        return False

@@ -14,6 +14,17 @@ function generateApiKey(): string {
 }
 
 
+export const validateAPIToken = protectedProcedure
+.query(async ({ ctx }) => {
+   return ctx.db.aPIToken.findFirst({
+    // @ts-ignore
+    where: { user: { id: ctx.session.user.id } },
+    select: {
+      user: true,
+    }
+  });
+})
+
 export const apiTokenRouter = createTRPCRouter({
   createApiToken: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))

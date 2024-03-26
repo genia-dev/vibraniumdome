@@ -60,13 +60,14 @@ function generateOpenSearchJWT() {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
+    //@ts-ignore
     async session({ session, user, token }) {
       const currUser = await db.user.findUnique({
         //@ts-ignore
         where: { email: session.user.email.toLowerCase() },
       });
 
-      if (!currUser.isActive) {
+      if (!currUser || !currUser.isActive) {
         return
       }
 
