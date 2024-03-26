@@ -1,12 +1,19 @@
-import time
+import os
 
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 
+vibranium_dome_api_key = os.getenv('VIBRANIUM_DOME_API_KEY')
+
+if vibranium_dome_api_key is None:
+    raise ValueError("VIBRANIUM_DOME_API_KEY environment variable is not set")
+
+headers = {"Authorization": f"Bearer {vibranium_dome_api_key}"}
+
 trace.set_tracer_provider(TracerProvider())
-otlp_exporter = OTLPSpanExporter(endpoint="http://localhost:5001/v1/traces")
+otlp_exporter = OTLPSpanExporter(endpoint="http://localhost:5001/v1/traces", headers=headers)
 span_processor = BatchSpanProcessor(otlp_exporter)
 trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(otlp_exporter))
 
