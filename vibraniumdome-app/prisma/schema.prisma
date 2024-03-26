@@ -90,6 +90,7 @@ model User {
   sessions      Session[]
   memberships   Membership[]
   tokens        APIToken[]
+  isActive      Boolean      @default(false)
 }
 
 model Team {

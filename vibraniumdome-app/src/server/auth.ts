@@ -66,6 +66,10 @@ export const authOptions: NextAuthOptions = {
         where: { email: session.user.email.toLowerCase() },
       });
 
+      if (!currUser.isActive) {
+        return
+      }
+
       return {
         ...session,
         user: {
