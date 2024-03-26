@@ -36,6 +36,7 @@ pyrate-limiter = "^3.1.0"
 vibraniumdome-sdk = "^0.1.0"
 openai = "0.28.0"
 httpx = "^0.25.2"
+prometheus-client = "^0.20.0"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -8,6 +8,10 @@ from uuid import UUID
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 from vibraniumdome_shields.utils import load_vibranium_home, safe_loads_yaml
 
+from prometheus_client import Histogram
+
+regex_shield_base_seconds_histogram = Histogram('regex_shield_base_seconds', 'Time for processing RegexShieldBase',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class RegexShieldDeflectionResult(ShieldDeflectionResult):
     pattern: str
@@ -67,7 +71,8 @@ class RegexShieldBase(VibraniumShield):
                     shield_matches.append(regex_shield_match)
             except Exception:
                 self._logger.exception("Failed to evaluate regex pattern %s", compiled_pattern)
-
+    
+    @regex_shield_base_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         llm_message = self._get_message_to_validate(llm_interaction)
         shield_matches = []

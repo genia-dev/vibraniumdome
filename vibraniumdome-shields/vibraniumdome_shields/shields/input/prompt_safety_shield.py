@@ -5,6 +5,10 @@ from uuid import UUID
 import openai
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
+from prometheus_client import Histogram
+
+prompt_safety_shield_seconds_histogram = Histogram('prompt_safety_shield_seconds', 'Time for processing PromptSafetyShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class PromptSafetyShieldResult(ShieldDeflectionResult):
     category: str
@@ -56,6 +60,7 @@ class PromptSafetyShield(VibraniumShield):
     def __init__(self):
         super().__init__(self._shield_name)
 
+    @prompt_safety_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
 

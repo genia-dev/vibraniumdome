@@ -2,6 +2,7 @@ import concurrent.futures
 import logging
 import os
 import tempfile
+import time
 
 from dotenv import load_dotenv
 from flask import Flask, Response, jsonify, request
@@ -17,9 +18,26 @@ from vibraniumdome_shields.shields.vibranium_shields_service import CaptainLLM, 
 from vibraniumdome_shields.user_interface.cli_app import main
 from vibraniumdome_shields.vector_db.vector_db_service import VectorDBService
 
+from prometheus_client import multiprocess
+from prometheus_client import generate_latest, CollectorRegistry, CONTENT_TYPE_LATEST, Counter, Histogram
+
 load_dotenv()
 
 app = Flask(__name__)
+
+number_of_requests = Counter(
+    'number_of_requests',
+    'The number of requests, its a counter so the value can increase or reset to zero.'
+)
+
+llm_processing_seconds_histogram = Histogram('llm_processing_seconds', 'Time for processing the LLM interaction',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
+
+llm_saving_seconds_histogram = Histogram('llm_saving_seconds', 'Time for saving the processed LLM interaction to opensearch',
+                                    buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
+
+llm_interaction_total_seconds_histogram = Histogram('llm_interaction_total_seconds', 'Time for total handling LLM interaction',
+                                    buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 # Configure logging levels
 logging.basicConfig(level=settings.logger_level.DEFAULT_LOGGING_LEVEL)
@@ -45,6 +63,13 @@ policy_service = PolicyService()
 parser = OpenTelemetryParser()
 interaction_service = LLMInteractionService()
 
+
+@app.route('/metrics', methods=['GET'])
+def metrics():
+    registry = CollectorRegistry()
+    multiprocess.MultiProcessCollector(registry)
+    data = generate_latest(registry)
+    return Response(data)
 
 @app.route("/api/health", methods=["GET"])
 def api():
@@ -75,15 +100,30 @@ def scan():
 
 @app.route("/v1/traces", methods=["POST"])
 def receive_traces():
+    number_of_requests.inc()
     llm_interactions: list(LLMInteraction) = parser.parse_llm_call(request.data)
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=1000, thread_name_prefix="traces")
 
     def process_traces(llm_interaction: LLMInteraction):
         try:
+            start_time_total = time.time()
+
             policy = policy_service.get_policy_by_name(llm_interaction._interaction.get("service.name", "default"))
+            
+            start_time = time.time()
             llm_interaction._shields_result = captain_llm.deflect_shields(llm_interaction, policy)
+            end_time = time.time() - start_time
+            llm_processing_seconds_histogram.observe(end_time)
+
             shield_names = policy_service.get_shields_names()
+
+            start_time = time.time()
             interaction_service.save_llm_interaction(llm_interaction, policy, shield_names)
+            end_time = time.time() - start_time
+            llm_saving_seconds_histogram.observe(end_time)
+            
+            end_time_total = time.time() - start_time_total
+            llm_interaction_total_seconds_histogram.observe(end_time_total)
         except Exception:
             logger.exception("error while deflecting shields for interaction= %s with policy= %s", llm_interaction, policy)
 

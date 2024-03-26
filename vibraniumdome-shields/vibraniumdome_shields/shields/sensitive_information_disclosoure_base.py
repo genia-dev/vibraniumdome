@@ -8,6 +8,10 @@ from presidio_analyzer import AnalyzerEngine
 
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
+from prometheus_client import Histogram
+
+sensitive_information_disclosoure_base_seconds_histogram = Histogram('sensitive_information_disclosoure_base_seconds', 'Time for processing SensitiveInformationDisclosureShieldBase',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class SensitiveShieldDeflectionResult(ShieldDeflectionResult):
     result: dict
@@ -37,6 +41,7 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
                 self._logger.info("Start spacy download")
                 spacy.cli.download(self._model_name)
             self._logger.info("Spacy is up to date")
+            self.analyzer = AnalyzerEngine()
         except Exception:
             self._logger.exception("Failed spacy download")
 
@@ -44,15 +49,14 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
     def _get_message_to_validate(self, llm_interaction: LLMInteraction) -> str:
         pass
 
+    @sensitive_information_disclosoure_base_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         threshold = shield_policy_config.get("threshold", 0.1)
         try:
-            # TODO: consider moving to ctor
-            analyzer: AnalyzerEngine = AnalyzerEngine()
             message: str = self._get_message_to_validate(llm_interaction)
             if message:
-                analyzer_results = analyzer.analyze(text=message, entities=self._entites, language="en")
+                analyzer_results = self.analyzer.analyze(text=message, entities=self._entites, language="en")
                 for result in analyzer_results:
                     if result.score > threshold:
                         shield_matches.append(

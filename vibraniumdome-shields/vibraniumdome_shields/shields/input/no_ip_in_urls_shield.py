@@ -7,6 +7,10 @@ from uuid import UUID
 
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
+from prometheus_client import Histogram
+
+no_ip_in_urls_shield_seconds_histogram = Histogram('no_ip_in_urls_shield_seconds', 'Time for processing NoIPInURLsShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class NoIPInURLsDeflectionResult(ShieldDeflectionResult):
     matches: List = []
@@ -20,6 +24,7 @@ class NoIPInURLsShield(VibraniumShield):
     def __init__(self):
         super().__init__(self._shield_name)
 
+    @no_ip_in_urls_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[NoIPInURLsDeflectionResult]:
         llm_message = llm_interaction.get_last_user_message_or_function_result()
         shield_matches = []

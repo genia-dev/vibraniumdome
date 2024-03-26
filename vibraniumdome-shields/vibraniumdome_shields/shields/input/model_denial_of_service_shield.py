@@ -7,6 +7,10 @@ from pyrate_limiter import BucketFullException, Duration, InMemoryBucket, Limite
 
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
+from prometheus_client import Histogram
+
+model_denial_of_service_shield_seconds_histogram = Histogram('model_denial_of_service_shield_seconds', 'Time for processing ModelDenialOfServiceShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class ModelDenialOfServiceShieldDeflectionResult(ShieldDeflectionResult):
     limit_key: str  # aka user_id or ip
@@ -33,6 +37,7 @@ class ModelDenialOfServiceShield(VibraniumShield):
         bucket = InMemoryBucket([rate])
         self._limiter_dict[llm_app] = Limiter(bucket)
 
+    @model_denial_of_service_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         limit_key = shield_policy_config.get("limit_by", "llm.user")

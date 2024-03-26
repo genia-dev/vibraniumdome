@@ -6,6 +6,10 @@ from uuid import UUID
 
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
+from prometheus_client import Histogram
+
+arbitrary_images_shield_seconds_histogram = Histogram('arbitrary_images_shield_seconds', 'Time for processing ArbitraryImagesShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class ArbitraryImagesShieldDeflectionResult(ShieldDeflectionResult):
     matches: List = []
@@ -36,6 +40,7 @@ class ArbitraryImagesShield(VibraniumShield):
     def _get_message_to_validate(self, llm_interaction: LLMInteraction):
         return llm_interaction.get_last_assistant_message_and_function_result()
 
+    @arbitrary_images_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         llm_message = self._get_message_to_validate(llm_interaction)
         shield_matches = []

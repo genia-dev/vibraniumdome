@@ -5,6 +5,10 @@ from typing import Optional
 
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
+from prometheus_client import Histogram
+
+canary_token_disclosoure_shield_seconds_histogram = Histogram('canary_token_disclosoure_shield_seconds', 'Time for processing CanaryTokenDisclosureShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class CanaryTokenDisclosureShieldDeflectionResult(ShieldDeflectionResult):
     token: Optional[str] = None
@@ -17,6 +21,7 @@ class CanaryTokenDisclosureShield(VibraniumShield):
     def __init__(self):
         super().__init__(self._shield_name)
 
+    @canary_token_disclosoure_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         try:

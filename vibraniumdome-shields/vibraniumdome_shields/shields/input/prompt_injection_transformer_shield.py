@@ -6,6 +6,10 @@ from transformers import pipeline
 
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
+from prometheus_client import Histogram
+
+prompt_injection_transformer_shield_seconds_histogram = Histogram('prompt_injection_transformer_shield_seconds', 'Time for processing PromptInjectionTransformerShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class PromptInjectionTransformerShieldDeflectionResult(ShieldDeflectionResult):
     model: str = ""
@@ -30,6 +34,7 @@ class PromptInjectionTransformerShield(VibraniumShield):
         except Exception:
             self._logger.error("Failed to load model: %s", self._model)
 
+    @prompt_injection_transformer_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         # TODO: take threshold by policy, check if should be 0.9
         threshold = shield_policy_config.get("threshold", self._default_threshold)

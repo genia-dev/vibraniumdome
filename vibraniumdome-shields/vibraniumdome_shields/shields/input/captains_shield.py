@@ -12,6 +12,10 @@ from vibraniumdome_shields.settings_loader import settings
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 from vibraniumdome_shields.utils import safe_loads_dictionary_string
 
+from prometheus_client import Histogram
+
+captains_shield_seconds_histogram = Histogram('captains_shield_seconds', 'Time for processing CaptainsShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class CaptainsShieldDeflectionResult(ShieldDeflectionResult):
     llm_response: Json
@@ -27,6 +31,7 @@ class CaptainsShield(VibraniumShield):
             raise ValueError("LLMShield missed openai_api_key")
         openai.api_key = openai_api_key
 
+    @captains_shield_seconds_histogram.time()
     @retry(
         stop=stop_after_attempt(3),
         retry=retry_if_exception_type((Timeout, TryAgain, APIError, APIConnectionError)),

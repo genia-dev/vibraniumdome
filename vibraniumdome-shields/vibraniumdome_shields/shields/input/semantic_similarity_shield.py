@@ -7,6 +7,10 @@ from langchain.docstore.document import Document
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 from vibraniumdome_shields.vector_db.vector_db_service import VectorDBService
 
+from prometheus_client import Histogram
+
+semantic_similarity_shield_seconds_histogram = Histogram('semantic_similarity_shield_seconds', 'Time for processing SemanticSimilarityShield',
+                                   buckets=[0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 20, float('inf')])
 
 class SemanticSimilarityShieldDeflectionResult(ShieldDeflectionResult):
     text: str = ""
@@ -27,6 +31,7 @@ class SemanticSimilarityShield(VibraniumShield):
         self._min_prompt_len = min_prompt_len
         self._default_threshold = default_threshold
 
+    @semantic_similarity_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         threshold = shield_policy_config.get("threshold", 0.4)
         llm_message = llm_interaction.get_last_user_message_or_function_result()
