@@ -69,7 +69,7 @@ def metrics():
     registry = CollectorRegistry()
     multiprocess.MultiProcessCollector(registry)
     data = generate_latest(registry)
-    return Response(data)
+    return Response(data, content_type='text/plain')
 
 @app.route("/api/health", methods=["GET"])
 def api():
