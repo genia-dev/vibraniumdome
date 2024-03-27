@@ -18,7 +18,7 @@ class TestVectorDB(unittest.TestCase):
             settings.get("vector_db.collection_name"),
             settings.get("vector_db.embedding_model_name"),
         )
-        self._threshold = settings.get("vibraniumdome_shields.semantic_similarity.default_thresold")
+        self._threshold = settings.get("vibraniumdome_shields.semantic_similarity.default_threshold")
 
     def test_sanity(self):
         docs_and_scores: List[Tuple[Document, float]] = self._vector_db_service.query("good morning!")

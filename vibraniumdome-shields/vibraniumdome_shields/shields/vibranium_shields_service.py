@@ -42,7 +42,7 @@ class VibraniumShieldsFactory:
                 SemanticSimilarityShield(
                     self._vector_db_service,
                     settings.get("vibraniumdome_shields.semantic_similarity.min_prompt_len"),
-                    settings.get("vibraniumdome_shields.semantic_similarity.default_thresold"),
+                    settings.get("vibraniumdome_shields.semantic_similarity.default_threshold"),
                 ),
                 InputRegexShield(),
                 CaptainsShield(settings.get("OPENAI_API_KEY")),
