@@ -6,7 +6,7 @@ from vibraniumdome_shields.shields.model import LLMInteraction
 from vibraniumdome_shields.shields.output.regex_shield import OutputRegexShield
 
 
-class TestVibraniumCanaryShield(unittest.TestCase):
+class TestVibraniumOutputRegexShield(unittest.TestCase):
     _shield: OutputRegexShield = None
     _scan_id = 1
     _full_policy: dict
