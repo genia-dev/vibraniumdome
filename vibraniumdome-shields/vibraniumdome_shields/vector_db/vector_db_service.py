@@ -29,13 +29,13 @@ class VectorDBService:
         if os.path.exists(self.vector_store_file_path):
             self._vector_store = self._vector_store.load_local(folder_path=self.vector_store_dir, embeddings=self._embeddings, index_name=self._index_name)
         else:
-            self._init_vector_store()
+            self.init_vector_store()
         self._logger.info("vectordb initialized")
 
-    def _init_vector_store(self):
+    def init_vector_store(self):
         self._logger.debug("the vectordb collection is empty, start initializing")
         self._init_vector_with_local_prompt_injections()
-        self.load_external_data()
+        self._load_external_data()
         self._logger.debug("vectordb data loaded")
 
     def add_texts(self, texts: List[str]):
@@ -104,7 +104,7 @@ class VectorDBService:
         # dataset = self._load_file("https://raw.githubusercontent.com/sherdencooper/GPTFuzz/master/datasets/questions/question_list.csv", "csv")
         self.add_texts(dataset["train"]["text"])
 
-    def load_external_data(self):
+    def _load_external_data(self):
         self._load_hf_gandalf()
         self._load_GPT_Fuzz()
         self._load_hf_jasper()

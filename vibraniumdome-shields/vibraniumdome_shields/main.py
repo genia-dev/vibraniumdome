@@ -81,7 +81,7 @@ def api():
 @app.route("/api/vector/reload", methods=["POST", "GET"])
 def vector_reload():
     try:
-        vector_db_service.load_external_data()
+        vector_db_service.init_vector_store()
     except Exception as e:
         return jsonify({"errors": e.messages}), 400
 
