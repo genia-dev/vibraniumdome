@@ -104,12 +104,24 @@ class CaptainLLM:
             except Exception:
                 self._logger.exception("error while deflecting shield %s with scan_id=%s", shield.name, scan_id)
 
+        results = {}
         if execution_mode_async:
             with concurrent.futures.ThreadPoolExecutor(max_workers=5, thread_name_prefix="CaptainLLM") as executor:
                 shields_res = executor.map(deflect_shield, shields)
-                results = dict(filter(lambda x: len(x[1]) > 0, shields_res))
+                for k, v in shields_res:
+                    if len(v) > 0:
+                        if k in results:
+                            results[k] += v
+                        else:
+                            results[k] = v
         else:
-            results = {k: v for a_shield in shields for k, v in [deflect_shield(a_shield)] if len(v) > 0}
+            for a_shield in shields:
+                k, v = deflect_shield(a_shield)
+                if len(v) > 0:
+                    if k in results:
+                        results[k] += v
+                    else:
+                        results[k] = v
 
         shield_deflection_result.results = results
         self._calculate_risk(shield_deflection_result, policy)
@@ -137,6 +149,7 @@ class CaptainLLM:
     def deflect_shields(self, llm_interaction: LLMInteraction, policy: dict) -> ShieldsDeflectionResult:
         shield_deflection_result = self.deflect_incoming(llm_interaction, policy)
         shield_deflection_result.merge(self.deflect_outbound(llm_interaction, policy))
+        # TODO: Shlomi consider removing the calculate risk from within the incoming/outbound deflections
         self._calculate_risk(shield_deflection_result, policy)
         return shield_deflection_result
 

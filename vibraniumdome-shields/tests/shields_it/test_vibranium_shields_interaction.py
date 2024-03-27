@@ -34,7 +34,8 @@ class TestVibraniumShieldsIT(unittest.TestCase):
                 "input_shields": [
                     {"type": "com.vibraniumdome.shield.input.captain", "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"}},
                     {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "name": "policy number"},
-                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {"patterns": ["shlomi@vibranium-dome.com"]}, "name": "email"},
+                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {"patterns": ["shlomi@vibranium-dome.com"], "name": "email"}},
+                    {"type": "com.vibraniumdome.shield.input.regex", "metadata": {"patterns_type": "white-list", "patterns": ["^[\x20-\x7E]+$"], "name": "visible characters only",}},
                     {"type": "com.vibraniumdome.shield.input.transformer", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}},
                     {"type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}, "full_name": "No IP in URLs shield"},
@@ -139,8 +140,30 @@ class TestVibraniumShieldsIT(unittest.TestCase):
         )
         expected = "shlomi@vibranium-dome.com"
         response = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
-        actual = response.results["com.vibraniumdome.shield.input.regex"][0].matches[0]
+        actual = response.results["com.vibraniumdome.shield.input.regex"][1].matches[0]
         self.assertEqual(actual, expected)
+
+
+    def test_invisible_char(self):
+        _llm_interaction = LLMInteraction(
+            {
+                "id": "1",
+                "service.name": "test",
+                "llm_vendor": "OpenAI",
+                "openai_api": {"base": "https://api.openai.com/v1", "type": "open_ai"},
+                "llm_request": {"type": "chat", "model": "gpt-3.5-turbo-0613"},
+                "llm_response": {"model": "gpt-3.5-turbo-0613"},
+                "llm.usage": {"prompt_tokens": 53, "completion_tokens": 25, "total_tokens": 78},
+                "llm_prompts": [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Who won the world series in 2020?"},
+                    {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
+                    {"role": "user", "content": "Where was it played ?"},
+                ],
+            }
+        )
+        response = self._captain_llm.deflect_shields(_llm_interaction, self._policy)
+        self.assertEqual(response.results["com.vibraniumdome.shield.input.regex"][2].risk, 1)
 
     def test_kamingo_subversion(self):
         _llm_interaction = LLMInteraction(
