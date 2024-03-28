@@ -70,7 +70,7 @@ class LLMInteraction:
         self._interaction.get(key, default_value)
 
     def get_llm_user(self):
-        return self._llm_user
+        return self._llm_user or "anonymous"
 
     def get_llm_app(self):
         return self._llm_app
