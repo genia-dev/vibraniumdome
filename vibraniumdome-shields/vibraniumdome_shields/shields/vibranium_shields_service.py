@@ -1,11 +1,12 @@
 import concurrent.futures
 import logging
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import openai
 
 from vibraniumdome_shields.settings_loader import settings
 from vibraniumdome_shields.shields.input.captains_shield import CaptainsShield
+from vibraniumdome_shields.shields.input.invisible_chars_shield import InvisibleInputCharactersShield
 from vibraniumdome_shields.shields.input.model_denial_of_service_shield import ModelDenialOfServiceShield
 from vibraniumdome_shields.shields.input.no_ip_in_urls_shield import NoIPInURLsShield
 from vibraniumdome_shields.shields.input.prompt_injection_transformer_shield import PromptInjectionTransformerShield
@@ -16,6 +17,7 @@ from vibraniumdome_shields.shields.input.sensitive_information_disclosoure_shiel
 from vibraniumdome_shields.shields.model import LLMInteraction, Risk, ShieldDeflectionResult, ShieldsDeflectionResult, VibraniumShield
 from vibraniumdome_shields.shields.output.arbitrary_images_shield import ArbitraryImagesShield
 from vibraniumdome_shields.shields.output.canary_token_disclosoure_shield import CanaryTokenDisclosureShield
+from vibraniumdome_shields.shields.output.invisible_chars_shield import InvisibleOutputCharactersShield
 from vibraniumdome_shields.shields.output.refusal_shield import RefusalShield
 from vibraniumdome_shields.shields.output.regex_shield import OutputRegexShield
 from vibraniumdome_shields.shields.output.sensitive_information_disclosoure_shield import SensitiveInformationDisclosureShieldOutput
@@ -51,6 +53,7 @@ class VibraniumShieldsFactory:
                 SensitiveInformationDisclosureShieldInput(),
                 ModelDenialOfServiceShield(),
                 NoIPInURLsShield(),
+                InvisibleInputCharactersShield(),
             ]
         }
 
@@ -63,6 +66,7 @@ class VibraniumShieldsFactory:
                 SensitiveInformationDisclosureShieldOutput(),
                 ArbitraryImagesShield(),
                 WhitelistURLsShield(),
+                InvisibleOutputCharactersShield(),
             ]
         }
 
@@ -96,7 +100,7 @@ class CaptainLLM:
         execution_mode_async = settings.get("vibraniumdome_shields.execution_mode_async", default=True, cast="@bool")
         scan_id = shield_deflection_result.scan_id
 
-        def deflect_shield(tuple: [VibraniumShield, dict]) -> List[ShieldDeflectionResult]:
+        def deflect_shield(tuple: Tuple[VibraniumShield, dict]) -> List[ShieldDeflectionResult]:
             try:
                 shield, shield_policy_config = tuple
                 self._logger.info("run shield: %s, with scan id=%s", shield.name, scan_id)
