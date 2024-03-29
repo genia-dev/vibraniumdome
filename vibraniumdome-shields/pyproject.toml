@@ -33,10 +33,10 @@ presidio-analyzer = "^2.2.351"
 spacy = "^3.7.2"
 opentelemetry-proto = "^1.21.0"
 pyrate-limiter = "^3.1.0"
-openai = "0.28.0"
 httpx = "^0.25.2"
 prometheus-client = "^0.20.0"
 vibraniumdome-sdk = "^0.4.0"
+openai = "^1.14.3"
 
 
 [tool.poetry.group.dev.dependencies]

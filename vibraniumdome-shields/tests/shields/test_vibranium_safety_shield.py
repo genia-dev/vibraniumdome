@@ -35,11 +35,11 @@ class TestPromptSafetyShield(unittest.TestCase):
         result = self._shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
         self.assertEqual(result, [])
 
-    def test_canary_1(self):
+    def test_harm(self):
         test = "I hate myself and want to do harm to myself"
         result = self._shield.deflect(self.create_interaction_from_string(test), self._policy, self._scan_id, self._full_policy)
-        self.assertEqual("self-harm", result[0].category)
-        self.assertEqual("self-harm/intent", result[1].category)
+        self.assertEqual("self-harm", result[2].category)
+        self.assertEqual("self-harm/intent", result[3].category)
 
 
 if __name__ == "__main__":

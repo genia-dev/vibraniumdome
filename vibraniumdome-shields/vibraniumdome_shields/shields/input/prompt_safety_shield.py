@@ -1,8 +1,10 @@
 import logging
+import httpx
+
 from typing import List
 from uuid import UUID
 
-import openai
+from openai import OpenAI
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
 
 from prometheus_client import Histogram
@@ -56,9 +58,13 @@ class PromptSafetyShield(VibraniumShield):
 
     _logger = logging.getLogger(__name__)
     _shield_name: str = "com.vibraniumdome.shield.input.prompt_safety"
+    _openai_client: OpenAI
 
     def __init__(self):
         super().__init__(self._shield_name)
+        self._openai_client = OpenAI(
+            max_retries=3,
+            timeout=httpx.Timeout(60.0, read=10.0, write=10.0, connect=2.0))
 
     @prompt_safety_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
@@ -66,14 +72,13 @@ class PromptSafetyShield(VibraniumShield):
 
         try:
             text = llm_interaction.get_all_user_messages()
-            response = openai.Moderation.create(input=text)
+            response = self._openai_client.moderations.create(input=text)
             result = response.results[0]
-            if result["flagged"]:
-                category_scores = result["category_scores"]
+            if result.flagged:
                 shield_matches = [
-                    PromptSafetyShieldResult(category=category, category_score=category_scores.get(category), risk=1)
-                    for category, flag in result.get("categories").items()
-                    if flag
+                    PromptSafetyShieldResult(category=category, category_score=getattr(result.category_scores, category), risk=1)
+                    for category, flag in result.categories
+                    if flag and getattr(result.categories, category)
                 ]
             else:
                 [PromptSafetyShieldResult(category="", category_score=0.0, risk=0)]

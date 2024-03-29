@@ -3,10 +3,9 @@ import logging
 from typing import List
 from uuid import UUID
 
-import openai
-from openai.error import APIConnectionError, APIError, Timeout, TryAgain
+import httpx
+from openai import OpenAI
 from pydantic import Json
-from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from vibraniumdome_shields.settings_loader import settings
 from vibraniumdome_shields.shields.model import LLMInteraction, ShieldDeflectionResult, VibraniumShield
@@ -24,31 +23,29 @@ class CaptainsShieldDeflectionResult(ShieldDeflectionResult):
 class CaptainsShield(VibraniumShield):
     logger = logging.getLogger(__name__)
     _shield_name: str = "com.vibraniumdome.shield.input.captain"
+    _openai_client: OpenAI
 
     def __init__(self, openai_api_key):
         super().__init__(self._shield_name)
         if not openai_api_key:
             raise ValueError("LLMShield missed openai_api_key")
-        openai.api_key = openai_api_key
+        self._openai_client = OpenAI(
+            api_key=openai_api_key,
+            max_retries=3,
+            timeout=httpx.Timeout(60.0, read=10.0, write=10.0, connect=2.0))
 
     @captains_shield_seconds_histogram.time()
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=retry_if_exception_type((Timeout, TryAgain, APIError, APIConnectionError)),
-    )
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         self.logger.info("performing scan, id='%s'", scan_id)
         llm_shield_prompt = settings[self._shield_name]["prompt"]
         llm_message = llm_interaction.get_all_user_messages_or_function_results()
-        messages = [
-            {"role": "system", "content": llm_shield_prompt},
-            {"role": "user", "content": f"""<~START~>\n{llm_message}\n<~END~>"""},
-        ]
 
         params = {
             "temperature": 0,
-            "messages": messages,
-            "request_timeout": 45,
+            "messages": [
+                {"role": "system", "content": llm_shield_prompt},
+                {"role": "user", "content": f"""<~START~>\n{llm_message}\n<~END~>"""},
+            ],
         }
 
         if os.getenv("OPENAI_API_TYPE") == "azure":
@@ -57,8 +54,8 @@ class CaptainsShield(VibraniumShield):
             params["model"] = shield_policy_config.get("model", settings.get("openai.openai_model", "gpt-3.5-turbo"))
 
         results = []
-        response = openai.ChatCompletion.create(**params)
-        response_val = response["choices"][0]["message"]["content"]
+        completion = self._openai_client.chat.completions.create(**params)
+        response_val = completion.choices[0].message.content
         parsed_dict = safe_loads_dictionary_string(response_val)
         if "true" == parsed_dict.get("eval", "true"):
             results = [CaptainsShieldDeflectionResult(llm_response=response_val, risk=1.0)]

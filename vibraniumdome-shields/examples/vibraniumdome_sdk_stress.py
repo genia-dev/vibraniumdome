@@ -1,21 +1,20 @@
-import os
-import openai
+import httpx
+from openai import OpenAI
 import time
 import concurrent.futures
 from vibraniumdome_sdk import VibraniumDome
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app_name = "playground"
 # app_name="insurance_quote"
 # app_name="gpt_next"
 # app_name="app.legal.chat"
-used_id = "user-123456"
-# used_id = "user-456789"
+user_id = "user-123456"
+# user_id = "user-456789"
 session_id_header = "cdef-1234-abcd"
 # session_id_header = "abcd-1234-cdef"
 
 VibraniumDome.init(app_name=app_name)
+openai_client = OpenAI(max_retries=3, timeout=httpx.Timeout(60.0, read=10.0, write=10.0, connect=2.0))
 
 
 def query_openai():
@@ -24,7 +23,7 @@ def query_openai():
     This function now returns a tuple (success: bool, response_or_error: str).
     """
     try:
-        response = openai.ChatCompletion.create(
+        completion = openai_client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -33,12 +32,11 @@ def query_openai():
                 {"role": "user", "content": "Where was it played?"},
             ],
             temperature=0,
-            request_timeout=30,
-            user=used_id,
-            headers={"x-session-id": session_id_header},
+            user=user_id,
+            extra_headers={"x-session-id": session_id_header},
         )
-        print(response)
-        return (True, response.choices[0].message.content)
+        print(completion)
+        return (True, completion.choices[0].message.content)
     except Exception as e:
         return (False, str(e))
 
@@ -78,4 +76,4 @@ def run_stress(duration_seconds=60, concurrent_requests=10):
 
 
 if __name__ == "__main__":
-    run_stress(60, 2)
+    run_stress(1, 10)
