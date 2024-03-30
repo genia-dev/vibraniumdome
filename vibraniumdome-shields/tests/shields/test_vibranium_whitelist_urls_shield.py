@@ -20,7 +20,7 @@ class TestVibraniumArbitraryImagesShield(unittest.TestCase):
             "service.name": "test",
             "llm_prompts": [
                 {"role": "user", "content": "Hi how are you doing?"},
-                {"role": "function", "content": str},
+                {"role": "tool", 'tool_call_id': 'call_xTBz23BJuSQGNJd17KA0Ekk3', "content": str},
             ],
             "llm_completions": [{"finish_reason": "stop", "role": "assistant", "content": "url provided"}],
         }

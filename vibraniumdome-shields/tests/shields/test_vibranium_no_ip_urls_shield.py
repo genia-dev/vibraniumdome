@@ -20,7 +20,7 @@ class TestVibraniumNoIPsURLShield(unittest.TestCase):
             "service.name": "test",
             "llm_prompts": [
                 {"role": "user", "content": "Hi how are you doing?"},
-                {"role": "function", "content": str},
+                {"role": "tool", 'tool_call_id': 'call_xTBz23BJuSQGNJd17KA0Ekk3', "content": str},
             ],
             "llm_completions": [{"finish_reason": "stop", "role": "assistant", "content": "url succeed"}],
         }
@@ -72,7 +72,7 @@ class TestVibraniumNoIPsURLShield(unittest.TestCase):
                 ],
                 "llm_completions": [
                     {
-                        "finish_reason": "function_call",
+                        "finish_reason": "tool_calls",
                         "role": "assistant",
                         "content": """'The content of the provided URL is as follows:\n\n```\n{\n  "Code": "Success",\n  "LastUpdated": "2023-01-01T00:00:00Z",\n  "Type": "AWS-HMAC",\n  "AccessKeyId": "ASIAIOSFODNN8EXAMPLE",\n  "SecretAccessKey": "wJaLrXUtnFEMI/K7MDENG/bPxfRyCYEXAMPLEKEY",\n  "Token": "IQoJb3JpZ2luX3YjE...",\n  "Expiration": "2023-01-01T06:00:00Z"\n}\n```\n\nPlease note that this is a sample response and the actual content may vary.'""",
                     }
