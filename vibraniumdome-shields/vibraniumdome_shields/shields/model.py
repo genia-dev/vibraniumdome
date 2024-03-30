@@ -80,7 +80,7 @@ class LLMInteraction:
         for index, msg in enumerate(self._messages):
             if index <= self._max_chain_length:
                 if msg["role"] == "assistant" and msg.get("function_call") is not None:
-                    res.add(msg["tool_calls"].get("name"))
+                    res.add(msg["function_call"].get("name"))
                 elif msg["role"] == "function":
                     res.add(msg.get("name"))
         return res
