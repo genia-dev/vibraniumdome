@@ -6,7 +6,7 @@ authors = ["Uri Shamay <cmpxchg16@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.9, !=3.9.7, <4.0"
 openai = "^1.14.3"
 vibraniumdome-sdk = "^0.5.0"
 httpx = "^0.27.0"
