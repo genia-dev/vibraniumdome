@@ -21,7 +21,6 @@ const basePolicy = {
     { "type": "com.vibraniumdome.shield.input.captain", "metadata": { "model": "gpt-3.5-turbo", "model_vendor": "openai" }, "full_name": "Captain's shield" },
     { "type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}, "full_name": "Semantic vector similarity shield" },
     { "type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "full_name": "Regex input shield" },
-    { "type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}, "full_name": "Prompt safety moderation shield" },
     { "type": "com.vibraniumdome.shield.input.sensitive_info_disc", "metadata": { "entities": ["CREDIT_CARD", "PERSON", "URL", "PHONE_NUMBER", "IP_ADDRESS", "EMAIL_ADDRESS", "US_PASSPORT", "US_BANK_NUMBER", "US_DRIVER_LICENSE"] }, "full_name": "PII and Sensetive information disclosure shield" },
     { "type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}, "full_name": "No IP in URLs shield" },
     { "type": "com.vibraniumdome.shield.input.invisible", "metadata": {}, "full_name": "Invisible input characters shield" },

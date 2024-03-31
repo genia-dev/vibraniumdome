@@ -29,11 +29,7 @@ class PolicyService:
                 "redact_conversation": False,
                 "input_shields": [
                     {"type": "com.vibraniumdome.shield.input.transformer", "metadata": {}, "full_name": "Prompt injection transformer shield"},
-                    {
-                        "type": "com.vibraniumdome.shield.input.model_dos",
-                        "metadata": {"threshold": 10, "interval_sec": 60, "limit_by": "llm.user"},
-                        "full_name": "Model denial of service shield",
-                    },
+                    {"type": "com.vibraniumdome.shield.input.model_dos", "metadata": { "threshold": 10, "interval_sec": 60, "limit_by": "llm.user" }, "full_name": "Model denial of service shield"},
                     {
                         "type": "com.vibraniumdome.shield.input.captain",
                         "metadata": {"model": "gpt-3.5-turbo", "model_vendor": "openai"},
@@ -41,27 +37,15 @@ class PolicyService:
                     },
                     {"type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}, "full_name": "Semantic vector similarity shield"},
                     {"type": "com.vibraniumdome.shield.input.regex", "metadata": {}, "full_name": "Regex input shield"},
-                    {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}, "full_name": "Prompt safety moderation shield"},
-                    {
-                        "type": "com.vibraniumdome.shield.input.sensitive_info_disc",
-                        "metadata": {},
-                        "full_name": "PII and Sensetive information disclosure shield",
-                    },
+                    {"type": "com.vibraniumdome.shield.input.prompt_safety", "metadata": {}, "full_name": "Prompt safety moderation shield" },
+                    {"type": "com.vibraniumdome.shield.input.sensitive_info_disc", "metadata": { "entities": ["CREDIT_CARD", "PERSON", "URL", "PHONE_NUMBER", "IP_ADDRESS", "EMAIL_ADDRESS", "US_PASSPORT", "US_BANK_NUMBER", "US_DRIVER_LICENSE", "US_SSN"] }, "full_name": "PII and Sensetive information disclosure shield" },
                     {"type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}, "full_name": "No IP in URLs shield"},
                     {"type": "com.vibraniumdome.shield.input.invisible", "metadata": {}, "full_name": "Invisible input characters shield"},
                 ],
                 "output_shields": [
-                    {
-                        "type": "com.vibraniumdome.shield.output.refusal.canary_token_disc",
-                        "metadata": {"canary_tokens": []},
-                        "full_name": "Canary token disclosure shield",
-                    },
+                    {"type": "com.vibraniumdome.shield.output.refusal.canary_token_disc", "metadata": { "canary_tokens": [] }, "full_name": "Canary token disclosure shield"},
                     {"type": "com.vibraniumdome.shield.output.refusal", "metadata": {}, "full_name": "Model output refusal shield"},
-                    {
-                        "type": "com.vibraniumdome.shield.output.sensitive_info_disc",
-                        "metadata": {},
-                        "full_name": "PII and sensetive information disclosure shield",
-                    },
+                    {"type": "com.vibraniumdome.shield.output.sensitive_info_disc", "metadata": { "entities": ["CREDIT_CARD", "PERSON", "URL", "PHONE_NUMBER", "IP_ADDRESS", "EMAIL_ADDRESS", "DATE_TIME", "LOCATION", "US_PASSPORT", "US_BANK_NUMBER", "US_DRIVER_LICENSE", "US_SSN"] }, "full_name": "PII and sensetive information disclosure shield" },
                     {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "full_name": "Regex output shield"},
                     {"type": "com.vibraniumdome.shield.output.arbitrary_image", "metadata": {}, "full_name": "Arbitrary image domain URL shield"},
                     {"type": "com.vibraniumdome.shield.output.whitelist_urls", "metadata": {}, "full_name": "White list domains URL shield"},
