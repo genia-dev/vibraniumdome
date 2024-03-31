@@ -26,7 +26,6 @@ torch = "2.0.1"
 datasets = "^2.15.0"
 langchain = "^0.0.339"
 faiss-cpu = "^1.7.4"
-tiktoken = "^0.5.1"
 load-dotenv = "^0.1.0"
 termcolor = "^2.3.0"
 presidio-analyzer = "^2.2.351"
@@ -37,6 +36,7 @@ httpx = "^0.25.2"
 prometheus-client = "^0.20.0"
 vibraniumdome-sdk = "^0.4.0"
 openai = "^1.14.3"
+tiktoken = "^0.6.0"
 
 
 [tool.poetry.group.dev.dependencies]

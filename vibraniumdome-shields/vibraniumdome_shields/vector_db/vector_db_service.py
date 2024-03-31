@@ -24,6 +24,7 @@ class VectorDBService:
         self._vector_store = FAISS
         self._embeddings = OpenAIEmbeddings(
             chunk_size=16 if os.getenv("OPENAI_API_TYPE") == "azure" else 1000,
+            model=embedding_model_name
         )  # 1000 is the default also in OpenAIEmbeddings, and 16 in Azure limit
 
         if os.path.exists(self.vector_store_file_path):
