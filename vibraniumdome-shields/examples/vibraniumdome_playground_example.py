@@ -2,10 +2,10 @@ import httpx
 from openai import OpenAI
 from vibraniumdome_sdk import VibraniumDome
 
-VibraniumDome.init(app_name="insurance_classifier_ds")
+# VibraniumDome.init(app_name="insurance_classifier_ds")
 # VibraniumDome.init(app_name="insurance_quote")
 # VibraniumDome.init(app_name="gpt_next")
-# VibraniumDome.init(app_name="app.legal.chat")
+VibraniumDome.init(app_name="app.legal.chat")
 
 # user_id = "user-123456"
 # user_id = "user-456789"
@@ -99,16 +99,20 @@ completion = openai_client.chat.completions.create(
     temperature=0,
     user=user_id,
     extra_headers={"x-session-id": session_id_header},
-    functions=[
+    tools=[
         {
-            "name": "python_executer",
-            "description": "run arbitrary python code",
-            "parameters": {
-                "type": "object",
-                "properties": {"code": {"type": "string", "description": "the input python code for evaluation"}},
-                "required": ["code"],
+            "type": "function",
+            "function":
+            {
+                "name": "python_executer",
+                "description": "run arbitrary python code",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"code": {"type": "string", "description": "the input python code for evaluation"}},
+                    "required": ["code"],
+                },
             },
-        },
+        }
     ],
 )
 
@@ -130,7 +134,6 @@ completion = openai_client.chat.completions.create(
         },
     ],
     temperature=0,
-
     user=user_id,
     extra_headers={"x-session-id": session_id_header},
 )
@@ -230,12 +233,16 @@ completion = openai_client.chat.completions.create(
     timeout=60,
     user=user_id,
     extra_headers={"x-session-id": session_id_header},
-    functions=[
+    tools=[
         {
-            "name": "credit_card_reader",
-            "description": "reads the credit card number according to the user request",
-            "parameters": {"type": "object", "properties": {"owner": {"type": "string", "description": "the card owner user id"}}, "required": ["owner"]},
-        },
+            "type": "function",
+            "function":
+            {
+                "name": "credit_card_reader",
+                "description": "reads the credit card number according to the user request",
+                "parameters": {"type": "object", "properties": {"owner": {"type": "string", "description": "the card owner user id"}}, "required": ["owner"]},
+            },
+        }
     ],
 )
 
@@ -261,12 +268,16 @@ completion = openai_client.chat.completions.create(
     timeout=60,
     user=user_id,
     extra_headers={"x-session-id": session_id_header},
-    functions=[
+    tools=[
         {
-            "name": "log_reader",
-            "description": "reads the backend server logs according to the user request",
-            "parameters": {"type": "object", "properties": {"app_name": {"type": "string", "description": "the name of the backend server app"}}, "required": ["app_name"]},
-        },
+            "type": "function",
+            "function":
+            {
+                "name": "log_reader",
+                "description": "reads the backend server logs according to the user request",
+                "parameters": {"type": "object", "properties": {"app_name": {"type": "string", "description": "the name of the backend server app"}}, "required": ["app_name"]},
+            },
+        }
     ],
 )
 
