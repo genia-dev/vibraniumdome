@@ -4,7 +4,7 @@ from typing import List
 from uuid import UUID
 
 import httpx
-from openai import OpenAI
+from openai import OpenAI ,AzureOpenAI
 from pydantic import Json
 
 from vibraniumdome_shields.settings_loader import settings
@@ -27,12 +27,20 @@ class CaptainsShield(VibraniumShield):
 
     def __init__(self, openai_api_key):
         super().__init__(self._shield_name)
-        if not openai_api_key:
-            raise ValueError("LLMShield missed openai_api_key")
-        self._openai_client = OpenAI(
-            api_key=openai_api_key,
-            max_retries=3,
-            timeout=httpx.Timeout(60.0, read=10.0, write=10.0, connect=2.0))
+        if os.getenv("OPENAI_API_TYPE") == "azure":
+            self._openai_client = AzureOpenAI(
+                api_version=os.environ.get("AZURE_OPENAI_VERSION"),
+                azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
+                api_key=os.environ.get("AZURE_OPENAI_KEY"),
+                max_retries=3,
+                timeout=httpx.Timeout(60.0, read=10.0, write=10.0, connect=2.0))
+        else:
+            if not openai_api_key:
+                raise ValueError("LLMShield missed openai_api_key")
+            self._openai_client = OpenAI(
+                api_key=openai_api_key,
+                max_retries=3,
+                timeout=httpx.Timeout(60.0, read=10.0, write=10.0, connect=2.0))
 
     @captains_shield_seconds_histogram.time()
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
@@ -49,7 +57,7 @@ class CaptainsShield(VibraniumShield):
         }
 
         if os.getenv("OPENAI_API_TYPE") == "azure":
-            params["engine"] = os.getenv("OPENAI_API_DEPLOYMENT")
+            params["model"] = os.environ.get("AZURE_OPENAI_DEPLOYMENT")
         else:
             params["model"] = shield_policy_config.get("model", settings.get("openai.openai_model", "gpt-3.5-turbo"))
 

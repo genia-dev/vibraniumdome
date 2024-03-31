@@ -6,8 +6,7 @@ import yaml
 from datasets import load_dataset
 from langchain.docstore.document import Document
 from langchain.embeddings import OpenAIEmbeddings
-
-# from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
+from langchain.embeddings.azure_openai import AzureOpenAIEmbeddings
 from langchain.vectorstores.faiss import FAISS
 from vibraniumdome_shields.utils import load_vibranium_home, uuid4_str
 
@@ -22,10 +21,18 @@ class VectorDBService:
         self.vector_store_dir = os.path.join(vector_db_dir, "vibranium-vector-store")
         self._index_name = index_name
         self._vector_store = FAISS
-        self._embeddings = OpenAIEmbeddings(
-            chunk_size=16 if os.getenv("OPENAI_API_TYPE") == "azure" else 1000,
-            model=embedding_model_name
-        )  # 1000 is the default also in OpenAIEmbeddings, and 16 in Azure limit
+        
+        # Note: requires those env vars
+        ####################################################################################
+        # os.environ["AZURE_OPENAI_API_KEY"] = "..."
+        # os.environ["AZURE_OPENAI_ENDPOINT"] = "https://<your-endpoint>.openai.azure.com/"
+
+        if os.getenv("OPENAI_API_TYPE") == "azure":
+            self._embeddings = AzureOpenAIEmbeddings(
+                    azure_deployment=os.environ.get("AZURE_OPENAI_EMBEDDING_DEPLOYMENT"),
+                    openai_api_version=os.environ.get("AZURE_OPENAI_EMBEDDING_VERSION"),)
+        else:
+            self._embeddings = OpenAIEmbeddings(model=embedding_model_name)
 
         if os.path.exists(self.vector_store_file_path):
             self._vector_store = self._vector_store.load_local(folder_path=self.vector_store_dir, embeddings=self._embeddings, index_name=self._index_name)
