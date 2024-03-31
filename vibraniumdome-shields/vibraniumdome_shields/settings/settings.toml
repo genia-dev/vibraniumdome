@@ -14,7 +14,7 @@ default_logging_level="INFO"
 [vector_db]
 collection_name="data"
 #vector_db_dir=tempfile.gettempdir()
-embedding_model_name="text-embedding-3-large"
+embedding_model_name="text-embedding-ada-002"
 
 [embeddings]
 cache_embeddings=false
