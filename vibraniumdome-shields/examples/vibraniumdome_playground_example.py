@@ -2,10 +2,10 @@ import httpx
 from openai import OpenAI
 from vibraniumdome_sdk import VibraniumDome
 
-# VibraniumDome.init(app_name="insurance_classifier_ds")
-# VibraniumDome.init(app_name="insurance_quote")
-# VibraniumDome.init(app_name="gpt_next")
-VibraniumDome.init(app_name="app.legal.chat")
+# VibraniumDome.init(app_name="insurance_classifier_ds", disable_batch=True)
+# VibraniumDome.init(app_name="insurance_quote", disable_batch=True)
+# VibraniumDome.init(app_name="gpt_next", disable_batch=True)
+VibraniumDome.init(app_name="app.legal.chat", disable_batch=True)
 
 # user_id = "user-123456"
 # user_id = "user-456789"

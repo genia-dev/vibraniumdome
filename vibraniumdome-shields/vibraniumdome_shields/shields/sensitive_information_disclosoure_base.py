@@ -19,7 +19,7 @@ class SensitiveShieldDeflectionResult(ShieldDeflectionResult):
 
 class SensitiveInformationDisclosureShieldBase(VibraniumShield):
     _logger = logging.getLogger(__name__)
-    _entites = [
+    _default_entites = [
         "CREDIT_CARD",
         "PERSON",
         "URL",
@@ -32,14 +32,13 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
         "US_BANK_NUMBER",
         "US_DRIVER_LICENSE",
     ]
-    _model_name: str = "en_core_web_lg"
 
-    def __init__(self, shield_name: str):
+    def __init__(self, shield_name: str, model_name):
         super().__init__(shield_name)
         try:
-            if not spacy.util.is_package(self._model_name):
+            if not spacy.util.is_package(model_name):
                 self._logger.info("Start spacy download")
-                spacy.cli.download(self._model_name)
+                spacy.cli.download(model_name)
             self._logger.info("Spacy is up to date")
             self.analyzer = AnalyzerEngine()
         except Exception:
@@ -53,10 +52,11 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
     def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
         shield_matches = []
         threshold = shield_policy_config.get("threshold", 0.1)
+        policy_entities = shield_policy_config.get("entities", self._default_entites)
         try:
             message: str = self._get_message_to_validate(llm_interaction)
             if message:
-                analyzer_results = self.analyzer.analyze(text=message, entities=self._entites, language="en")
+                analyzer_results = self.analyzer.analyze(text=message, entities=policy_entities, language="en")
                 for result in analyzer_results:
                     if result.score > threshold:
                         shield_matches.append(

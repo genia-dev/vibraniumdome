@@ -29,3 +29,5 @@ semantic_similarity.default_threshold=0.34
 # execution_mode_async=true
 transformer_model_name="deepset/deberta-v3-base-injection"
 refusal_model_name="MoritzLaurer/deberta-v3-large-zeroshot-v1"
+#sensetive_info_disc_model_name="en_core_web_lg"
+sensetive_info_disc_model_name="en_core_web_trf"

@@ -48,7 +48,7 @@ class PolicyService:
                         "full_name": "PII and Sensetive information disclosure shield",
                     },
                     {"type": "com.vibraniumdome.shield.input.no_ip_in_urls", "metadata": {}, "full_name": "No IP in URLs shield"},
-                    {"type": "com.vibraniumdome.shield.input.invisible", "metadata": {}, "full_name": "Invisible character input shield"},
+                    {"type": "com.vibraniumdome.shield.input.invisible", "metadata": {}, "full_name": "Invisible input characters shield"},
                 ],
                 "output_shields": [
                     {
@@ -65,7 +65,7 @@ class PolicyService:
                     {"type": "com.vibraniumdome.shield.output.regex", "metadata": {}, "full_name": "Regex output shield"},
                     {"type": "com.vibraniumdome.shield.output.arbitrary_image", "metadata": {}, "full_name": "Arbitrary image domain URL shield"},
                     {"type": "com.vibraniumdome.shield.output.whitelist_urls", "metadata": {}, "full_name": "White list domains URL shield"},
-                    {"type": "com.vibraniumdome.shield.output.invisible", "metadata": {}, "full_name": "Invisible character input shield"},
+                    {"type": "com.vibraniumdome.shield.output.invisible", "metadata": {}, "full_name": "Invisible output characters shield"},
                 ],
             },
         }

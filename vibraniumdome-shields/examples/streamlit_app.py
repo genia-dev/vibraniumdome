@@ -173,7 +173,7 @@ with st.sidebar:
 if vibranium_dome_base_url:
     os.environ["VIBRANIUM_DOME_BASE_URL"] = vibranium_dome_base_url
 
-VibraniumDome.init(app_name=llm_agent_name or "openai_test_app")
+VibraniumDome.init(app_name=llm_agent_name or "openai_test_app", disable_batch=True)
 
 st.title(page_title)
 st.caption(
