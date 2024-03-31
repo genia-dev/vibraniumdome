@@ -28,6 +28,7 @@ class SensitiveInformationDisclosureShieldBase(VibraniumShield):
         "EMAIL_ADDRESS",
         "DATE_TIME",
         "LOCATION",
+        "US_SSN",
         "US_PASSPORT",
         "US_BANK_NUMBER",
         "US_DRIVER_LICENSE",

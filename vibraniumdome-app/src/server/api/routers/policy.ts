@@ -16,7 +16,7 @@ const basePolicy = {
   "low_risk_threshold": 0.2,
   "redact_conversation": false,
   "input_shields": [
-    { "type": "com.vibraniumdome.shield.input.transformer", "metadata": {}, "full_name": "Prompt injection transformer shield" },
+    { "type": "com.vibraniumdome.shield.input.transformer", "metadata": { "threshold": 0.98 }, "full_name": "Prompt injection transformer shield" },
     { "type": "com.vibraniumdome.shield.input.model_dos", "metadata": { "threshold": 10, "interval_sec": 60, "limit_by": "llm.user" }, "full_name": "Model denial of service shield" },
     { "type": "com.vibraniumdome.shield.input.captain", "metadata": { "model": "gpt-3.5-turbo", "model_vendor": "openai" }, "full_name": "Captain's shield" },
     { "type": "com.vibraniumdome.shield.input.semantic_similarity", "metadata": {}, "full_name": "Semantic vector similarity shield" },
