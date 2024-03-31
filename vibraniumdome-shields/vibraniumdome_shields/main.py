@@ -102,11 +102,11 @@ def scan():
 # TODO
 @app.route("/v1/metrics", methods=["POST"])
 def receive_metrics():
+    logger.info(request.data)
     return jsonify({}), 200
 
 @app.route("/v1/traces", methods=["POST"])
 def receive_traces():
-    print(request.data)
     try:
         vibranium_dome_base_url = settings.get("VIBRANIUM_DOME_APP_BASE_URL", "http://localhost:3000")
         auth_header = request.headers.get('Authorization')
