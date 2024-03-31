@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY streamlit_app.py .
 
-RUN pip3 install streamlit streamlit_extras openai==0.28.1 vibraniumdome-sdk
+RUN pip3 install streamlit streamlit_extras openai vibraniumdome-sdk
 
 EXPOSE 8501
 
