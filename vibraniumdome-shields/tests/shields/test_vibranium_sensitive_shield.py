@@ -7,14 +7,14 @@ from vibraniumdome_shields.shields.model import LLMInteraction
 from vibraniumdome_shields.shields.sensitive_information_disclosoure_base import SensitiveShieldDeflectionResult
 
 
-class TestVibraniumRefusalShieldSanity(unittest.TestCase):
+class TestVibraniumSensitiveInformationDisclosureShield(unittest.TestCase):
     _sensitive_shield: SensitiveInformationDisclosureShieldOutput = None
     _scan_id = 1
     _policy: dict
     _full_policy: dict
 
     def setUp(self):
-        self._sensitive_shield = SensitiveInformationDisclosureShieldOutput()
+        self._sensitive_shield = SensitiveInformationDisclosureShieldOutput(settings.get("vibraniumdome_shields.sensetive_info_disc_model_name"))
         self._policy = {}
         self._full_policy = PolicyService("mock_key")._get_default_policy()
 
