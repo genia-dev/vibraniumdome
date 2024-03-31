@@ -99,9 +99,14 @@ def scan():
     response = captain_llm.deflect_shields(validated_data["llm_session"])
     return jsonify({"response": response.model_dump()})
 
+# TODO
+@app.route("/v1/metrics", methods=["POST"])
+def receive_metrics():
+    return jsonify({}), 200
 
 @app.route("/v1/traces", methods=["POST"])
 def receive_traces():
+    print(request.data)
     try:
         vibranium_dome_base_url = settings.get("VIBRANIUM_DOME_APP_BASE_URL", "http://localhost:3000")
         auth_header = request.headers.get('Authorization')
