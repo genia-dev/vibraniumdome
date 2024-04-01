@@ -27,7 +27,7 @@ semantic_similarity.min_prompt_len=10
 semantic_similarity.default_threshold=0.34
 # false for sync or true for async
 # execution_mode_async=true
-transformer_model_name="deepset/deberta-v3-base-injection"
+transformer_model_name="deepset/deberta-v3-base-injection,ProtectAI/deberta-v3-base-prompt-injection"
 refusal_model_name="MoritzLaurer/deberta-v3-large-zeroshot-v1"
 # sensetive_info_disc_model_name="en_core_web_lg"
 sensetive_info_disc_model_name="en_core_web_trf"
