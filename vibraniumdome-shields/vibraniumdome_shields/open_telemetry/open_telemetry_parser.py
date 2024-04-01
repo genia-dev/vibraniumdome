@@ -104,7 +104,7 @@ class OpenTelemetryParser:
 
     def _extract_id_attributes(self, span):
         document = {}
-        logging.info("Start Time: %s", span.start_time_unix_nano)
+        self._logger.debug("Start Time: %s", span.start_time_unix_nano)
         document["start_timestamp"] = span.start_time_unix_nano
         document["end_timestamp"] = span.end_time_unix_nano
         document["id"] = self._bytes_to_hex(span.trace_id)

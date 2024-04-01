@@ -103,7 +103,7 @@ class CaptainLLM:
         def deflect_shield(tuple: Tuple[VibraniumShield, dict]) -> List[ShieldDeflectionResult]:
             try:
                 shield, shield_policy_config = tuple
-                self._logger.info("run shield: %s, with scan id=%s", shield.name, scan_id)
+                self._logger.debug("run shield: %s, with scan id=%s", shield.name, scan_id)
                 return shield.name, shield.deflect(llm_interaction, shield_policy_config, scan_id, policy)
             except Exception:
                 self._logger.exception("error while deflecting shield %s with scan_id=%s", shield.name, scan_id)

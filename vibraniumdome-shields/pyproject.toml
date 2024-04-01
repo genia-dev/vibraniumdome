@@ -34,9 +34,9 @@ opentelemetry-proto = "^1.21.0"
 pyrate-limiter = "^3.1.0"
 httpx = "^0.25.2"
 prometheus-client = "^0.20.0"
-vibraniumdome-sdk = "^0.4.0"
 openai = "^1.14.3"
 tiktoken = "^0.6.0"
+vibraniumdome-sdk = "^0.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
