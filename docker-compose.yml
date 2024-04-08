@@ -2,7 +2,7 @@ version: '3.8'
 services:
   vibraniumdome-app:
     container_name: vibraniumdome-app
-    image: vibraniumdome/vibraniumdome-app:0.1.0
+    image: vibraniumdome/vibraniumdome-app:0.3.0
     ports:
       - "3000:3000"
     env_file:
@@ -20,14 +20,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
-      MYSQL_DATABASE: vibranium
+      MYSQL_DATABASE: vibraniumdome
     ports:
       - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password
   
   vibraniumdome-shields:
     container_name: vibraniumdome-shields
-    image: vibraniumdome/vibraniumdome-shields:0.1.0
+    image: vibraniumdome/vibraniumdome-shields:0.3.0
     ports:
       - "5001:5001"
     env_file:
@@ -39,11 +39,13 @@ services:
   
   vibraniumdome-streamlit-app:
     container_name: vibraniumdome-streamlit-app
-    image: vibraniumdome/vibraniumdome-streamlit-app:0.1.0
+    image: vibraniumdome/vibraniumdome-streamlit-app:0.3.0
     ports:
       - "8501:8501"
     depends_on:
       - vibraniumdome-app
+    env_file:
+      - ./vibraniumdome-shields/examples/.env.example
 
   vibraniumdome-opensearch-node-1:
     image: opensearchproject/opensearch:2.9.0
