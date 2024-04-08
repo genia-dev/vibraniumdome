@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+      - name: {{ .Values.app.name }}
+        image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+        ports:
+        - containerPort: {{ (index .Values.app.ports 0).containerPort }}
+        env:
+          - name: DATABASE_URL
+            value: {{ .Values.app.environment.DATABASE_URL | quote }}
+          - name: NEXTAUTH_SECRET
+            value: {{ .Values.app.environment.NEXTAUTH_SECRET | quote }}
+          - name: NEXTAUTH_URL
+            value: {{ .Values.app.environment.NEXTAUTH_URL | quote }}
+          - name: GOOGLE_CLIENT_ID
+            value: {{ .Values.app.environment.GOOGLE_CLIENT_ID | quote }}
+          - name: GOOGLE_CLIENT_SECRET
+            value: {{ .Values.app.environment.GOOGLE_CLIENT_SECRET | quote }}
+          - name: OPENSEARCH_JWT_HMAC_SIGNING_KEY
+            value: {{ .Values.app.environment.OPENSEARCH_JWT_HMAC_SIGNING_KEY | quote }}
+          - name: OPENSEARCH_DASHBOARD_URL
+            value: {{ .Values.app.environment.OPENSEARCH_DASHBOARD_URL | quote }}
+          - name: OPENSEARCH_GOVERNANCE_URL
+            value: {{ .Values.app.environment.OPENSEARCH_GOVERNANCE_URL | quote }}

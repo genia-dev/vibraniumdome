@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.opensearchNode1.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.opensearchNode1.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.opensearchNode1.name }}
+    spec:
+      containers:
+      - name: {{ .Values.opensearchNode1.name }}
+        image: "{{ .Values.opensearchNode1.image.repository }}:{{ .Values.opensearchNode1.image.tag }}"
+        ports:
+        - containerPort: 9200
+        - containerPort: 9600
+        env:
+          {{- range .Values.opensearchNode1.environment }}
+          - name: {{ .name }}
+            value: "{{ .value }}"
+          {{- end }}
+        volumeMounts:
+        - name: opensearch-data1
+          mountPath: /usr/share/opensearch/data
+        - name: opensearch-config
+          mountPath: /usr/share/opensearch/config/opensearch-security/opensearch.yml
+          subPath: opensearch.yml
+        - name: opensearch-security-config
+          mountPath: /usr/share/opensearch/config/opensearch-security/config.yml
+          subPath: config.yml
+        - name: opensearch-log4j2-config
+          mountPath: /usr/share/opensearch/config/log4j2.properties
+          subPath: log4j2.properties
+      volumes:
+      - name: opensearch-data1
+        emptyDir: {}
+      - name: opensearch-config
+        configMap:
+          name: opensearch-config
+      - name: opensearch-security-config
+        configMap:
+          name: opensearch-security-config
+      - name: opensearch-log4j2-config
+        configMap:
+          name: opensearch-log4j2-config

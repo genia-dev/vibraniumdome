@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-seeder-config
+data:
+  opensearch-seed.sh: |
+    {{ .Values.opensearchSeederSH.properties | nindent 4 }}

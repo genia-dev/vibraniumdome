@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.db.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.db.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.db.name }}
+    spec:
+      containers:
+      - name: {{ .Values.db.name }}
+        image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: {{ .Values.db.env.MYSQL_ROOT_PASSWORD | quote }}
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: {{ .Values.db.env.MYSQL_ALLOW_EMPTY_PASSWORD | quote }}
+        - name: MYSQL_DATABASE
+          value: {{ .Values.db.env.MYSQL_DATABASE | quote }}
+        args: ["--default-authentication-plugin=mysql_native_password"]
+        ports:
+        - containerPort: {{ (index .Values.db.ports 0).containerPort }}

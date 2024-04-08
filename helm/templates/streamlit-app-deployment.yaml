@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.streamlitApp.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.streamlitApp.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.streamlitApp.name }}
+    spec:
+      containers:
+      - name: {{ .Values.streamlitApp.name }}
+        image: "{{ .Values.streamlitApp.image.repository }}:{{ .Values.streamlitApp.image.tag }}"
+        ports:
+        - containerPort: {{ (index .Values.streamlitApp.ports 0).containerPort }}
+        env:
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: vibraniumdome-shields-secrets
+                key: OPENAI_API_KEY
+          - name: VIBRANIUM_DOME_API_KEY
+            value: "vibranium_elgstr7i53e3vpy0pbc8175fp6eaj4k3fjzd"
+          - name: VIBRANIUM_DOME_BASE_URL
+            value: "http://vibraniumdome-shields:5001"

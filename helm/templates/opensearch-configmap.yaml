@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-config
+data:
+  opensearch.yml: |
+    {{ .Values.opensearchConfig.properties | nindent 4 }}

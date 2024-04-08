@@ -1,0 +1,734 @@
+app:
+  replicaCount: 1
+  name: vibraniumdome-app
+  image:
+    repository: vibraniumdome/vibraniumdome-app
+    tag: 0.3.0
+  ports:
+    - containerPort: 3000
+  environment:
+    DATABASE_URL: "mysql://root:@vibraniumdome-app-db:3306/vibraniumdome"
+    NEXTAUTH_SECRET: "TNhv82aTvdYGcn7J8mUMpgaIEjgCpagUyn1dih/Ex0Y="
+    NEXTAUTH_URL: "http://localhost:3000"
+    GOOGLE_CLIENT_ID: "changeme"
+    GOOGLE_CLIENT_SECRET: "changeme"
+    OPENSEARCH_JWT_HMAC_SIGNING_KEY: "39214785178865762003920415964132"
+    OPENSEARCH_DASHBOARD_URL: "http://localhost:5601/app/dashboards?jwtToken=<JWT>#/view/575f44f0-8314-11ee-8fdd-231c9d91c919?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-7d%2Cto%3Anow))&show-query-input=true&show-time-filter=true"
+    OPENSEARCH_GOVERNANCE_URL: "http://localhost:5601/app/dashboards?jwtToken=<JWT>#/view/7825b8b0-b6e8-11ee-8860-0f0de9c93d68?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-7d%2Cto%3Anow))&show-query-input=true&show-time-filter=true"
+
+db:
+  replicaCount: 1
+  name: vibraniumdome-app-db
+  image:
+    repository: mysql
+    tag: 8.1.0
+  ports:
+    - containerPort: 3306
+  env:
+    MYSQL_ROOT_PASSWORD: ""
+    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    MYSQL_DATABASE: vibraniumdome
+
+shields:
+  replicaCount: 1
+  name: vibraniumdome-shields
+  image:
+    repository: vibraniumdome/vibraniumdome-shields
+    tag: 0.3.0
+  ports:
+    - containerPort: 5001
+  environment:
+    OPENAI_API_KEY: ""
+    VIBRANIUM_DOME_OPENSEARCH_HOST: "vibraniumdome-opensearch-node-1"
+    VIBRANIUM_DOME_OPENSEARCH_PORT: "9200"
+    VIBRANIUM_DOME_APP_BASE_URL: "http://vibraniumdome-app:3000"
+    VIBRANIUM_DOME_API_KEY: "vibranium_elgstr7i53e3vpy0pbc8175fp6eaj4k3fjzd"
+    VIBRANIUM_HOME: "/app"
+    TOKENIZERS_PARALLELISM: "false"
+
+streamlitApp:
+  replicaCount: 1
+  name: vibraniumdome-streamlit-app
+  image:
+    repository: vibraniumdome/vibraniumdome-streamlit-app
+    tag: 0.3.0
+  ports:
+    - containerPort: 8501
+
+opensearchNode1:
+  replicaCount: 1
+  name: vibraniumdome-opensearch-node-1
+  image:
+    repository: opensearchproject/opensearch
+    tag: 2.9.0
+  ports:
+    - containerPort: 9200
+    - containerPort: 9600
+  environment:
+    - name: "discovery.type"
+      value: "single-node"
+    - name: cluster.name
+      value: opensearch-cluster
+    - name: node.name
+      value: vibraniumdome-opensearch-node-1
+    - name: bootstrap.memory_lock
+      value: "true"
+    - name: OPENSEARCH_JAVA_OPTS
+      value: "-Xms512m -Xmx512m"
+
+opensearchDashboards:
+  replicaCount: 1
+  name: vibraniumdome-opensearch-dashboards
+  image:
+    repository: opensearchproject/opensearch-dashboards
+    tag: 2.9.0
+  ports:
+    - containerPort: 5601
+
+opensearchSeeder:
+  name: vibraniumdome-opensearch-seeder
+  image:
+    repository: centos
+    tag: latest
+
+service:
+  port: 3000
+
+service:
+  type: "NodePort"
+
+serviceAccount:
+  create: false
+
+autoscaling:
+  enabled: false
+
+ingress:
+  enabled: true
+
+opensearchDashboardsConfig:
+  properties: |
+    ---
+    # Copyright OpenSearch Contributors
+    # SPDX-License-Identifier: Apache-2.0
+
+    # Description:
+    # Default configuration for OpenSearch Dashboards
+
+    # OpenSearch Dashboards is served by a back end server. This setting specifies the port to use.
+    # server.port: 5601
+
+    # Specifies the address to which the OpenSearch Dashboards server will bind. IP addresses and host names are both valid values.
+    # The default is 'localhost', which usually means remote machines will not be able to connect.
+    # To allow connections from remote users, set this parameter to a non-loopback address.
+    # server.host: "localhost"
+
+    # Enables you to specify a path to mount OpenSearch Dashboards at if you are running behind a proxy.
+    # Use the `server.rewriteBasePath` setting to tell OpenSearch Dashboards if it should remove the basePath
+    # from requests it receives, and to prevent a deprecation warning at startup.
+    # This setting cannot end in a slash.
+    # server.basePath: ""
+
+    # Specifies whether OpenSearch Dashboards should rewrite requests that are prefixed with
+    # `server.basePath` or require that they are rewritten by your reverse proxy.
+    # server.rewriteBasePath: false
+
+    # The maximum payload size in bytes for incoming server requests.
+    # server.maxPayloadBytes: 1048576
+
+    # The OpenSearch Dashboards server's name.  This is used for display purposes.
+    # server.name: "your-hostname"
+
+    # The URLs of the OpenSearch instances to use for all your queries.
+    # opensearch.hosts: ["http://localhost:9200"]
+
+    # OpenSearch Dashboards uses an index in OpenSearch to store saved searches, visualizations and
+    # dashboards. OpenSearch Dashboards creates a new index if the index doesn't already exist.
+    # opensearchDashboards.index: ".opensearch_dashboards"
+
+    # The default application to load.
+    # opensearchDashboards.defaultAppId: "home"
+
+    # Setting for an optimized healthcheck that only uses the local OpenSearch node to do Dashboards healthcheck.
+    # This settings should be used for large clusters or for clusters with ingest heavy nodes.
+    # It allows Dashboards to only healthcheck using the local OpenSearch node rather than fan out requests across all nodes.
+    #
+    # It requires the user to create an OpenSearch node attribute with the same name as the value used in the setting
+    # This node attribute should assign all nodes of the same cluster an integer value that increments with each new cluster that is spun up
+    # e.g. in opensearch.yml file you would set the value to a setting using node.attr.cluster_id:
+    # Should only be enabled if there is a corresponding node attribute created in your OpenSearch config that matches the value here
+    # opensearch.optimizedHealthcheckId: "cluster_id"
+
+    # If your OpenSearch is protected with basic authentication, these settings provide
+    # the username and password that the OpenSearch Dashboards server uses to perform maintenance on the OpenSearch Dashboards
+    # index at startup. Your OpenSearch Dashboards users still need to authenticate with OpenSearch, which
+    # is proxied through the OpenSearch Dashboards server.
+    # opensearch.username: "opensearch_dashboards_system"
+    # opensearch.password: "pass"
+
+    # Enables SSL and paths to the PEM-format SSL certificate and SSL key files, respectively.
+    # These settings enable SSL for outgoing requests from the OpenSearch Dashboards server to the browser.
+    # server.ssl.enabled: true
+    # server.ssl.certificate: /tmp/certificate.crt
+    # server.ssl.key: /tmp/private.key
+
+    # Optional settings that provide the paths to the PEM-format SSL certificate and key files.
+    # These files are used to verify the identity of OpenSearch Dashboards to OpenSearch and are required when
+    # xpack.security.http.ssl.client_authentication in OpenSearch is set to required.
+    # opensearch.ssl.certificate: /path/to/your/client.crt
+    # opensearch.ssl.key: /path/to/your/client.key
+
+    # Optional setting that enables you to specify a path to the PEM file for the certificate
+    # authority for your OpenSearch instance.
+    # opensearch.ssl.certificateAuthorities: [ "/path/to/your/CA.pem" ]
+
+    # To disregard the validity of SSL certificates, change this setting's value to 'none'.
+    # opensearch.ssl.verificationMode: full
+
+    # Time in milliseconds to wait for OpenSearch to respond to pings. Defaults to the value of
+    # the opensearch.requestTimeout setting.
+    # opensearch.pingTimeout: 1500
+
+    # Time in milliseconds to wait for responses from the back end or OpenSearch. This value
+    # must be a positive integer.
+    # opensearch.requestTimeout: 30000
+
+    # List of OpenSearch Dashboards client-side headers to send to OpenSearch. To send *no* client-side
+    # headers, set this value to [] (an empty list).
+    # opensearch.requestHeadersWhitelist: [ authorization ]
+
+    # Header names and values that are sent to OpenSearch. Any custom headers cannot be overwritten
+    # by client-side headers, regardless of the opensearch.requestHeadersWhitelist configuration.
+    # opensearch.customHeaders: {}
+
+    # Time in milliseconds for OpenSearch to wait for responses from shards. Set to 0 to disable.
+    # opensearch.shardTimeout: 30000
+
+    # Logs queries sent to OpenSearch. Requires logging.verbose set to true.
+    # opensearch.logQueries: false
+
+    # Specifies the path where OpenSearch Dashboards creates the process ID file.
+    # pid.file: /var/run/opensearchDashboards.pid
+
+    # Enables you to specify a file where OpenSearch Dashboards stores log output.
+    # logging.dest: stdout
+
+    # Set the value of this setting to true to suppress all logging output.
+    # logging.silent: false
+
+    # Set the value of this setting to true to suppress all logging output other than error messages.
+    # logging.quiet: false
+
+    # Set the value of this setting to true to log all events, including system usage information
+    # and all requests.
+    # logging.verbose: false
+
+    # Set the interval in milliseconds to sample system and process performance
+    # metrics. Minimum is 100ms. Defaults to 5000.
+    # ops.interval: 5000
+
+    # Specifies locale to be used for all localizable strings, dates and number formats.
+    # Supported languages are the following: English - en , by default , Chinese - zh-CN .
+    # i18n.locale: "en"
+
+    # Set the allowlist to check input graphite Url. Allowlist is the default check list.
+    # vis_type_timeline.graphiteAllowedUrls: ['http://www.hostedgraphite.com/UID/ACCESS_KEY/graphite']
+
+    # Set the blocklist to check input graphite Url. Blocklist is an IP list.
+    # Below is an example for reference
+    # vis_type_timeline.graphiteBlockedIPs: [
+    #  //Loopback
+    #  '127.0.0.0/8',
+    #  '::1/128',
+    #  //Link-local Address for IPv6
+    #  'fe80::/10',
+    #  //Private IP address for IPv4
+    #  '10.0.0.0/8',
+    #  '172.16.0.0/12',
+    #  '192.168.0.0/16',
+    #  //Unique local address (ULA)
+    #  'fc00::/7',
+    #  //Reserved IP address
+    #  '0.0.0.0/8',
+    #  '100.64.0.0/10',
+    #  '192.0.0.0/24',
+    #  '192.0.2.0/24',
+    #  '198.18.0.0/15',
+    #  '192.88.99.0/24',
+    #  '198.51.100.0/24',
+    #  '203.0.113.0/24',
+    #  '224.0.0.0/4',
+    #  '240.0.0.0/4',
+    #  '255.255.255.255/32',
+    #  '::/128',
+    #  '2001:db8::/32',
+    #  'ff00::/8',
+    # ]
+    # vis_type_timeline.graphiteBlockedIPs: []
+
+    opensearchDashboards.branding:
+      logo:
+        defaultUrl: "https://www.vibraniumdome.com/_next/static/media/logo.83b784c8.svg"
+        darkModeUrl: ""
+      mark:
+        defaultUrl: "https://www.vibraniumdome.com/_next/static/media/logo.83b784c8.svg"
+        # darkModeUrl: ""
+      loadingLogo:
+        defaultUrl: "http://localhost:5601/ui/assets/icon.svg"
+      #   darkModeUrl: ""
+      faviconUrl: "https://www.vibraniumdome.com/favicon.ico"
+      applicationTitle: "Vibranium Dome"
+
+    # Set the value of this setting to true to capture region blocked warnings and errors
+    # for your map rendering services.
+    # map.showRegionBlockedWarning: false%
+
+    # Set the value of this setting to false to suppress search usage telemetry
+    # for reducing the load of OpenSearch cluster.
+    # data.search.usageTelemetry.enabled: false
+
+    # 2.4 renames 'wizard.enabled: false' to 'vis_builder.enabled: false'
+    # Set the value of this setting to false to disable VisBuilder
+    # functionality in Visualization.
+    # vis_builder.enabled: false
+
+    # 2.4 New Experimental Feature
+    # Set the value of this setting to true to enable the experimental multiple data source
+    # support feature. Use with caution.
+    # data_source.enabled: false
+    # Set the value of these settings to customize crypto materials to encryption saved credentials
+    # in data sources.
+    # data_source.encryption.wrappingKeyName: 'changeme'
+    # data_source.encryption.wrappingKeyNamespace: 'changeme'
+    # data_source.encryption.wrappingKey: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+    # 2.6 New ML Commons Dashboards Feature
+    # Set the value of this setting to true to enable the ml commons dashboards
+    # ml_commons_dashboards.enabled: false
+
+    ## opensearch.hosts: [http://localhost:9200]
+    opensearch.ssl.verificationMode: none
+    opensearch.username: kibanaserver
+    opensearch.password: kibanaserver
+    opensearch.requestHeadersWhitelist: [authorization, securitytenant, Authorization]
+    # OpenSearch with JWT, if those lines are marked - the OpenSearch will have basic credentials login
+    opensearch_security.auth.type: "jwt"
+    opensearch_security.jwt.url_param: "jwtToken"
+    opensearch_security.jwt.enabled: true
+    # EOF JWT
+
+    # opensearch_security.cookie.secure: true
+
+    # opensearch_security.basicauth.enabled: true
+    # opensearch_security.auth.anonymous_auth_enabled: true
+    # opensearch_security.auth.multiple_auth_enabled: true
+    # opensearch_security.cookie.isSameSite: "None"
+
+    # opensearch_security.multitenancy.enabled: true
+    # opensearch_security.multitenancy.tenants.preferred: [Private, Global]
+    # opensearch_security.readonly_mode.roles: [kibana_read_only]
+
+    # logging.verbose: true
+
+    # Use this setting if you are running opensearch-dashboards without http
+    server.host: '0.0.0.0'
+
+
+opensearchSeederSH:
+  properties: |
+    #!/bin/bash
+
+    check_opensearch() {
+        curl -k "https://vibraniumdome-opensearch-node-1:9200/_cluster/health" > /dev/null
+    }
+
+    check_dashboard() {
+        curl -fsSL "http://vibraniumdome-opensearch-dashboards:5601" > /dev/null
+    }
+
+    echo "Waiting for OpenSearch to be ready..."
+    until check_opensearch; do
+      sleep 5
+    done
+
+    echo "OpenSearch is ready. Running the seed script..."
+
+    status=0
+    while [ "$status" -ne 200 ]; do
+        response=$(curl -vvv -XPUT -k "https://vibraniumdome-opensearch-node-1:9200/_plugins/_security/api/rolesmapping/all_access" \
+                        -u 'admin:admin' -H 'Content-Type: application/json' -d '
+                        {
+                          "backend_roles": ["all_access"],
+                          "hosts": [],
+                          "users": ["admin"]
+                        }
+                        ' -w '%{http_code}' -o /dev/null -s)
+        
+        status=$response
+        echo "HTTP Status: $status"
+
+        if [ "$status" -ne 200 ]; then
+            echo "Received status $status, retrying in 5 seconds..."
+            sleep 5
+        fi
+    done
+
+    echo "OpenSearch seeding completed."
+
+    echo "Waiting for OpenSearch Dashboard to be ready..."
+    until check_opensearch; do
+      sleep 5
+    done
+
+    sleep 5
+
+    echo "OpenSearch Dashboard is ready. Running the seed script..."
+
+    status=415
+    until [ "$status" -ne 415 ]; do
+        response=$(curl -vvv -X POST "http://vibraniumdome-opensearch-dashboards:5601/api/saved_objects/_import?overwrite=true" \
+                        -H "kbn-xsrf: true" --form "file=@/tmp/dashboard.ndjson" \
+                        -H "osd-xsrf: true" -k -u admin:admin \
+                        -w '%{http_code}' -o /dev/null -s)
+        status=$response
+        echo "HTTP Status: $status"
+
+        if [ "$status" -eq 415 ]; then
+            echo "Received status 415, retrying in 5 seconds..."
+            sleep 5
+        fi
+    done
+
+    echo "OpenSearch Dashboard seeding completed."
+
+    echo "Seeding completed."
+
+opensearchDashboardNdjson:
+  properties: |
+    {"attributes":{"fields":"[{\"count\":0,\"name\":\"_id\",\"type\":\"string\",\"esTypes\":[\"_id\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":false},{\"count\":0,\"name\":\"_index\",\"type\":\"string\",\"esTypes\":[\"_index\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":false},{\"count\":0,\"name\":\"_score\",\"type\":\"number\",\"scripted\":false,\"searchable\":false,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"_source\",\"type\":\"_source\",\"esTypes\":[\"_source\"],\"scripted\":false,\"searchable\":false,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"_type\",\"type\":\"string\",\"scripted\":false,\"searchable\":false,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"completion\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"completion.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"completion\"}}},{\"count\":0,\"name\":\"end_timestamp\",\"type\":\"date\",\"esTypes\":[\"date\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"high_risk_shield_names\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"high_risk_shield_names.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"high_risk_shield_names\"}}},{\"count\":0,\"name\":\"high_risk_shields\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"high_risk_shields.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"high_risk_shields\"}}},{\"count\":0,\"name\":\"id\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"id.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"id\"}}},{\"count\":0,\"name\":\"last_prompt\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"last_prompt.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"last_prompt\"}}},{\"count\":0,\"name\":\"llm.completions.0.content\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.completions.0.content.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.completions.0.content\"}}},{\"count\":0,\"name\":\"llm.completions.0.finish_reason\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.completions.0.finish_reason.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.completions.0.finish_reason\"}}},{\"count\":0,\"name\":\"llm.completions.0.function_call.arguments\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.completions.0.function_call.arguments.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.completions.0.function_call.arguments\"}}},{\"count\":0,\"name\":\"llm.completions.0.function_call.name\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.completions.0.function_call.name.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.completions.0.function_call.name\"}}},{\"count\":0,\"name\":\"llm.completions.0.role\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.completions.0.role.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.completions.0.role\"}}},{\"count\":0,\"name\":\"llm.headers\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.headers.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.headers\"}}},{\"count\":0,\"name\":\"llm.is_streaming\",\"type\":\"boolean\",\"esTypes\":[\"boolean\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"llm.request.function_names\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.request.function_names.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.request.function_names\"}}},{\"count\":0,\"name\":\"llm.request.functions.description\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.request.functions.description.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.request.functions.description\"}}},{\"count\":0,\"name\":\"llm.request.functions.name\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.request.functions.name.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.request.functions.name\"}}},{\"count\":0,\"name\":\"llm.request.functions.parameters\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.request.functions.parameters.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.request.functions.parameters\"}}},{\"count\":0,\"name\":\"llm.request.model\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.request.model.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.request.model\"}}},{\"count\":0,\"name\":\"llm.request.type\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.request.type.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.request.type\"}}},{\"count\":0,\"name\":\"llm.response.model\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.response.model.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.response.model\"}}},{\"count\":0,\"name\":\"llm.temperature\",\"type\":\"number\",\"esTypes\":[\"long\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"llm.usage.completion_tokens\",\"type\":\"number\",\"esTypes\":[\"long\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"llm.usage.prompt_tokens\",\"type\":\"number\",\"esTypes\":[\"long\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"llm.usage.total_tokens\",\"type\":\"number\",\"esTypes\":[\"long\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"llm.user\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.user.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.user\"}}},{\"count\":0,\"name\":\"llm.vendor\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm.vendor.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm.vendor\"}}},{\"count\":0,\"name\":\"llm_prompts.content\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm_prompts.content.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm_prompts.content\"}}},{\"count\":0,\"name\":\"llm_prompts.role\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"llm_prompts.role.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"llm_prompts.role\"}}},{\"count\":0,\"name\":\"openai.api_base\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"openai.api_base.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"openai.api_base\"}}},{\"count\":0,\"name\":\"openai.api_type\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"openai.api_type.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"openai.api_type\"}}},{\"count\":0,\"name\":\"risk\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"risk.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"risk\"}}},{\"count\":0,\"name\":\"risk_factor\",\"type\":\"number\",\"esTypes\":[\"float\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"scan_id\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"scan_id.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"scan_id\"}}},{\"count\":0,\"name\":\"service.name\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"service.name.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"service.name\"}}},{\"count\":0,\"name\":\"session-id\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"session-id.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"session-id\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_captain\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_captain.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_captain\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_invisible\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_invisible.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_invisible\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_model_dos\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_model_dos.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_model_dos\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_no_ip_in_urls\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_no_ip_in_urls.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_no_ip_in_urls\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_regex\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_regex.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_regex\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity_1\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity_1.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity_1\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity_2\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity_2.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_semantic_similarity_2\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_1\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_1.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_1\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_2\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_2.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_2\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_3\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_3.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_3\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_4\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_4.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_sensitive_info_disc_4\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_transformer\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_transformer.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_transformer\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_transformer_1\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_input_transformer_1.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_input_transformer_1\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_arbitrary_image\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_arbitrary_image.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_arbitrary_image\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_invisible\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_invisible.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_invisible\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_refusal\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_refusal.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_refusal\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_regex\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_regex.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_regex\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_1\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_1.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_1\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_2\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_2.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_2\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_3\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_3.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_3\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_4\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_4.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_4\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_5\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_5.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_5\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_6\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_6.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_sensitive_info_disc_6\"}}},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_whitelist_urls\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_result_com_vibraniumdome_shield_output_whitelist_urls.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_result_com_vibraniumdome_shield_output_whitelist_urls\"}}},{\"count\":0,\"name\":\"shields_results\",\"type\":\"string\",\"esTypes\":[\"text\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":false,\"readFromDocValues\":false},{\"count\":0,\"name\":\"shields_results.keyword\",\"type\":\"string\",\"esTypes\":[\"keyword\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true,\"subType\":{\"multi\":{\"parent\":\"shields_results\"}}},{\"count\":0,\"name\":\"shields_timestamp\",\"type\":\"date\",\"esTypes\":[\"date\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"count\":0,\"name\":\"start_timestamp\",\"type\":\"date\",\"esTypes\":[\"date\"],\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true}]","timeFieldName":"start_timestamp","title":"vibranium_index*"},"id":"e31f81a0-8fa6-11ee-80ab-0598e6bb73bb","migrationVersion":{"index-pattern":"7.6.0"},"references":[],"type":"index-pattern","updated_at":"2024-03-31T19:55:24.620Z","version":"WzE4NSw4XQ=="}
+    {"attributes":{"columns":["service.name","llm.user","last_prompt","completion","risk","high_risk_shield_names","session-id","llm.usage.total_tokens"],"description":"","hits":0,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\n  \"highlightAll\": true,\n  \"version\": true,\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"kuery\"\n  },\n  \"filter\": [],\n  \"indexRefName\": \"kibanaSavedObjectMeta.searchSourceJSON.index\",\n  \"size\": 10\n}"},"sort":[],"title":"vibranium-dome-search","version":1},"id":"15caa250-8314-11ee-8fdd-231c9d91c919","migrationVersion":{"search":"7.9.3"},"references":[{"id":"e31f81a0-8fa6-11ee-80ab-0598e6bb73bb","name":"kibanaSavedObjectMeta.searchSourceJSON.index","type":"index-pattern"}],"type":"search","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE2Niw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"kuery\"\n  },\n  \"filter\": []\n}"},"savedSearchRefName":"search_0","title":"llm-model-pie","uiStateJSON":"{}","version":1,"visState":"{\n  \"title\": \"llm-model-pie\",\n  \"type\": \"pie\",\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"params\": {},\n      \"schema\": \"metric\"\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"params\": {\n        \"field\": \"llm.request.model.keyword\",\n        \"orderBy\": \"1\",\n        \"order\": \"desc\",\n        \"size\": 5,\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\"\n      },\n      \"schema\": \"segment\"\n    }\n  ],\n  \"params\": {\n    \"type\": \"pie\",\n    \"addTooltip\": true,\n    \"addLegend\": true,\n    \"legendPosition\": \"bottom\",\n    \"isDonut\": true,\n    \"labels\": {\n      \"show\": false,\n      \"values\": true,\n      \"last_level\": true,\n      \"truncate\": 100\n    }\n  }\n}"},"id":"110a3600-83c2-11ee-8fdd-231c9d91c919","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE2Nyw4XQ=="}
+    {"attributes":{"columns":["risk"],"description":"","hits":0,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"highlightAll\":true,\"version\":true,\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[{\"meta\":{\"alias\":null,\"negate\":false,\"disabled\":false,\"type\":\"phrase\",\"key\":\"risk\",\"params\":{\"query\":\"High\"},\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.filter[0].meta.index\"},\"query\":{\"match_phrase\":{\"risk\":\"High\"}},\"$state\":{\"store\":\"appState\"}}],\"indexRefName\":\"kibanaSavedObjectMeta.searchSourceJSON.index\"}"},"sort":[],"title":"high-risk-search","version":1},"id":"42271340-a97c-11ee-abae-8d6f90e91fa7","migrationVersion":{"search":"7.9.3"},"references":[{"id":"e31f81a0-8fa6-11ee-80ab-0598e6bb73bb","name":"kibanaSavedObjectMeta.searchSourceJSON.index","type":"index-pattern"},{"id":"e31f81a0-8fa6-11ee-80ab-0598e6bb73bb","name":"kibanaSavedObjectMeta.searchSourceJSON.filter[0].meta.index","type":"index-pattern"}],"type":"search","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE2OCw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"language\":\"kuery\",\"query\":\"\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"high-risk-prompts-cloud","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"high-risk-prompts-cloud\",\"type\":\"tagcloud\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{\"customLabel\":\"#\"},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"last_prompt.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":20,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"customLabel\":\"High Risk Prompts\"},\"schema\":\"segment\"}],\"params\":{\"scale\":\"linear\",\"orientation\":\"right angled\",\"minFontSize\":7,\"maxFontSize\":46,\"showLabel\":false}}"},"id":"1179c330-a97e-11ee-abae-8d6f90e91fa7","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"42271340-a97c-11ee-abae-8d6f90e91fa7","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE2OSw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\n  \"query\": {\n    \"language\": \"kuery\",\n    \"query\": \"\"\n  },\n  \"filter\": []\n}"},"savedSearchRefName":"search_0","title":"llm-function-names-pie","uiStateJSON":"{}","version":1,"visState":"{\n  \"title\": \"llm-function-names-pie\",\n  \"type\": \"pie\",\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"params\": {},\n      \"schema\": \"metric\"\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"params\": {\n        \"field\": \"llm.request.function_names.keyword\",\n        \"orderBy\": \"1\",\n        \"order\": \"desc\",\n        \"size\": 20,\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\"\n      },\n      \"schema\": \"segment\"\n    }\n  ],\n  \"params\": {\n    \"type\": \"pie\",\n    \"addTooltip\": true,\n    \"addLegend\": true,\n    \"legendPosition\": \"bottom\",\n    \"isDonut\": true,\n    \"labels\": {\n      \"show\": false,\n      \"values\": true,\n      \"last_level\": true,\n      \"truncate\": 100\n    }\n  }\n}"},"id":"1914bb10-8f87-11ee-80ab-0598e6bb73bb","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3MCw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"kuery\"\n  },\n  \"filter\": []\n}"},"savedSearchRefName":"search_0","title":"Function calls","uiStateJSON":"{}","version":1,"visState":"{\n  \"title\": \"function calls\",\n  \"type\": \"metric\",\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"params\": {\n        \"customLabel\": \"#\"\n      },\n      \"schema\": \"metric\"\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"params\": {\n        \"field\": \"llm.completions.0.function_call.name.keyword\",\n        \"orderBy\": \"1\",\n        \"order\": \"desc\",\n        \"size\": 5,\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\"\n      },\n      \"schema\": \"group\"\n    }\n  ],\n  \"params\": {\n    \"addTooltip\": true,\n    \"addLegend\": false,\n    \"type\": \"metric\",\n    \"metric\": {\n      \"percentageMode\": false,\n      \"useRanges\": false,\n      \"colorSchema\": \"Green to Red\",\n      \"metricColorMode\": \"None\",\n      \"colorsRange\": [\n        {\n          \"from\": 0,\n          \"to\": 10000\n        }\n      ],\n      \"labels\": {\n        \"show\": true\n      },\n      \"invertColors\": false,\n      \"style\": {\n        \"bgFill\": \"#000\",\n        \"bgColor\": false,\n        \"labelColor\": false,\n        \"subText\": \"\",\n        \"fontSize\": 18\n      }\n    }\n  }\n}"},"id":"1ddc3b10-a8ea-11ee-af73-090dbc4448a6","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"42271340-a97c-11ee-abae-8d6f90e91fa7","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3MSw4XQ=="}
+    {"attributes":{"buildNum":6391,"defaultIndex":"e31f81a0-8fa6-11ee-80ab-0598e6bb73bb","theme:darkMode":true},"id":"2.9.0","migrationVersion":{"config":"7.9.0"},"references":[],"type":"config","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3Miw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"virtual-dome-time-histogram","uiStateJSON":"{\"vis\":{\"colors\":{\"High\":\"#BF1B00\",\"None\":\"#9AC48A\"}}}","version":1,"visState":"{\"title\":\"virtual-dome-time-histogram\",\"type\":\"histogram\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"date_histogram\",\"params\":{\"field\":\"start_timestamp\",\"timeRange\":{\"from\":\"now-7d\",\"to\":\"now\"},\"useNormalizedOpenSearchInterval\":true,\"scaleMetricValues\":false,\"interval\":\"auto\",\"drop_partials\":false,\"min_doc_count\":1,\"extended_bounds\":{}},\"schema\":\"segment\"},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"risk.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":5,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"},\"schema\":\"group\"}],\"params\":{\"type\":\"histogram\",\"grid\":{\"categoryLines\":false},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"filter\":true,\"truncate\":100},\"title\":{}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"left\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\"},\"labels\":{\"show\":true,\"rotate\":0,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Count\"}}],\"seriesParams\":[{\"show\":true,\"type\":\"histogram\",\"mode\":\"stacked\",\"data\":{\"label\":\"Count\",\"id\":\"1\"},\"valueAxis\":\"ValueAxis-1\",\"drawLinesBetweenPoints\":true,\"lineWidth\":2,\"showCircles\":true}],\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"bottom\",\"times\":[],\"addTimeMarker\":false,\"labels\":{\"show\":false},\"thresholdLine\":{\"show\":false,\"value\":10,\"width\":1,\"style\":\"full\",\"color\":\"#E7664C\"}}}"},"id":"2e7bf530-83bc-11ee-8fdd-231c9d91c919","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3Myw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"histogram-by-app-user","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"histogram-by-app-user\",\"type\":\"histogram\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"date_histogram\",\"params\":{\"field\":\"start_timestamp\",\"timeRange\":{\"from\":\"now-7d\",\"to\":\"now\"},\"useNormalizedOpenSearchInterval\":true,\"scaleMetricValues\":false,\"interval\":\"auto\",\"drop_partials\":false,\"min_doc_count\":1,\"extended_bounds\":{}},\"schema\":\"segment\"},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"service.name.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":5,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"},\"schema\":\"group\"},{\"id\":\"4\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"llm.user.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":5,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"},\"schema\":\"group\"}],\"params\":{\"type\":\"histogram\",\"grid\":{\"categoryLines\":false},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"filter\":true,\"truncate\":100},\"title\":{}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"left\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\"},\"labels\":{\"show\":true,\"rotate\":0,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Count\"}}],\"seriesParams\":[{\"show\":true,\"type\":\"histogram\",\"mode\":\"stacked\",\"data\":{\"label\":\"Count\",\"id\":\"1\"},\"valueAxis\":\"ValueAxis-1\",\"drawLinesBetweenPoints\":true,\"lineWidth\":2,\"showCircles\":true}],\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"right\",\"times\":[],\"addTimeMarker\":false,\"labels\":{\"show\":false},\"thresholdLine\":{\"show\":false,\"value\":10,\"width\":1,\"style\":\"full\",\"color\":\"#E7664C\"},\"row\":true}}"},"id":"3a20bbe0-898a-11ee-ace6-3da9cddd30a5","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3NCw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"sessions","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"sessions\",\"type\":\"pie\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"session-id.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":7,\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"},\"schema\":\"segment\"}],\"params\":{\"type\":\"pie\",\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"bottom\",\"isDonut\":true,\"labels\":{\"show\":false,\"values\":true,\"last_level\":true,\"truncate\":100}}}"},"id":"461f5210-a4f3-11ee-9253-4376b4a9fd71","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3NSw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"llm-application-name-pie","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"llm-application-name-pie\",\"type\":\"pie\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{\"customLabel\":\"LLM Application\"},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"service.name.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":10,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"customLabel\":\"LLM Application\"},\"schema\":\"segment\"}],\"params\":{\"type\":\"pie\",\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"bottom\",\"isDonut\":true,\"labels\":{\"show\":false,\"values\":true,\"last_level\":true,\"truncate\":100}}}"},"id":"48167fd0-8315-11ee-8fdd-231c9d91c919","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3Niw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"language\":\"kuery\",\"query\":\"\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"high-risk-shields-bars","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"high-risk-shields-bars\",\"type\":\"horizontal_bar\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"high_risk_shield_names.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":7,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"},\"schema\":\"group\"}],\"params\":{\"type\":\"histogram\",\"grid\":{\"categoryLines\":false},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"left\",\"show\":false,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"rotate\":0,\"filter\":false,\"truncate\":200},\"title\":{}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\"},\"labels\":{\"show\":true,\"rotate\":75,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Count\"}}],\"seriesParams\":[{\"show\":true,\"type\":\"histogram\",\"mode\":\"normal\",\"data\":{\"label\":\"Count\",\"id\":\"1\"},\"valueAxis\":\"ValueAxis-1\",\"drawLinesBetweenPoints\":true,\"lineWidth\":2,\"showCircles\":true,\"interpolate\":\"cardinal\"}],\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"bottom\",\"times\":[],\"addTimeMarker\":false,\"labels\":{\"show\":false},\"thresholdLine\":{\"show\":false,\"value\":10,\"width\":1,\"style\":\"full\",\"color\":\"#E7664C\"},\"orderBucketsBySum\":true}}"},"id":"4c6eeb70-a98b-11ee-abae-8d6f90e91fa7","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"42271340-a97c-11ee-abae-8d6f90e91fa7","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3Nyw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"user-pie","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"user-pie\",\"type\":\"pie\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"llm.user.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":10,\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"},\"schema\":\"segment\"}],\"params\":{\"type\":\"pie\",\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"bottom\",\"isDonut\":true,\"labels\":{\"show\":false,\"values\":true,\"last_level\":true,\"truncate\":100}}}"},"id":"5044c7b0-8983-11ee-ace6-3da9cddd30a5","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3OCw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"kuery\"\n  },\n  \"filter\": []\n}"},"savedSearchRefName":"search_0","title":"Applications at risk","uiStateJSON":"{}","version":1,"visState":"{\n  \"title\": \"Applications at risk\",\n  \"type\": \"metric\",\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"params\": {\n        \"customLabel\": \"#\"\n      },\n      \"schema\": \"metric\"\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"params\": {\n        \"field\": \"service.name.keyword\",\n        \"orderBy\": \"1\",\n        \"order\": \"desc\",\n        \"size\": 5,\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\"\n      },\n      \"schema\": \"group\"\n    }\n  ],\n  \"params\": {\n    \"addTooltip\": true,\n    \"addLegend\": false,\n    \"type\": \"metric\",\n    \"metric\": {\n      \"percentageMode\": false,\n      \"useRanges\": false,\n      \"colorSchema\": \"Green to Red\",\n      \"metricColorMode\": \"None\",\n      \"colorsRange\": [\n        {\n          \"from\": 0,\n          \"to\": 10000\n        }\n      ],\n      \"labels\": {\n        \"show\": true\n      },\n      \"invertColors\": false,\n      \"style\": {\n        \"bgFill\": \"#000\",\n        \"bgColor\": false,\n        \"labelColor\": false,\n        \"subText\": \"\",\n        \"fontSize\": 18\n      }\n    }\n  }\n}"},"id":"ee2d64b0-a8ea-11ee-af73-090dbc4448a6","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"42271340-a97c-11ee-abae-8d6f90e91fa7","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE3OSw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"tokens percentiles","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"tokens percentiles\",\"type\":\"metric\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"percentiles\",\"params\":{\"field\":\"llm.usage.total_tokens\",\"percents\":[50,95,99],\"customLabel\":\"tokens\"},\"schema\":\"metric\"}],\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":20}}}}"},"id":"c80c1150-8315-11ee-8fdd-231c9d91c919","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE4MCw4XQ=="}
+    {"attributes":{"description":"","hits":0,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"language\":\"kuery\",\"query\":\"\"},\"filter\":[]}"},"optionsJSON":"{\"hidePanelTitles\":false,\"useMargins\":true}","panelsJSON":"[{\"embeddableConfig\":{},\"gridData\":{\"h\":7,\"i\":\"4dc6d05f-c408-484d-9a89-aa1c04938895\",\"w\":16,\"x\":0,\"y\":0},\"panelIndex\":\"4dc6d05f-c408-484d-9a89-aa1c04938895\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_0\"},{\"embeddableConfig\":{\"hidePanelTitles\":false,\"table\":null,\"vis\":{\"legendOpen\":true}},\"gridData\":{\"h\":11,\"i\":\"ed11eebf-72f3-436c-8aec-984bac834746\",\"w\":11,\"x\":16,\"y\":0},\"panelIndex\":\"ed11eebf-72f3-436c-8aec-984bac834746\",\"title\":\"Applications\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_1\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":11,\"i\":\"446f7b3b-8c78-4f0b-9e69-579334b6a9da\",\"w\":11,\"x\":27,\"y\":0},\"panelIndex\":\"446f7b3b-8c78-4f0b-9e69-579334b6a9da\",\"title\":\"Users\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_2\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":11,\"i\":\"003f7eb0-4e68-4576-9843-f625098054fc\",\"w\":10,\"x\":38,\"y\":0},\"panelIndex\":\"003f7eb0-4e68-4576-9843-f625098054fc\",\"title\":\"Sessions\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_3\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":4,\"i\":\"6f0f5053-b3f9-4a5b-a595-997ab48af1d8\",\"w\":16,\"x\":0,\"y\":7},\"panelIndex\":\"6f0f5053-b3f9-4a5b-a595-997ab48af1d8\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_4\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":12,\"i\":\"19c17a96-ef1e-4869-ac10-93021161e3eb\",\"w\":27,\"x\":0,\"y\":11},\"panelIndex\":\"19c17a96-ef1e-4869-ac10-93021161e3eb\",\"title\":\"Interactions by risk\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_5\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":12,\"i\":\"00d64829-89bc-4561-ab9f-a4d082f797bb\",\"w\":11,\"x\":27,\"y\":11},\"panelIndex\":\"00d64829-89bc-4561-ab9f-a4d082f797bb\",\"title\":\"Available functions\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_6\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":12,\"i\":\"430ae9b5-0d12-40bc-9f86-fee0825af895\",\"w\":10,\"x\":38,\"y\":11},\"panelIndex\":\"430ae9b5-0d12-40bc-9f86-fee0825af895\",\"title\":\"Models\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_7\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":12,\"i\":\"8c7e8cea-dd14-4d25-baaf-d38891c8b7a0\",\"w\":22,\"x\":0,\"y\":23},\"panelIndex\":\"8c7e8cea-dd14-4d25-baaf-d38891c8b7a0\",\"title\":\"Applications and users\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_8\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":12,\"i\":\"3a8cc0ee-fc50-4d6d-9583-14a70ccdd02a\",\"w\":11,\"x\":22,\"y\":23},\"panelIndex\":\"3a8cc0ee-fc50-4d6d-9583-14a70ccdd02a\",\"title\":\"High risk shields\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_9\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":12,\"i\":\"eb9f5f59-2e28-4516-918b-a1256723a882\",\"w\":15,\"x\":33,\"y\":23},\"panelIndex\":\"eb9f5f59-2e28-4516-918b-a1256723a882\",\"title\":\"High risk prompts\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_10\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":34,\"i\":\"50364b8a-a23b-4b00-be6c-de7594cf8626\",\"w\":37,\"x\":0,\"y\":35},\"panelIndex\":\"50364b8a-a23b-4b00-be6c-de7594cf8626\",\"title\":\"Vibranium Dome Interactions\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_11\"},{\"embeddableConfig\":{\"hidePanelTitles\":false},\"gridData\":{\"h\":12,\"i\":\"036214d3-5c79-4ead-8707-2fc995e5047e\",\"w\":11,\"x\":37,\"y\":35},\"panelIndex\":\"036214d3-5c79-4ead-8707-2fc995e5047e\",\"title\":\"Tokens percentiles\",\"version\":\"2.9.0\",\"panelRefName\":\"panel_12\"}]","refreshInterval":{"pause":true,"value":60000},"timeFrom":"now-7d","timeRestore":true,"timeTo":"now","title":"vibranium-dashboard","version":1},"id":"575f44f0-8314-11ee-8fdd-231c9d91c919","migrationVersion":{"dashboard":"7.9.3"},"references":[{"id":"ee2d64b0-a8ea-11ee-af73-090dbc4448a6","name":"panel_0","type":"visualization"},{"id":"48167fd0-8315-11ee-8fdd-231c9d91c919","name":"panel_1","type":"visualization"},{"id":"5044c7b0-8983-11ee-ace6-3da9cddd30a5","name":"panel_2","type":"visualization"},{"id":"461f5210-a4f3-11ee-9253-4376b4a9fd71","name":"panel_3","type":"visualization"},{"id":"1ddc3b10-a8ea-11ee-af73-090dbc4448a6","name":"panel_4","type":"visualization"},{"id":"2e7bf530-83bc-11ee-8fdd-231c9d91c919","name":"panel_5","type":"visualization"},{"id":"1914bb10-8f87-11ee-80ab-0598e6bb73bb","name":"panel_6","type":"visualization"},{"id":"110a3600-83c2-11ee-8fdd-231c9d91c919","name":"panel_7","type":"visualization"},{"id":"3a20bbe0-898a-11ee-ace6-3da9cddd30a5","name":"panel_8","type":"visualization"},{"id":"4c6eeb70-a98b-11ee-abae-8d6f90e91fa7","name":"panel_9","type":"visualization"},{"id":"1179c330-a97e-11ee-abae-8d6f90e91fa7","name":"panel_10","type":"visualization"},{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"panel_11","type":"search"},{"id":"c80c1150-8315-11ee-8fdd-231c9d91c919","name":"panel_12","type":"visualization"}],"type":"dashboard","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE4MSw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"#Alerts ","uiStateJSON":"{}","version":1,"visState":"{\"title\":\"#Alerts \",\"type\":\"metric\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"risk.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":5,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"exclude\":\"None\"},\"schema\":\"group\"}],\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":48}}}}"},"id":"728b2490-a8e6-11ee-af73-090dbc4448a6","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE4Miw4XQ=="}
+    {"attributes":{"description":"","hits":0,"kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"language\":\"kuery\",\"query\":\"\"},\"filter\":[]}"},"optionsJSON":"{\"hidePanelTitles\":false,\"useMargins\":true}","panelsJSON":"[{\"version\":\"2.9.0\",\"gridData\":{\"x\":0,\"y\":0,\"w\":48,\"h\":126,\"i\":\"50364b8a-a23b-4b00-be6c-de7594cf8626\"},\"panelIndex\":\"50364b8a-a23b-4b00-be6c-de7594cf8626\",\"embeddableConfig\":{\"hidePanelTitles\":false},\"title\":\"Vibranium Dome Interactions\",\"panelRefName\":\"panel_0\"}]","refreshInterval":{"pause":true,"value":60000},"timeFrom":"now-7d","timeRestore":true,"timeTo":"now","title":"vibranium-governance","version":1},"id":"7825b8b0-b6e8-11ee-8860-0f0de9c93d68","migrationVersion":{"dashboard":"7.9.3"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"panel_0","type":"search"}],"type":"dashboard","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE4Myw4XQ=="}
+    {"attributes":{"description":"","kibanaSavedObjectMeta":{"searchSourceJSON":"{\"query\":{\"query\":\"\",\"language\":\"kuery\"},\"filter\":[]}"},"savedSearchRefName":"search_0","title":"Risk","uiStateJSON":"{\"vis\":{\"colors\":{\"High\":\"#E24D42\",\"None\":\"#9AC48A\"}}}","version":1,"visState":"{\"title\":\"Risk\",\"type\":\"pie\",\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"params\":{},\"schema\":\"metric\"},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"params\":{\"field\":\"risk.keyword\",\"orderBy\":\"1\",\"order\":\"desc\",\"size\":5,\"otherBucket\":false,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"},\"schema\":\"segment\"}],\"params\":{\"type\":\"pie\",\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"bottom\",\"isDonut\":true,\"labels\":{\"show\":false,\"values\":true,\"last_level\":true,\"truncate\":100}}}"},"id":"8d24dd60-8469-11ee-94ed-55973088c20a","migrationVersion":{"visualization":"7.10.0"},"references":[{"id":"15caa250-8314-11ee-8fdd-231c9d91c919","name":"search_0","type":"search"}],"type":"visualization","updated_at":"2024-03-31T19:55:03.415Z","version":"WzE4NCw4XQ=="}
+    {"exportedCount":20,"missingRefCount":0,"missingReferences":[]}
+
+opensearchConfig:
+  properties: |
+    ---
+    cluster.name: opensearch-cluster
+    # cluster.name: docker-cluster
+
+    # Bind to all interfaces because we don't know what IP address Docker will assign to us.
+    network.host: 0.0.0.0
+    # network.bind_host: 0.0.0.0
+
+    # # minimum_master_nodes need to be explicitly set when bound on a public IP
+    # # set to 1 to allow single node clusters
+    # discovery.zen.minimum_master_nodes: 1
+
+    # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
+    # discovery.type: single-node
+
+    ######## Start OpenSearch Security Demo Configuration ########
+    # WARNING: revise all the lines below before you go into production
+    plugins.security.ssl.transport.pemcert_filepath: esnode.pem
+    plugins.security.ssl.transport.pemkey_filepath: esnode-key.pem
+    plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
+    plugins.security.ssl.transport.enforce_hostname_verification: false
+    plugins.security.ssl.http.enabled: true
+    plugins.security.ssl.http.pemcert_filepath: esnode.pem
+    plugins.security.ssl.http.pemkey_filepath: esnode-key.pem
+    plugins.security.ssl.http.pemtrustedcas_filepath: root-ca.pem
+    plugins.security.allow_unsafe_democertificates: true
+    plugins.security.allow_default_init_securityindex: true
+    plugins.security.authcz.admin_dn:
+      - CN=kirk,OU=client,O=client,L=test, C=de
+
+    plugins.security.audit.type: internal_opensearch
+    plugins.security.enable_snapshot_restore_privilege: true
+    plugins.security.check_snapshot_restore_write_privileges: true
+    plugins.security.restapi.roles_enabled: ["all_access", "security_rest_api_access"]
+    plugins.security.system_indices.enabled: true
+    plugins.security.system_indices.indices: [".plugins-ml-config", ".plugins-ml-connector", ".plugins-ml-model-group", ".plugins-ml-model", ".plugins-ml-task", ".plugins-ml-conversation-meta", ".plugins-ml-conversation-interactions", ".opendistro-alerting-config", ".opendistro-alerting-alert*", ".opendistro-anomaly-results*", ".opendistro-anomaly-detector*", ".opendistro-anomaly-checkpoints", ".opendistro-anomaly-detection-state", ".opendistro-reports-*", ".opensearch-notifications-*", ".opensearch-notebooks", ".opensearch-observability", ".ql-datasources", ".opendistro-asynchronous-search-response*", ".replication-metadata-store", ".opensearch-knn-models", ".geospatial-ip2geo-data*"]
+    node.max_local_storage_nodes: 3
+    plugins.security.cache.ttl_minutes: 0
+    ######## End OpenSearch Security Demo Configuration ########
+
+opensearchLog4j2Config:
+  properties: |
+    status = info
+
+    appender.console.type = Console
+    appender.console.name = console
+    appender.console.layout.type = PatternLayout
+    appender.console.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] [%node_name]%marker %m%n
+
+    rootLogger.level = info
+    rootLogger.appenderRef.console.ref = console
+
+opensearchSecurityConfig:
+  properties: |
+    ---
+    # This is the main OpenSearch Security configuration file where authentication
+    # and authorization is defined.
+    #
+    # You need to configure at least one authentication domain in the authc of this file.
+    # An authentication domain is responsible for extracting the user credentials from
+    # the request and for validating them against an authentication backend like Active Directory for example.
+    #
+    # If more than one authentication domain is configured the first one which succeeds wins.
+    # If all authentication domains fail then the request is unauthenticated.
+    # In this case an exception is thrown and/or the HTTP status is set to 401.
+    #
+    # After authentication authorization (authz) will be applied. There can be zero or more authorizers which collect
+    # the roles from a given backend for the authenticated user.
+    #
+    # Both, authc and auth can be enabled/disabled separately for REST and TRANSPORT layer. Default is true for both.
+    #        http_enabled: true
+    #        transport_enabled: true
+    #
+    # For HTTP it is possible to allow anonymous authentication. If that is the case then the HTTP authenticators try to
+    # find user credentials in the HTTP request. If credentials are found then the user gets regularly authenticated.
+    # If none can be found the user will be authenticated as an "anonymous" user. This user has always the username "anonymous"
+    # and one role named "anonymous_backendrole".
+    # If you enable anonymous authentication all HTTP authenticators will not challenge.
+    #
+    #
+    # Note: If you define more than one HTTP authenticators make sure to put non-challenging authenticators like "proxy" or "clientcert"
+    # first and the challenging one last.
+    # Because it's not possible to challenge a client with two different authentication methods (for example
+    # Kerberos and Basic) only one can have the challenge flag set to true. You can cope with this situation
+    # by using pre-authentication, e.g. sending a HTTP Basic authentication header in the request.
+    #
+    # Default value of the challenge flag is true.
+    #
+    #
+    # HTTP
+    #   basic (challenging)
+    #   proxy (not challenging, needs xff)
+    #   kerberos (challenging)
+    #   clientcert (not challenging, needs https)
+    #   jwt (not challenging)
+    #   host (not challenging) #DEPRECATED, will be removed in a future version.
+    #                          host based authentication is configurable in roles_mapping
+
+    # Authc
+    #   internal
+    #   noop
+    #   ldap
+
+    # Authz
+    #   ldap
+    #   noop
+
+
+
+    _meta:
+      type: "config"
+      config_version: 2
+
+    config:
+      dynamic:
+        # Set filtered_alias_mode to 'disallow' to forbid more than 2 filtered aliases per index
+        # Set filtered_alias_mode to 'warn' to allow more than 2 filtered aliases per index but warns about it (default)
+        # Set filtered_alias_mode to 'nowarn' to allow more than 2 filtered aliases per index silently
+        #filtered_alias_mode: warn
+        #do_not_fail_on_forbidden: false
+        #kibana:
+        # Kibana multitenancy
+        # multitenancy_enabled: true
+        #private_tenant_enabled: true
+        #default_tenant: ""
+        #server_username: kibanaserver
+        #index: '.kibana'
+        http:
+          anonymous_auth_enabled: true
+          xff:
+            enabled: false
+            internalProxies: '192\.168\.0\.10|192\.168\.0\.11' # regex pattern
+            #internalProxies: '.*' # trust all internal proxies, regex pattern
+            #remoteIpHeader:  'x-forwarded-for'
+            ###### see https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html for regex help
+            ###### more information about XFF https://en.wikipedia.org/wiki/X-Forwarded-For
+            ###### and here https://tools.ietf.org/html/rfc7239
+            ###### and https://tomcat.apache.org/tomcat-8.0-doc/config/valve.html#Remote_IP_Valve
+        authc:
+          kerberos_auth_domain:
+            http_enabled: false
+            transport_enabled: false
+            order: 6
+            http_authenticator:
+              type: kerberos
+              challenge: true
+              config:
+                # If true a lot of kerberos/security related debugging output will be logged to standard out
+                krb_debug: false
+                # If true then the realm will be stripped from the user name
+                strip_realm_from_principal: true
+            authentication_backend:
+              type: noop
+          basic_internal_auth_domain:
+            description: "Authenticate via HTTP Basic against internal users database"
+            http_enabled: true
+            transport_enabled: true
+            order: 4
+            http_authenticator:
+              type: basic
+              challenge: true
+            authentication_backend:
+              type: intern
+          proxy_auth_domain:
+            description: "Authenticate via proxy"
+            http_enabled: false
+            transport_enabled: false
+            order: 3
+            http_authenticator:
+              type: proxy
+              challenge: false
+              config:
+                user_header: "x-proxy-user"
+                roles_header: "x-proxy-roles"
+            authentication_backend:
+              type: noop
+          jwt_auth_domain:
+            description: "Authenticate via Json Web Token"
+            http_enabled: true
+            transport_enabled: true
+            order: 0
+            http_authenticator:
+              type: jwt
+              challenge: false
+              config:
+                signing_key: "MzkyMTQ3ODUxNzg4NjU3NjIwMDM5MjA0MTU5NjQxMzI="
+                jwt_header: "Authorization"
+                jwt_url_parameter: "jwtToken"
+                jwt_clock_skew_tolerance_seconds: 30
+                roles_key: null
+                subject_key: null
+            authentication_backend:
+              type: noop
+          clientcert_auth_domain:
+            description: "Authenticate via SSL client certificates"
+            http_enabled: false
+            transport_enabled: false
+            order: 2
+            http_authenticator:
+              type: clientcert
+              config:
+                username_attribute: cn #optional, if omitted DN becomes username
+              challenge: false
+            authentication_backend:
+              type: noop
+          ldap:
+            description: "Authenticate via LDAP or Active Directory"
+            http_enabled: false
+            transport_enabled: false
+            order: 5
+            http_authenticator:
+              type: basic
+              challenge: false
+            authentication_backend:
+              # LDAP authentication backend (authenticate users against a LDAP or Active Directory)
+              type: ldap
+              config:
+                # enable ldaps
+                enable_ssl: false
+                # enable start tls, enable_ssl should be false
+                enable_start_tls: false
+                # send client certificate
+                enable_ssl_client_auth: false
+                # verify ldap hostname
+                verify_hostnames: true
+                hosts:
+                - localhost:8389
+                bind_dn: null
+                password: null
+                userbase: 'ou=people,dc=example,dc=com'
+                # Filter to search for users (currently in the whole subtree beneath userbase)
+                # {0} is substituted with the username
+                usersearch: '(sAMAccountName={0})'
+                # Use this attribute from the user as username (if not set then DN is used)
+                username_attribute: null
+        authz:
+          roles_from_myldap:
+            description: "Authorize via LDAP or Active Directory"
+            http_enabled: false
+            transport_enabled: false
+            authorization_backend:
+              # LDAP authorization backend (gather roles from a LDAP or Active Directory, you have to configure the above LDAP authentication backend settings too)
+              type: ldap
+              config:
+                # enable ldaps
+                enable_ssl: false
+                # enable start tls, enable_ssl should be false
+                enable_start_tls: false
+                # send client certificate
+                enable_ssl_client_auth: false
+                # verify ldap hostname
+                verify_hostnames: true
+                hosts:
+                - localhost:8389
+                bind_dn: null
+                password: null
+                rolebase: 'ou=groups,dc=example,dc=com'
+                # Filter to search for roles (currently in the whole subtree beneath rolebase)
+                # {0} is substituted with the DN of the user
+                # {1} is substituted with the username
+                # {2} is substituted with an attribute value from user's directory entry, of the authenticated user. Use userroleattribute to specify the name of the attribute
+                rolesearch: '(member={0})'
+                # Specify the name of the attribute which value should be substituted with {2} above
+                userroleattribute: null
+                # Roles as an attribute of the user entry
+                userrolename: disabled
+                #userrolename: memberOf
+                # The attribute in a role entry containing the name of that role, Default is "name".
+                # Can also be "dn" to use the full DN as rolename.
+                rolename: cn
+                # Resolve nested roles transitive (roles which are members of other roles and so on ...)
+                resolve_nested_roles: true
+                userbase: 'ou=people,dc=example,dc=com'
+                # Filter to search for users (currently in the whole subtree beneath userbase)
+                # {0} is substituted with the username
+                usersearch: '(uid={0})'
+                # Skip users matching a user name, a wildcard or a regex pattern
+                #skip_users:
+                #  - 'cn=Michael Jackson,ou*people,o=TEST'
+                #  - '/\S*/'
+          roles_from_another_ldap:
+            description: "Authorize via another Active Directory"
+            http_enabled: false
+            transport_enabled: false
+            authorization_backend:
+              type: ldap
+              #config goes here ...
+      #    auth_failure_listeners:
+      #      ip_rate_limiting:
+      #        type: ip
+      #        allowed_tries: 10
+      #        time_window_seconds: 3600
+      #        block_expiry_seconds: 600
+      #        max_blocked_clients: 100000
+      #        max_tracked_clients: 100000
+      #      internal_authentication_backend_limiting:
+      #        type: username
+      #        authentication_backend: intern
+      #        allowed_tries: 10
+      #        time_window_seconds: 3600
+      #        block_expiry_seconds: 600
+      #        max_blocked_clients: 100000
+      #        max_tracked_clients: 100000

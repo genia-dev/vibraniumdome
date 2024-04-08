@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-log4j2-config
+data:
+  log4j2.properties: |
+    {{ .Values.opensearchLog4j2Config.properties | nindent 4 }}

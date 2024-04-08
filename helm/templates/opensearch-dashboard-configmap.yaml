@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-dashboard-ndjson-config
+data:
+  dashboard.ndjson: |
+    {{ .Values.opensearchDashboardNdjson.properties | nindent 4 }}

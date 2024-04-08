@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-dashboards-config
+data:
+  opensearch_dashboards.yml: |
+    {{ .Values.opensearchDashboardsConfig.properties | nindent 4 }}
