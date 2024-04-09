@@ -173,10 +173,12 @@ class OpenTelemetryParser:
 
     def _parse_headers(self, llm_interaction, document):
         llm_interaction["llm.user"] = document.get("llm.user")
-        headers_dict = safe_loads_dictionary_string(document.get("llm.headers"))
-        # parse all meaningful headers here
-        if headers_dict:
-            llm_interaction["session-id"] = headers_dict.get("x-session-id")
+        llm_headers = document.get("llm.headers")
+        if llm_headers:
+            headers_dict = safe_loads_dictionary_string()
+            # parse all meaningful headers here
+            if headers_dict:
+                llm_interaction["session-id"] = headers_dict.get("x-session-id")
         return llm_interaction
 
     def _parse_trace_request(self, export_trace_service_request):

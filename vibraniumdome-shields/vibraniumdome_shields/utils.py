@@ -17,7 +17,7 @@ def safe_loads_dictionary_string(dictionary_string: str = ""):
     try:
         if dictionary_string:
             parsed_dictionary = ast.literal_eval(dictionary_string)
-    except (json.JSONDecodeError, SyntaxError):
+    except Exception:
         logger.error("dictionary_string could not be parser: %s", dictionary_string)
     return parsed_dictionary
 
