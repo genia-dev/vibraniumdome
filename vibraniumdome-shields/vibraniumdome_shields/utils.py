@@ -12,12 +12,13 @@ import requests
 logger = logging.getLogger(__name__)
 
 
-def safe_loads_dictionary_string(dictionary_string: str):
+def safe_loads_dictionary_string(dictionary_string: str = ""):
+    parsed_dictionary = {}
     try:
-        parsed_dictionary = ast.literal_eval(dictionary_string)
-    except json.JSONDecodeError:
+        if dictionary_string:
+            parsed_dictionary = ast.literal_eval(dictionary_string)
+    except (json.JSONDecodeError, SyntaxError):
         logger.error("dictionary_string could not be parser: %s", dictionary_string)
-        parsed_dictionary = {}
     return parsed_dictionary
 
 
