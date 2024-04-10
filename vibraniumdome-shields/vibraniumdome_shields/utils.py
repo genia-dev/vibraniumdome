@@ -23,11 +23,11 @@ def safe_loads_dictionary_string(dictionary_string: str = ""):
 
 
 def safe_loads_json(json_string: str):
+    parsed_json = {}
     try:
         parsed_json = json.loads(json_string)
-    except json.JSONDecodeError:
-        logger.warn("json_string could not be parser: %s", json_string)
-        parsed_json = {}
+    except Exception:
+        logger.warn("json_string could not be parsed: %s", json_string)
     return parsed_json
 
 
