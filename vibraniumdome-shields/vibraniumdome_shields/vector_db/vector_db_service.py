@@ -69,7 +69,7 @@ class VectorDBService:
             raise err
 
     def query(self, text: str, k: int = 3) -> List[Tuple[Document, float]]:
-        self._logger.debug("vectordb query: %s", text, k)
+        self._logger.debug("vectordb query: %s %s", text, k)
         try:
             return self._vector_store.similarity_search_with_score(text, k)
         except Exception as e:

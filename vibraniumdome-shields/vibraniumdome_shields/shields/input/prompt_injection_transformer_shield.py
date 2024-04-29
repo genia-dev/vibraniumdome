@@ -18,7 +18,7 @@ class PromptInjectionTransformerShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
     _shield_name: str = "com.vibraniumdome.shield.input.transformer"
     _default_threshold = 0.98
-    _default_model_name: str = "deepset/deberta-v3-base-injection"
+    _default_model_name: str = "vibraniumdome/deberta-v3-base-optimus-v0"
     _models_dict: Dict[str, Pipeline]
     _instance = None
 
@@ -62,7 +62,8 @@ class PromptInjectionTransformerShield(VibraniumShield):
         for rec in hits:
             self._logger.debug(rec)
             risk_score = rec["score"]
-            if rec["label"] == "INJECTION" and risk_score > threshold:
+            # TODO
+            if (rec["label"] == "INJECTION" or rec["label"] == "LABEL_1") and risk_score > threshold:
                 self._logger.debug("Detected prompt injection; score={%s} threshold={%s} id={%s}", risk_score, threshold, scan_id)
                 shield_matches.append(
                     PromptInjectionTransformerShieldDeflectionResult(model=model_name, label=rec["label"], threshold=threshold, risk=risk_score)
