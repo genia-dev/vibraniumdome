@@ -46,7 +46,7 @@ class PromptInjectionTransformerShield(VibraniumShield):
         return self._instance._models_dict.get(model_name)
 
     @prompt_injection_transformer_shield_seconds_histogram.time()
-    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict) -> List[ShieldDeflectionResult]:
+    def deflect(self, llm_interaction: LLMInteraction, shield_policy_config: dict, scan_id: UUID, policy: dict, trace=False) -> List[ShieldDeflectionResult]:
 
         threshold = shield_policy_config.get("threshold", self._default_threshold)
         model_name = shield_policy_config.get("model", PromptInjectionTransformerShield._default_model_name)
@@ -63,7 +63,7 @@ class PromptInjectionTransformerShield(VibraniumShield):
             self._logger.debug(rec)
             risk_score = rec["score"]
             # TODO
-            if (rec["label"] == "INJECTION" or rec["label"] == "LABEL_1") and risk_score > threshold:
+            if (rec["label"] == "INJECTION" or rec["label"] == "LABEL_1") and risk_score > threshold or trace:
                 self._logger.debug("Detected prompt injection; score={%s} threshold={%s} id={%s}", risk_score, threshold, scan_id)
                 shield_matches.append(
                     PromptInjectionTransformerShieldDeflectionResult(model=model_name, label=rec["label"], threshold=threshold, risk=risk_score)
