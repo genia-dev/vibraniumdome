@@ -17,7 +17,7 @@ class PromptInjectionTransformerShieldDeflectionResult(ShieldDeflectionResult):
 class PromptInjectionTransformerShield(VibraniumShield):
     _logger = logging.getLogger(__name__)
     _shield_name: str = "com.vibraniumdome.shield.input.transformer"
-    _default_threshold = 0.98
+    _default_threshold = 0.70
     _default_model_name: str = "vibraniumdome/deberta-v3-base-optimus-v0"
     _models_dict: Dict[str, Pipeline]
     _instance = None
