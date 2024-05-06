@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: {{ .Values.shields.name }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.shields.serviceType }}
   ports:
-  - port: {{ (index .Values.shields.ports 0).containerPort }}
-    targetPort: {{ (index .Values.shields.ports 0).containerPort }}
+    - port: {{ (index .Values.shields.ports 0).containerPort }}
+      targetPort: {{ (index .Values.shields.ports 0).containerPort }}
   selector:
     app: {{ .Values.shields.name }}

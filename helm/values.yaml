@@ -6,13 +6,38 @@ app:
     tag: 0.3.0
   ports:
     - containerPort: 3000
+  serviceType: ClusterIP  # Default service type
   environment:
+    # `vibraniumdome-app` serves as the frontend (management & dashboard) of the VibraniumDome service,
+    # utilizing a MySQL database for its state. This is the database URL which, by default, does not include a password.
+    # You can modify this by adding a password after `root:` and configuring it
+    # in this file as well as in `vibraniumdome-app-db` under the MYSQL_ROOT_PASSWORD environment variable.
     DATABASE_URL: "mysql://root:@vibraniumdome-app-db:3306/vibraniumdome"
+    # `vibraniumdome-app` is a Next.js app that includes a login page,
+    # this key is used by NextAuth to create authenticated sessions.
     NEXTAUTH_SECRET: "TNhv82aTvdYGcn7J8mUMpgaIEjgCpagUyn1dih/Ex0Y="
+    # The base URL for login. Note that if you change from ClusterIP to NodePort with a LoadBalancer Ingress,
+    # you need to configure the FQDN here, e.g., https://myapp.myvibraniumdome.com
     NEXTAUTH_URL: "http://localhost:3000"
+    # The Next.js authentication library, NextAuth, supports multiple authentication providers.
+    # You can read more here: https://next-auth.js.org/v3/configuration/providers
+    # Google Social Login is one of these providers. You can configure this login by creating a Google App Integration
+    # and providing the credential details of the app here.
     GOOGLE_CLIENT_ID: "changeme"
     GOOGLE_CLIENT_SECRET: "changeme"
+    # `vibraniumdome-app` contains embedded OpenSearch to ensure seamless integration between the app and OpenSearch.
+    # The authentication method in OpenSearch has transitioned from basic authentication to jwtToken. To generate this jwtToken,
+    # the app and OpenSearch share a key. Note that if you change the default key, you must also update it in this file
+    # by providing the base64 encoded value. For example, the default case for `39214785178865762003920415964132` in base64
+    # encoding is `MzkyMTQ3ODUxNzg4NjU3NjIwMDM5MjA0MTU5NjQxMzI=`, so in this config it is plain, while in the OpenSearch config,
+    # it is the base64 encoding of '39214785178865762003920415964132', which is 'MzkyMTQ3ODUxNzg4NjU3NjIwMDM5MjA0MTU5NjQxMzI=':
+    # config:
+    #   signing_key: "MzkyMTQ3ODUxNzg4NjU3NjIwMDM5MjA0MTU5NjQxMzI="
+    #   jwt_header: "Authorization"
     OPENSEARCH_JWT_HMAC_SIGNING_KEY: "39214785178865762003920415964132"
+    # The OpenSearch URLs are not secrets; they are the dashboard IDs used to load the correct pre-built dashboards.
+    # Note that if you change from ClusterIP to NodePort with a LoadBalancer Ingress,
+    # you need to configure the FQDN here, e.g., https://myopensearch.myvibraniumdome.com
     OPENSEARCH_DASHBOARD_URL: "http://localhost:5601/app/dashboards?jwtToken=<JWT>#/view/575f44f0-8314-11ee-8fdd-231c9d91c919?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-7d%2Cto%3Anow))&show-query-input=true&show-time-filter=true"
     OPENSEARCH_GOVERNANCE_URL: "http://localhost:5601/app/dashboards?jwtToken=<JWT>#/view/7825b8b0-b6e8-11ee-8860-0f0de9c93d68?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-7d%2Cto%3Anow))&show-query-input=true&show-time-filter=true"
 
@@ -37,11 +62,15 @@ shields:
     tag: 0.3.0
   ports:
     - containerPort: 5001
+  serviceType: ClusterIP  # Default service type
   environment:
     OPENAI_API_KEY: ""
     VIBRANIUM_DOME_OPENSEARCH_HOST: "vibraniumdome-opensearch-node-1"
     VIBRANIUM_DOME_OPENSEARCH_PORT: "9200"
     VIBRANIUM_DOME_APP_BASE_URL: "http://vibraniumdome-app:3000"
+    # The VibraniumDome client requires authentication to send telemetry data to `vibraniumdome-shields`.
+    # This key is used to authenticate to the system and to identify which tenant the data belongs to.
+    # To modify this key, you also need to update it in `seed.ts` in `vibraniumdome-app`.
     VIBRANIUM_DOME_API_KEY: "vibranium_elgstr7i53e3vpy0pbc8175fp6eaj4k3fjzd"
     VIBRANIUM_HOME: "/app"
     TOKENIZERS_PARALLELISM: "false"
@@ -54,6 +83,7 @@ streamlitApp:
     tag: 0.3.0
   ports:
     - containerPort: 8501
+  serviceType: ClusterIP  # Default service type
 
 opensearchNode1:
   replicaCount: 1
@@ -82,20 +112,19 @@ opensearchDashboards:
   image:
     repository: opensearchproject/opensearch-dashboards
     tag: 2.9.0
-  ports:
-    - containerPort: 5601
+  service:
+    type: ClusterIP  # Default service type
+    port: 5601
+    targetPort: 5601
+    protocol: TCP
+  deployment:
+    containerPort: 5601
 
 opensearchSeeder:
   name: vibraniumdome-opensearch-seeder
   image:
     repository: centos
     tag: latest
-
-service:
-  port: 3000
-
-service:
-  type: "NodePort"
 
 serviceAccount:
   create: false

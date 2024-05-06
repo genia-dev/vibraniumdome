@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: {{ .Values.opensearchDashboards.name }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.opensearchDashboards.service.type }}
   ports:
-  - port: 5601
-    targetPort: 5601
-    protocol: TCP
-    name: http
+    - port: {{ .Values.opensearchDashboards.service.port }}
+      targetPort: {{ .Values.opensearchDashboards.service.targetPort }}
+      protocol: {{ .Values.opensearchDashboards.service.protocol }}
+      name: http
   selector:
     app: {{ .Values.opensearchDashboards.name }}
