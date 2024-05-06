@@ -144,3 +144,38 @@ class OpenTelemetryBuilder:
             #span.set_end_time(time.time_ns())
 
         self.span_processor.force_flush()
+
+    def build_advanced_qa(self, model, system_message, user_message, assistant_message, attributes_dict, temperature='0', user_id='user-123456J3', session_id='abcd-1234-cdef'):
+        """
+            pass the conversation and additional attributes as a dictionary for more advanced scenarios
+            for example:
+
+            span.set_attribute('llm.prompts.0.role', 'system')
+            span.set_attribute('llm.prompts.0.content', "system context")
+            span.set_attribute('llm.prompts.1.role', 'user')
+            span.set_attribute('llm.prompts.1.content', "user message")
+            ...
+            span.set_attribute('llm.completions.0.finish_reason', 'stop')
+            span.set_attribute('llm.completions.0.role', 'assistant')
+            span.set_attribute('llm.completions.0.content', "assistant message")
+            span.set_attribute('llm.usage.prompt_tokens', 1000)
+            span.set_attribute('llm.usage.total_tokens', 100)
+            span.set_attribute('llm.usage.completion_tokens', 1000 + 100)
+        """
+        with self.tracer.start_as_current_span("Default") as span:
+            span.set_attribute('service.name', 'Default')
+            span.set_attribute('llm.vendor', 'OpenAI')
+            span.set_attribute('llm.request.type', 'chat')
+            span.set_attribute('openai.api_base', 'https://api.openai.com/v1')
+            span.set_attribute('openai.api_type', 'open_ai')
+            span.set_attribute('llm.request.model', model)
+            span.set_attribute('llm.response.model', model)
+            span.set_attribute('llm.temperature', temperature)
+            span.set_attribute('llm.user', user_id)
+            span.set_attribute('llm.headers', "{'x-session-id': "+session_id+"}")
+            # setting a custom trace_id (hexadecimal string) i.e 'f5b1b6ad8df2bdfb3d84211fb2549f63'
+            span.set_attribute('trace_id_hex', ''.join(secrets.choice('0123456789abcdef') for _ in range(32)))
+            for key, value in attributes_dict.items():
+                span.set_attribute(key, value)
+
+        self.span_processor.force_flush()
