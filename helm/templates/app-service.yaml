@@ -3,9 +3,12 @@ kind: Service
 metadata:
   name: {{ .Values.app.name }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.app.serviceType }}
   ports:
-  - port: {{ (index .Values.app.ports 0).containerPort }}
-    targetPort: {{ (index .Values.app.ports 0).containerPort }}
+    - port: {{ (index .Values.app.ports 0).containerPort }}
+      targetPort: {{ (index .Values.app.ports 0).containerPort }}
+      protocol: TCP
+      name: http
+
   selector:
     app: {{ .Values.app.name }}
