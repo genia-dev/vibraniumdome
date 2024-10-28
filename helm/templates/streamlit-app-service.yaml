@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ .Values.streamlitApp.name }}
 spec:
-  type: {{ .Values.streamlitApp.serviceType }}
+  type: ClusterIP
   ports:
   - port: {{ (index .Values.streamlitApp.ports 0).containerPort }}
     targetPort: {{ (index .Values.streamlitApp.ports 0).containerPort }}

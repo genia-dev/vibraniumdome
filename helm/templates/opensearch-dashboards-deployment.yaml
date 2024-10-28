@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: {{ .Values.opensearchDashboards.name }}
 spec:
-  replicas: {{ .Values.opensearchDashboards.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       app: {{ .Values.opensearchDashboards.name }}
@@ -16,7 +16,7 @@ spec:
       - name: {{ .Values.opensearchDashboards.name }}
         image: "{{ .Values.opensearchDashboards.image.repository }}:{{ .Values.opensearchDashboards.image.tag }}"
         ports:
-        - containerPort: {{ .Values.opensearchDashboards.deployment.containerPort }}
+        - containerPort: 5601
         env:
           - name: "OPENSEARCH_HOSTS"
             value: '["https://vibraniumdome-opensearch-node-1:9200"]'

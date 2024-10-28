@@ -61,12 +61,6 @@ kubectl port-forward service/vibraniumdome-streamlit-app 8501:8501
 
 Now you can access the application via http://localhost:3000 and the streamlit application via http://localhost:8501 and send llm interactions via http://localhost:5001 .
 
-> [!IMPORTANT]
-> The default configuration works on `ClusterIP`, if you want to run on real env with `NodePort`, you need to configure helm to run:
-
-```
-helm install test-release helm --set app.serviceType=NodePort --set shields.serviceType=NodePort --set streamlitApp.serviceType=NodePort --set opensearchDashboards.service.type=NodePort
-```
 
 ## Uninstall VibraniumDome Helm Chart
 ```
